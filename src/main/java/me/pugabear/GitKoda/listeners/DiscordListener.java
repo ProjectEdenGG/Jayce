@@ -31,6 +31,8 @@ public class DiscordListener extends ListenerAdapter
 				switch (sub)
 				{
 				case "create":
+				case "open":
+				case "make":
 					try {
 						String[] content = rest.split("( \\| )");
 						IssueManager.createIssue(content[0], content[1]);
@@ -38,20 +40,37 @@ public class DiscordListener extends ListenerAdapter
 						IssueManager.createIssue(rest, "");
 					}
 					break;
-					
+
 				case "edit":
+				case "set":
 					try {
-						int i2 = rest.indexOf(' ');
-						String id = rest.substring(0, i2);
-						String edit = rest.substring(i2+1);
+						i = rest.indexOf(' ');
+						String id = rest.substring(0, i);
+						String edit = rest.substring(i+1);
 						String[] content = edit.split("( \\| )");
 						IssueManager.editIssue(id, content[0], content[1]);
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
 					break;
-					
+
+				case "label":
+				case "labels":
+					try {
+						i = rest.indexOf(' ');
+						String action = rest.substring(0, i);
+						rest = rest.substring(i+1);
+						i = rest.indexOf(' ');
+						String id = rest.substring(0, i);
+						String labels = rest.substring(i+1);
+						IssueManager.changeLabels(action, id, labels.split(" "));
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+					break;
+
 				case "close": 
+				case "delete": 
 					IssueManager.closeIssue(rest);
 					break;
 					
