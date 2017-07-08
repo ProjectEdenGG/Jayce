@@ -30,3 +30,7 @@ hs_err_pid*
 # maven
 target/
 dependency-reduced-pom.xml
+
+# tokens
+github.token
+discord.token
