@@ -1,4 +1,4 @@
-package me.pugabear.GitKoda;
+package me.pugabear.gitkoda.listeners;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class DiscordListener extends ListenerAdapter
 {
-
+/*
 	@Override
 	public void onGuildMessageReceived(GuildMessageReceivedEvent event)
 	{
@@ -28,35 +28,42 @@ public class DiscordListener extends ListenerAdapter
 				int i = message.indexOf(' ');
 				String sub = message.substring(0, i);
 				String rest = message.substring(i+1);
-				switch (sub)
+				switch (sub.toLowerCase())
 				{
 				case "create":
 				case "open":
 				case "make":
-					try {
+					try 
+					{
 						String[] content = rest.split("( \\| )");
 						IssueManager.createIssue(content[0], content[1]);
-					} catch (ArrayIndexOutOfBoundsException ex) {
+					} 
+					catch (ArrayIndexOutOfBoundsException ex) 
+					{
 						IssueManager.createIssue(rest, "");
-					}
+					}	
 					break;
 
 				case "edit":
 				case "set":
-					try {
+					try 
+					{
 						i = rest.indexOf(' ');
 						String id = rest.substring(0, i);
 						String edit = rest.substring(i+1);
 						String[] content = edit.split("( \\| )");
 						IssueManager.editIssue(id, content[0], content[1]);
-					} catch (Exception ex) {
+					} 
+					catch (Exception ex) 
+					{
 						ex.printStackTrace();
 					}
 					break;
 
 				case "label":
 				case "labels":
-					try {
+					try 
+					{
 						i = rest.indexOf(' ');
 						String action = rest.substring(0, i);
 						rest = rest.substring(i+1);
@@ -64,7 +71,9 @@ public class DiscordListener extends ListenerAdapter
 						String id = rest.substring(0, i);
 						String labels = rest.substring(i+1);
 						IssueManager.changeLabels(action, id, labels.split(" "));
-					} catch (Exception ex) {
+					} 
+					catch (Exception ex) 
+					{
 						ex.printStackTrace();
 					}
 					break;
@@ -78,5 +87,6 @@ public class DiscordListener extends ListenerAdapter
 			}
 		}
 	}
+	*/
 
 }

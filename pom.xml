@@ -51,7 +51,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>me.pugabear.GitKoda.GitKoda</mainClass>
+              <mainClass>me.pugabear.gitkoda.GitKoda</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -81,6 +81,12 @@
       <groupId>net.dv8tion</groupId>
       <artifactId>JDA</artifactId>
       <version>3.1.1_220</version>
+    </dependency>
+    <!-- JDA-Utilities -->
+    <dependency>
+      <groupId>com.jagrosh</groupId>
+      <artifactId>JDA-Utilities</artifactId>
+      <version>1.2</version>
     </dependency>
     <!-- Gson -->
     <dependency>

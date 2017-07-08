@@ -1,4 +1,4 @@
-package me.pugabear.GitKoda;
+package me.pugabear.gitkoda.utils;
 
 import java.io.BufferedReader;
 import java.util.HashMap;

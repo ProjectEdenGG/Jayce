@@ -1,4 +1,8 @@
-package me.pugabear.GitKoda;
+package me.pugabear.gitkoda.utils;
+
+import me.pugabear.gitkoda.commands.*;
+import me.pugabear.gitkoda.GitKoda;
+import static me.pugabear.gitkoda.GitKoda.SERVICES;
 
 import org.eclipse.egit.github.core.*;
 import org.eclipse.egit.github.core.Issue;
@@ -6,8 +10,6 @@ import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.IssueService;
 import org.eclipse.egit.github.core.service.UserService;
 import org.eclipse.egit.github.core.service.RepositoryService;
-
-import static me.pugabear.GitKoda.GitKoda.SERVICES;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -30,11 +32,20 @@ public class IssueManager
 		}
 	}
 
-	public static boolean editIssue(String id, String title, String body) {
+	public static boolean editIssue(String id, String what, String content) {
 		try {
 			Issue issue = SERVICES.issues.getIssue("PugaBear", repo, Integer.parseInt(id));
-			issue.setTitle(title);
-			issue.setBody(body);
+			if (what.equalsIgnoreCase("title")) 
+			{
+				issue.setTitle(content);
+			}
+			else if (what.equalsIgnoreCase("body")) 
+			{
+				issue.setBody(content);
+			}
+			else {
+				return false;
+			}
 			SERVICES.issues.editIssue("PugaBear", repo, issue);
 			return true;
 		} catch (Exception ex) {
