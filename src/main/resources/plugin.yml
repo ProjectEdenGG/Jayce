@@ -1,8 +1,0 @@
-name: DubtrackUtils
-main: me.pugabear.DubtrackUtils.DubtrackUtils
-author: PugaBear
-version: 1.0
-softdepend: [PurpleIRC, DiscordSRV]
-commands:
-  dubtrack:
-    description: Dubtrack command
