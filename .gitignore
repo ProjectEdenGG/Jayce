@@ -26,3 +26,7 @@ hs_err_pid*
 .classpath
 .project
 .settings
+
+# maven
+target/
+dependency-reduced-pom.xml
