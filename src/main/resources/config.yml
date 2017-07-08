@@ -1,0 +1,214 @@
+#   ____        _     _                  _    _   _ _   _ _
+#  |  _ \ _   _| |__ | |_ _ __ __ _  ___| | _| | | | |_(_) |___
+#  | | | | | | | '_ \| __| '__/ _` |/ __| |/ / | | | __| | / __|
+#  | |_| | |_| | |_) | |_| | | (_| | (__|   <| |_| | |_| | \__ \
+#  |____/ \__,_|_.__/ \__|_|  \__,_|\___|_|\_\\___/ \__|_|_|___/
+# 
+#
+# By Pugabear
+#
+# https://github.com/PugaBear/DubtrackUtils
+
+settings:
+  
+  # Make an account and put the details here
+  username: 'username'
+  password: 'password'
+  
+  # The name of your room; https://dubtrack.fm/join/<ROOM NAME>
+  room: 'room'
+
+  # Enable announcements?
+  announcements: true
+
+  # Enable chat hook?
+  chat: 
+    dub-to-game: true
+    game-to-dub: true
+
+lang:
+  # A lot of these settings use each other to get the text 
+  # displayed. For example, at the end of 'announcement' 
+  # is '%display%'. That pulls directly from the 'display' 
+  # setting. All %placeholders% are optional, however 
+  # removing them may cause a loss of functionality 
+  # (such as the song not being displayed). If you'd 
+  # like any other placeholders, feel free to create 
+  # an issue over at the github repository:
+  # https://github.com/PugaBear/DubtrackUtils/issues
+  # Please understand that I am limited by the Dubtrack
+  # Java API which is very very underdeveloped. I may
+  # try to update it in the future.
+
+  # Full color support. http://ess.khhq.net/mc/
+
+  # Chat format
+  chat: 
+    dub-to-game: '&8&l[&5Dubtrack&8&l] &f%user% &5&l> &f%message%'
+    game-to-dub: '[MC] %user%: %message%'
+
+  # Used in /dubtrack and announcements
+  display: '&e%song% &3(Queued by &e%dj%&3)'
+
+  # Announcement 
+  # Use %new% to move to a new line
+  # Other valid placeholders: url, song, dj
+  announcement: ' &3Now playing on &dDubtrack&3:%new% %display%'
+
+  # Hover text on announcements
+  tooltip: '&eClick here &3to join our &dDubtrack &3room!'
+  
+  # Following 3 are used in /dubtrack command. 
+  # Set to '' if you don't want to display it
+  # Use %new% to move to a new line
+  # By default it displays as:
+  # =====================
+  # 
+  # %info%
+  # 
+  # %join%
+  #
+  # %currentlyplaying%
+  # =====================
+  info: '&f%new%&bDubtrack &3is a music sharing platform. It allows you to listen to songs at the same time as your friends.'
+  join: '&f%new%&3Join us on dubtrack at &d%url%'
+  currentlyplaying: '&f%new%&3Currently playing: %display%'
+
+  # This will replace the 'currently playing' if there is no song playing
+  queueempty: '&f%new%&3Nothing is currently playing. Be the first to join the queue!'
+  
+  # Prefix used in commands
+  prefix: '&8&l[&eDubtrackUtils&8&l]&3'
+
+  # Hide command
+  hide: 
+    announcements: 
+      true: '%prefix% Dubtrack announcements are now hidden'
+      false: '%prefix% Dubtrack announcements are no longer hidden'
+    chat: 
+      true: '%prefix% Dubtrack chat is now hidden'
+      false: '%prefix% Dubtrack chat is no longer hidden'
+
+  # Permission error message
+  noperm: '&cYou do not have permission to use this command!'
+
+  # Login failed
+  noroom: '&cCould not find the dubtrack room. Check your settings'
+
+  # User not found error
+  usernotfound: '%prefix% Could not find dubtrack user %user%'
+  
+  # Queue commannd
+  queue:
+    invalidurl: '%prefix% Sorry, I could not understand that URL!'
+    success: '%prefix% Successfully queued song'
+    usage: '%prefix% &c/dubtrack queue <youtube url>'
+
+  # Mod commands
+  mod:
+    ban: '%prefix% Banned user %user%'
+    kick: '%prefix% Kicked user %user%'
+    skip: 
+      success: '%prefix% Skipped current song'
+      nosong: '%prefix% There is no song currently playing'
+    usage: '%prefix% &c/dubtrack <ban <user>|kick <user>|skip>'
+
+  # Set role commands
+  roles:
+    set:
+      dj: '%prefix% Set &e%user%&3''s role to &eDJ'
+      resident_dj: '%prefix% Set &e%user%&3''s role to &eResident DJ'
+      vip: '%prefix% Set &e%user%&3''s role to &eVIP'
+      mod: '%prefix% Set &e%user%&3''s role to &eMod'
+      manager: '%prefix% Set &e%user%&3''s role to &eManager'
+      co_owner: '%prefix% Set &e%user%&3''s role to &eCo-Owner'
+      cannotset:
+        co_owner: '%prefix% Only the room creator can set the Co-Owner role'
+        creator: '%prefix% The creator role cannot be set'
+      invalidrole: '%prefix% Valid roles are: DJ, Resident_DJ, VIP, Mod, Manager, and Co_Owner'
+      usage: '%prefix% &c/dubtrack roles set <user> <dj|resident_dj|vip|mod|manager|co_owner>'
+    clear: '%prefix% Cleared &e%user%&3''s roles'
+    usage: '%prefix% &c/dubtrack roles <set <user> <role>|clear <user>>'
+
+  # Admin commands
+  admin:
+    reload: '%prefix% Successfully reloaded configuration'
+    reconnect: '%prefix% Successfully reconnected to Dubtrack'
+    reset: '%prefix% Successfully reloaded and reconnected'
+    usage: '%prefix% &c/dubtrack <reload|reconnect|reset>'
+
+
+hooks:
+  # Send the information recieved from Dubtrack to other
+  # chat platforms. Current supported platforms are:
+  #
+  # IRC (via PurpleIRC)
+  # https://www.spigotmc.org/resources/purpleirc.2836/
+  #
+  # Discord (via DiscordSRV)
+  # https://discordapp.com
+  # https://www.spigotmc.org/resources/discordsrv.18494/
+  # 
+  # Have another request? Open an issue at 
+  # https://github.com/PugaBear/DubtrackUtils
+  # and I will happily look into it
+
+  irc:
+    # Send chat?
+    chat:
+      enabled: true
+      
+      # Name of bot file without the .yml
+      bot: 'bot'
+      
+      # Name of channel without the #
+      channel: 'channel'
+    
+    # Send announcements?
+    announcements:
+      enabled: true
+      
+      # Name of bot file without the .yml
+      bot: 'bot'
+      
+      # Name of channel without the #
+      channel: 'channel'
+
+  discord:      
+    # To get the server and channel ID's, first
+    # go to User settings -> Appearance -> Advanced
+    # and turn on Developer Mode. 
+
+    # Send chat?
+    chat: 
+      enabled: true
+
+      # Right click on the server icon (far 
+      # left hand side) and click Copy ID.
+      server: '000000000000000000'
+      
+      # Right click on the text channel 
+      # and click Copy ID
+      channel: '000000000000000000'
+    
+    # Send announcements?
+    announcements:
+      enabled: true
+
+      # Right click on the server icon (far 
+      # left hand side) and click Copy ID.
+      server: '000000000000000000'
+
+      # Right click on the text channel 
+      # and click Copy ID
+      channel: '000000000000000000'
+
+      # How do you want to display what is playing?
+      # Valid values are: 
+      # topic
+      #   Will set the topic of the specified channel to the currently playing song
+      # chat
+      #   Will simply send the announcement updates to the channel's chat
+      # status
+      #   Will use the bot's status message ('Playing <song>')
+      type: 'topic'
