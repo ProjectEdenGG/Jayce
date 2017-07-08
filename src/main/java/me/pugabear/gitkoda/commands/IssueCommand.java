@@ -1,8 +1,12 @@
 package me.pugabear.gitkoda.commands;
 
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
+
+import java.util.Arrays;
+
 import com.jagrosh.jdautilities.commandclient.Command;
-import me.pugabear.gitkoda.utils.IssueManager;
+import me.pugabear.gitkoda.managers.IssueManager;
+import me.pugabear.gitkoda.managers.LabelManager;
 
 public class IssueCommand extends Command 
 {
@@ -20,6 +24,7 @@ public class IssueCommand extends Command
 			return;
 		}
 
+		event.getJDA().getSelfUser().getManager().setName("GitKoda").queue();
 		switch (args[0].toLowerCase())
 		{
 			case "create":
@@ -43,12 +48,8 @@ public class IssueCommand extends Command
 			case "edit":
 			{
 				String id = args[1];
-				String what = args[2]; 
-				String content = event.getArgs();
-				content = content.replace("edit", "");
-				content = content.replace(id, "");
-				content = content.replace(what, "");
-				content = content.trim();
+				String what = args[2].toLowerCase(); 
+				String content =  String.join(" ", Arrays.copyOfRange(args, 3, args.length));
 				
 				if (IssueManager.editIssue(id, what, content))
 				{
@@ -70,6 +71,22 @@ public class IssueCommand extends Command
 				else
 				{
 					event.reply("Could not close issue");
+				}
+				break;
+			}
+			
+			case "label": case "labels":
+			{
+				String action = args[1].toLowerCase();
+				String id = args[2];
+				String[] labels = Arrays.copyOfRange(args, 3, args.length);
+				if (action.equals("add"))
+				{
+					LabelManager.addLabels(id, labels);
+				}
+				else if (action.equals("remove"))
+				{
+					LabelManager.removeLabels(id, labels);
 				}
 				break;
 			}

@@ -1,4 +1,4 @@
-package me.pugabear.gitkoda.utils;
+package me.pugabear.gitkoda.managers;
 
 import me.pugabear.gitkoda.commands.*;
 import me.pugabear.gitkoda.GitKoda;
@@ -58,41 +58,6 @@ public class IssueManager
 		try {
 			Issue issue = SERVICES.issues.getIssue("PugaBear", repo, Integer.parseInt(id));
 			SERVICES.issues.editIssue("PugaBear", repo, issue.setState("closed"));
-			return true;
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return false;
-		}
-	}
-	
-	public static boolean changeLabels(String action, String id, String[] labelNames) {
-		try {
-			Issue issue = SERVICES.issues.getIssue("PugaBear", repo, Integer.parseInt(id));
-			if (action.equalsIgnoreCase("add")) {
-				List<Label> labels = issue.getLabels();
-				for (String label : labelNames) {
-					issue.getLabels().add(SERVICES.labels.getLabel("PugaBear", repo, label));
-				}
-				SERVICES.issues.editIssue("PugaBear", repo, issue);
-			} else if (action.equalsIgnoreCase("remove")) {
-				List<Label> labels = issue.getLabels();
-				int i = 0;
-				for (Label label : labels) {
-					for (String labelName : labelNames) {
-						if (labelName.equalsIgnoreCase(label.getName())) {
-							labels.remove(i);
-						}
-					}
-					i++;
-				}
-			} else if (action.equalsIgnoreCase("set")) {
-				List<Label> labels = new ArrayList<Label>();
-				for (String label : labelNames) {
-					labels.add(SERVICES.labels.getLabel("PugaBear", repo, label));
-				}
-				SERVICES.issues.editIssue("PugaBear", repo, issue.setLabels(labels));
-			} 
-			
 			return true;
 		} catch (Exception ex) {
 			ex.printStackTrace();

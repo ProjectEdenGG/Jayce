@@ -20,7 +20,8 @@ public class GitKoda {
 	        CommandClientBuilder client = new CommandClientBuilder();
 	        client.setPrefix("!");
 	        client.setOwnerId("115552359458799616");
-
+	        client.setPlaying("!issue");
+	        
 	        client.addCommands(
 	        		new IssueCommand() 
 	        );
