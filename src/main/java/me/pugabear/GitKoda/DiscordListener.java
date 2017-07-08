@@ -25,7 +25,6 @@ public class DiscordListener extends ListenerAdapter
 			{
 				String message = event.getMessage().getRawContent();
 				message = message.replaceFirst("!issue ", "");
-				List<String> args = Arrays.asList(message.split(" "));
 				int i = message.indexOf(' ');
 				String sub = message.substring(0, i);
 				String rest = message.substring(i+1);
@@ -34,14 +33,26 @@ public class DiscordListener extends ListenerAdapter
 				case "create":
 					try {
 						String[] content = rest.split("( \\| )");
-						Utils.createIssue(content[0], content[1]);
+						IssueManager.createIssue(content[0], content[1]);
 					} catch (ArrayIndexOutOfBoundsException ex) {
-						Utils.createIssue(rest, "");
+						IssueManager.createIssue(rest, "");
+					}
+					break;
+					
+				case "edit":
+					try {
+						int i2 = rest.indexOf(' ');
+						String id = rest.substring(0, i2);
+						String edit = rest.substring(i2+1);
+						String[] content = edit.split("( \\| )");
+						IssueManager.editIssue(id, content[0], content[1]);
+					} catch (Exception ex) {
+						ex.printStackTrace();
 					}
 					break;
 					
 				case "close": 
-					Utils.closeIssue(rest);
+					IssueManager.closeIssue(rest);
 					break;
 					
 				}
