@@ -80,13 +80,27 @@ public class IssueCommand extends Command
 				String action = args[1].toLowerCase();
 				String id = args[2];
 				String[] labels = Arrays.copyOfRange(args, 3, args.length);
+				boolean result = false;
 				if (action.equals("add"))
 				{
-					LabelManager.addLabels(id, labels);
+					result = LabelManager.addLabels(id, labels);
 				}
 				else if (action.equals("remove"))
 				{
-					LabelManager.removeLabels(id, labels);
+					result = LabelManager.removeLabels(id, labels);
+				} 
+				else 
+				{
+					event.reply("Unknown action");
+				}
+				
+				if (result)
+				{
+					event.reply("Successfully " + (action == "add" ? "added" : "removed") + " label" + (labels.length > 1 ? "s" : ""));
+				}
+				else
+				{
+					event.reply("Could not modify labels");
 				}
 				break;
 			}

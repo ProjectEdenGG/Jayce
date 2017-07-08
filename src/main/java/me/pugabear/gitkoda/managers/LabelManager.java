@@ -1,32 +1,25 @@
 package me.pugabear.gitkoda.managers;
 
-import me.pugabear.gitkoda.commands.*;
-import me.pugabear.gitkoda.GitKoda;
-import static me.pugabear.gitkoda.GitKoda.SERVICES;
-
-import org.eclipse.egit.github.core.*;
 import org.eclipse.egit.github.core.Issue;
-import org.eclipse.egit.github.core.client.GitHubClient;
-import org.eclipse.egit.github.core.service.IssueService;
-import org.eclipse.egit.github.core.service.UserService;
-import org.eclipse.egit.github.core.service.RepositoryService;
-
+import org.eclipse.egit.github.core.Label;
 import java.util.List;
-import java.util.ArrayList;
+
+import static me.pugabear.gitkoda.GitKoda.SERVICES;
 
 public class LabelManager
 {
-	static String repo = "GitKodaTest";
+	static final String REPO = "GitKodaTest";
+	static final String USER = "PugaBear";
 	
 	public static boolean addLabels(String id, String[] labels) {
 		try {
-			Issue issue = SERVICES.issues.getIssue("PugaBear", repo, Integer.parseInt(id));
+			Issue issue = SERVICES.issues.getIssue(USER, REPO, Integer.parseInt(id));
 			List<Label> issueLabels = issue.getLabels();
 			for (String label : labels)
 			{
-				issueLabels.add(SERVICES.labels.getLabel("PugaBear", repo, label));	
+				issueLabels.add(SERVICES.labels.getLabel(USER, REPO, label));	
 			}
-			SERVICES.labels.setLabels("PugaBear", repo, id, issueLabels);
+			SERVICES.labels.setLabels(USER, REPO, id, issueLabels);
 			return true;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -36,13 +29,13 @@ public class LabelManager
 	
 	public static boolean removeLabels(String id, String[] labels) {
 		try {
-			Issue issue = SERVICES.issues.getIssue("PugaBear", repo, Integer.parseInt(id));
+			Issue issue = SERVICES.issues.getIssue(USER, REPO, Integer.parseInt(id));
 			List<Label> issueLabels = issue.getLabels();
 			for (String label : labels)
 			{
-				issueLabels.remove(SERVICES.labels.getLabel("PugaBear", repo, label));
+				issueLabels.remove(SERVICES.labels.getLabel(USER, REPO, label));
 			}
-			SERVICES.labels.setLabels("PugaBear", repo, id, issueLabels);
+			SERVICES.labels.setLabels(USER, REPO, id, issueLabels);
 			return true;
 		} catch (Exception ex) {
 			ex.printStackTrace();

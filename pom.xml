@@ -124,7 +124,7 @@
       <artifactId>json</artifactId>
       <version>20160810</version>
     </dependency>
-    <!-- NA -->
+    <!-- JNA -->
     <dependency>
       <groupId>net.java.dev.jna</groupId>
       <artifactId>jna</artifactId>
