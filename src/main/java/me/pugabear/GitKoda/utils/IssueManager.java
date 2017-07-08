@@ -41,7 +41,6 @@ public class IssueManager
 	
 	public static boolean closeIssue(String id) {
 		try {
-			System.out.println("Closing issue #" + id);
 			SERVICES.issues.editIssue("PugaBear", "GitKodaTest", SERVICES.issues.getIssue("PugaBear", "GitKodaTest", Integer.parseInt(id)).setState("closed"));
 			return true;
 		} catch (Exception ex) {
