@@ -2,6 +2,8 @@ package me.pugabear.gitkoda.commands;
 
 import me.pugabear.gitkoda.managers.IssueManager;
 import me.pugabear.gitkoda.managers.LabelManager;
+import static me.pugabear.gitkoda.GitKoda.USER;
+import static me.pugabear.gitkoda.GitKoda.REPO;
 
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import com.jagrosh.jdautilities.commandclient.Command;
@@ -56,11 +58,18 @@ public class IssueCommand extends Command
 				} 
 				catch (ArrayIndexOutOfBoundsException ex) 
 				{
-					id = IssueManager.createIssue(content[0], "", event.getMember().getNickname());
+					id = IssueManager.createIssue(content[0], "", name);
 				}
 	
-				if (id != 0) event.reply("https://github.com/PugaBear/GitKodaTest/issues/" + id);
-				else event.reply("Issue creation failed");
+				if (id != 0)
+				{
+					event.reply("https://github.com/" + USER + "/" + REPO + "/issues/" + id);
+				}
+				else
+				{
+					event.reply("Issue creation failed");
+				}
+				
 				break;
 			}
 			
@@ -78,6 +87,7 @@ public class IssueCommand extends Command
 				{
 					event.reply("Could not edit issue");
 				}
+				
 				break;
 			}
 			
@@ -91,6 +101,7 @@ public class IssueCommand extends Command
 				{
 					event.reply("Could not close issue");
 				}
+				
 				break;
 			}
 			
@@ -104,6 +115,7 @@ public class IssueCommand extends Command
 				{
 					event.reply("Could not open issue");
 				}
+				
 				break;
 			}
 			
@@ -134,6 +146,7 @@ public class IssueCommand extends Command
 				{
 					event.reply("Could not modify labels");
 				}
+				
 				break;
 			}
 			
@@ -149,6 +162,7 @@ public class IssueCommand extends Command
 				{
 					event.reply("Couldn't assign user to issue");
 				}
+				
 				break;
 			}
 			
@@ -156,7 +170,7 @@ public class IssueCommand extends Command
 			{
 				String id = args[1];
 				String comment =  String.join(" ", Arrays.copyOfRange(args, 2, args.length));
-				if (IssueManager.comment(id, comment, event.getMember().getNickname()))
+				if (IssueManager.comment(id, comment, name))
 				{
 					event.reply("Successfully added comment to issue #" + id);
 				}
@@ -164,6 +178,7 @@ public class IssueCommand extends Command
 				{
 					event.reply("Couldn't add comment");
 				}
+				
 				break;
 			}
 			
