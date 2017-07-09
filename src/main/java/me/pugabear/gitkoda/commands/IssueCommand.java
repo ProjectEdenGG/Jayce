@@ -1,18 +1,20 @@
 package me.pugabear.gitkoda.commands;
 
+import me.pugabear.gitkoda.managers.IssueManager;
+import me.pugabear.gitkoda.managers.LabelManager;
+
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import com.jagrosh.jdautilities.commandclient.Command;
 
 import java.util.Arrays;
 
-import com.jagrosh.jdautilities.commandclient.Command;
-import me.pugabear.gitkoda.managers.IssueManager;
-import me.pugabear.gitkoda.managers.LabelManager;
 
 public class IssueCommand extends Command 
 {
 	public IssueCommand() 
 	{
 		this.name = "issue";
+		this.requiredRole = "Staff";
 	}
 
 	protected void execute(CommandEvent event)
@@ -24,6 +26,23 @@ public class IssueCommand extends Command
 			return;
 		}
 
+		String name = null;
+		try
+		{
+			if (event.getMember().getNickname().equals("null"))
+			{
+				name = event.getAuthor().getName();
+			}
+			else
+			{
+				name = event.getMember().getNickname();
+			}
+		}
+		catch (NullPointerException ex)
+		{
+			name = event.getAuthor().getName();
+		}
+
 		event.getJDA().getSelfUser().getManager().setName("GitKoda").queue();
 		switch (args[0].toLowerCase())
 		{
@@ -33,11 +52,11 @@ public class IssueCommand extends Command
 				int id = 0;
 				try
 				{
-					id = IssueManager.createIssue(content[0], content[1]);
+					id = IssueManager.createIssue(content[0], content[1], name);
 				} 
 				catch (ArrayIndexOutOfBoundsException ex) 
 				{
-					id = IssueManager.createIssue(content[0], "");
+					id = IssueManager.createIssue(content[0], "", event.getMember().getNickname());
 				}
 	
 				if (id != 0) event.reply("https://github.com/PugaBear/GitKodaTest/issues/" + id);
@@ -75,10 +94,23 @@ public class IssueCommand extends Command
 				break;
 			}
 			
+			case "open":
+			{
+				if (IssueManager.openIssue(args[1]))
+				{
+					event.reply("Opened issue");
+				}
+				else
+				{
+					event.reply("Could not open issue");
+				}
+				break;
+			}
+			
 			case "label": case "labels":
 			{
-				String action = args[1].toLowerCase();
-				String id = args[2];
+				String id = args[1];
+				String action = args[2].toLowerCase();
 				String[] labels = Arrays.copyOfRange(args, 3, args.length);
 				boolean result = false;
 				if (action.equals("add"))
@@ -96,7 +128,7 @@ public class IssueCommand extends Command
 				
 				if (result)
 				{
-					event.reply("Successfully " + (action == "add" ? "added" : "removed") + " label" + (labels.length > 1 ? "s" : ""));
+					event.reply("Successfully " + (action.equalsIgnoreCase("add") ? "added" : "removed") + " label" + (labels.length > 1 ? "s" : ""));
 				}
 				else
 				{
@@ -104,6 +136,37 @@ public class IssueCommand extends Command
 				}
 				break;
 			}
+			
+			case "assign":
+			{
+				String id = args[1];
+				String user = args[2];
+				if (IssueManager.assign(id, user))
+				{
+					event.reply("Successfully assigned " + user + " to issue #" + id);
+				}
+				else
+				{
+					event.reply("Couldn't assign user to issue");
+				}
+				break;
+			}
+			
+			case "comment":
+			{
+				String id = args[1];
+				String comment =  String.join(" ", Arrays.copyOfRange(args, 2, args.length));
+				if (IssueManager.comment(id, comment, event.getMember().getNickname()))
+				{
+					event.reply("Successfully added comment to issue #" + id);
+				}
+				else
+				{
+					event.reply("Couldn't add comment");
+				}
+				break;
+			}
+			
 			default:
 				event.reply("Invalid action");
 		}
