@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class Utils {
+public class Utils 
+{
 	
-	public static String getToken(String service) {
+	public static String getToken(String service) 
+	{
 		String token = null;
 		try 
 		{

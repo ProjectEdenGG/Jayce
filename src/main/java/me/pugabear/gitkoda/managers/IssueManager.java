@@ -5,6 +5,11 @@ import static me.pugabear.gitkoda.GitKoda.USER;
 import static me.pugabear.gitkoda.GitKoda.REPO;
 
 import org.eclipse.egit.github.core.Issue;
+import org.eclipse.egit.github.core.Repository;
+import org.eclipse.egit.github.core.SearchIssue;
+
+import java.io.IOException;
+import java.util.List;
 
 public class IssueManager
 {	
@@ -89,4 +94,37 @@ public class IssueManager
 			return false;
 		}
 	}
+	
+	public static List<SearchIssue> search(String state, String query) {
+		try
+		{
+			Repository repo = SERVICES.repos.getRepository(USER, REPO);
+			return SERVICES.issues.searchIssues(repo, state, query);
+		} 
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

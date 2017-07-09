@@ -2,13 +2,19 @@ package me.pugabear.gitkoda.commands;
 
 import me.pugabear.gitkoda.managers.IssueManager;
 import me.pugabear.gitkoda.managers.LabelManager;
+
 import static me.pugabear.gitkoda.GitKoda.USER;
 import static me.pugabear.gitkoda.GitKoda.REPO;
 
+import org.eclipse.egit.github.core.SearchIssue;
+
+import net.dv8tion.jda.core.EmbedBuilder;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import com.jagrosh.jdautilities.commandclient.Command;
 
 import java.util.Arrays;
+import java.util.List;
+
 
 
 public class IssueCommand extends Command 
@@ -17,6 +23,7 @@ public class IssueCommand extends Command
 	{
 		this.name = "issue";
 		this.requiredRole = "Staff";
+		this.aliases = new String[]{"issues"};
 	}
 
 	protected void execute(CommandEvent event)
@@ -44,8 +51,9 @@ public class IssueCommand extends Command
 		{
 			name = event.getAuthor().getName();
 		}
+		
+		System.out.println(name + ": " + event.getArgs());
 
-		event.getJDA().getSelfUser().getManager().setName("GitKoda").queue();
 		switch (args[0].toLowerCase())
 		{
 			case "create":
@@ -178,6 +186,33 @@ public class IssueCommand extends Command
 				{
 					event.reply("Couldn't add comment");
 				}
+				
+				break;
+			}
+			
+			case "search":
+			{
+				String state = "open";
+				int i = 1;
+				if (args[1].equalsIgnoreCase("open") || args[1].equalsIgnoreCase("closed")) 
+				{
+					state = args[1];
+					i = 2;	
+				}
+				
+				String query =  String.join(" ", Arrays.copyOfRange(args, i, args.length));
+				List<SearchIssue> results = IssueManager.search(state, query);
+				String body = "";
+				// 
+				for (SearchIssue issue : results) {
+					body += "#" + issue.getNumber() + ": " + "[" + issue.getTitle() + "](https://github.com/" + USER + "/" + REPO + "/issues/" + issue.getNumber() + ") " + " - " + issue.getUser();
+					body += System.lineSeparator() + System.lineSeparator();
+				}
+				
+				event.reply(new EmbedBuilder()
+						.setAuthor("Found " + results.size() + " issue" + (results.size() > 1 ? "s" : ""), "https://github.com/" + USER + "/" + REPO + "/issues", "https://cdn.discordapp.com/avatars/252601425941495828/661dd6e25bcac8634e3362504b9705e7.webp?size=256")
+						.setDescription(body)
+						.build());
 				
 				break;
 			}
