@@ -15,8 +15,6 @@ import com.jagrosh.jdautilities.commandclient.Command;
 import java.util.Arrays;
 import java.util.List;
 
-
-
 public class IssueCommand extends Command 
 {
 	public IssueCommand() 

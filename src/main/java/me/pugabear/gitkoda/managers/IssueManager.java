@@ -15,14 +15,17 @@ public class IssueManager
 {	
 	public static int createIssue(String title, String body, String name)
 	{
-		try {
+		try 
+		{
 			Issue issue = new Issue();
 			issue.setTitle(title);
 			issue.setBody("**" + name + "**: " + body);
 			Issue result = SERVICES.issues.createIssue(USER, REPO, issue);
 
 			return result.getNumber();
-		} catch (Exception ex) {
+		} 
+		catch (Exception ex) 
+		{
 			ex.printStackTrace();
 			return 0;
 		}
@@ -30,7 +33,8 @@ public class IssueManager
 
 	public static boolean editIssue(String id, String what, String content)
 	{
-		try {
+		try 
+		{
 			Issue issue = SERVICES.issues.getIssue(USER, REPO, Integer.parseInt(id));
 			if (what.equalsIgnoreCase("title")) 
 			{
@@ -46,7 +50,9 @@ public class IssueManager
 			
 			SERVICES.issues.editIssue(USER, REPO, issue);
 			return true;
-		} catch (Exception ex) {
+		} 
+		catch (Exception ex) 
+		{
 			ex.printStackTrace();
 			return false;
 		}
@@ -54,11 +60,14 @@ public class IssueManager
 	
 	public static boolean closeIssue(String id)
 	{
-		try {
+		try 
+		{
 			Issue issue = SERVICES.issues.getIssue(USER, REPO, Integer.parseInt(id));
 			SERVICES.issues.editIssue(USER, REPO, issue.setState("closed"));
 			return true;
-		} catch (Exception ex) {
+		} 
+		catch (Exception ex) 
+		{
 			ex.printStackTrace();
 			return false;
 		}
@@ -66,11 +75,14 @@ public class IssueManager
 	
 	public static boolean openIssue(String id)
 	{
-		try {
+		try 
+		{
 			Issue issue = SERVICES.issues.getIssue(USER, REPO, Integer.parseInt(id));
 			SERVICES.issues.editIssue(USER, REPO, issue.setState("open"));
 			return true;
-		} catch (Exception ex) {
+		} 
+		catch (Exception ex) 
+		{
 			ex.printStackTrace();
 			return false;
 		}
@@ -78,12 +90,15 @@ public class IssueManager
 	
 	public static boolean assign(String id, String user)
 	{
-		try {
+		try 
+		{
 			Issue issue = SERVICES.issues.getIssue(USER, REPO, Integer.parseInt(id));
 			SERVICES.issues.editIssue(USER, REPO, issue.setAssignee(SERVICES.users.getUser(user)));
 
 			return true;
-		} catch (Exception ex) {
+		} 
+		catch (Exception ex) 
+		{
 			ex.printStackTrace();
 			return false;
 		}
@@ -95,7 +110,9 @@ public class IssueManager
 			SERVICES.issues.createComment(USER, REPO, id, "**" + name + "**: " + comment);
 
 			return true;
-		} catch (Exception ex) {
+		} 
+		catch (Exception ex) 
+		{
 			ex.printStackTrace();
 			return false;
 		}

@@ -18,6 +18,5 @@ public class Services
 		labels.getClient().setOAuth2Token(Utils.getToken("github"));
 		users.getClient().setOAuth2Token(Utils.getToken("github"));
 		repos.getClient().setOAuth2Token(Utils.getToken("github"));
-		
 	}
 }

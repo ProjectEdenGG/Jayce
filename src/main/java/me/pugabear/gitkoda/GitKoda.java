@@ -33,8 +33,6 @@ public class GitKoda
 			        .buildAsync();
 	        
             jda.addEventListener(client.build());
-            
-            
 
 			SERVICES = new Services();
 		}
