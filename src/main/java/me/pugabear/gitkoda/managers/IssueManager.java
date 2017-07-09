@@ -13,7 +13,8 @@ import java.util.List;
 
 public class IssueManager
 {	
-	public static int createIssue(String title, String body, String name) {
+	public static int createIssue(String title, String body, String name)
+	{
 		try {
 			Issue issue = new Issue();
 			issue.setTitle(title);
@@ -27,7 +28,8 @@ public class IssueManager
 		}
 	}
 
-	public static boolean editIssue(String id, String what, String content) {
+	public static boolean editIssue(String id, String what, String content)
+	{
 		try {
 			Issue issue = SERVICES.issues.getIssue(USER, REPO, Integer.parseInt(id));
 			if (what.equalsIgnoreCase("title")) 
@@ -50,7 +52,8 @@ public class IssueManager
 		}
 	}
 	
-	public static boolean closeIssue(String id) {
+	public static boolean closeIssue(String id)
+	{
 		try {
 			Issue issue = SERVICES.issues.getIssue(USER, REPO, Integer.parseInt(id));
 			SERVICES.issues.editIssue(USER, REPO, issue.setState("closed"));
@@ -61,7 +64,8 @@ public class IssueManager
 		}
 	}
 	
-	public static boolean openIssue(String id) {
+	public static boolean openIssue(String id)
+	{
 		try {
 			Issue issue = SERVICES.issues.getIssue(USER, REPO, Integer.parseInt(id));
 			SERVICES.issues.editIssue(USER, REPO, issue.setState("open"));
@@ -72,7 +76,8 @@ public class IssueManager
 		}
 	}
 	
-	public static boolean assign(String id, String user) {
+	public static boolean assign(String id, String user)
+	{
 		try {
 			Issue issue = SERVICES.issues.getIssue(USER, REPO, Integer.parseInt(id));
 			SERVICES.issues.editIssue(USER, REPO, issue.setAssignee(SERVICES.users.getUser(user)));
@@ -84,7 +89,8 @@ public class IssueManager
 		}
 	}
 	
-	public static boolean comment(String id, String comment, String name) {
+	public static boolean comment(String id, String comment, String name)
+	{
 		try {
 			SERVICES.issues.createComment(USER, REPO, id, "**" + name + "**: " + comment);
 
@@ -95,7 +101,8 @@ public class IssueManager
 		}
 	}
 	
-	public static List<SearchIssue> search(String state, String query) {
+	public static List<SearchIssue> search(String state, String query)
+	{
 		try
 		{
 			Repository repo = SERVICES.repos.getRepository(USER, REPO);
@@ -108,23 +115,3 @@ public class IssueManager
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
