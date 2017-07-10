@@ -27,7 +27,7 @@ public class IssueManager
 		} 
 		catch (Exception ex) 
 		{
-			System.out.println(ex.getError());
+			System.out.println(ex.getMessage());
 			ex.printStackTrace();
 			return 0;
 		}
