@@ -20,12 +20,14 @@ public class IssueManager
 			Issue issue = new Issue();
 			issue.setTitle(title);
 			issue.setBody("**" + name + "**: " + body);
+			System.out.println(CONFIG.githubUser + "/" + CONFIG.githubRepo);
 			Issue result = SERVICES.issues.createIssue(CONFIG.githubUser, CONFIG.githubRepo, issue);
 
 			return result.getNumber();
 		} 
 		catch (Exception ex) 
 		{
+			System.out.println(ex.getError());
 			ex.printStackTrace();
 			return 0;
 		}
@@ -73,7 +75,7 @@ public class IssueManager
 		}
 	}
 
-	public static boolean assign(String id, List<String> users)
+	public static boolean assign(String id, List<String> userIds)
 	{
 		try 
 		{

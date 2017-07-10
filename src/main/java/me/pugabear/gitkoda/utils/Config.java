@@ -2,6 +2,7 @@ package me.pugabear.gitkoda.utils;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -25,10 +26,11 @@ public class Config
 		for (String line : config) 
 		{
 			String[] setting = line.split(": ");
+			System.out.println(setting[0] + " = " + setting[1]);
 			switch (setting[0]) 
 			{
 				case "githubToken":
-					this.githubToken = setting[1];
+					this.githubToken = setting[1]; 
 					break;
 				case "discordToken":
 					this.discordToken = setting[1];

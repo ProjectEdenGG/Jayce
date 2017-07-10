@@ -13,6 +13,7 @@ import net.dv8tion.jda.core.entities.User;
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -167,7 +168,7 @@ public class IssueCommand extends Command
 				List<String> userIds = new ArrayList<String>();
 				for (User user : event.getMessage().getMentionedUsers())
 				{
-					userIds.add(User.getId());
+					userIds.add(user.getId());
 				}
 				if (IssueManager.assign(id, userIds))
 				{

@@ -16,7 +16,7 @@ public class Aliases
 		List<String> config = Files.readAllLines(Paths.get("GitKoda" + FileSystems.getDefault().getSeparator() + "aliases.txt"));
 		for (String line : config) 
 		{
-			String[] setting = line.split(": ");
+			String[] setting = line.split(" ");
 			aliases.put(setting[0], setting[1]);
 		}
 	}
