@@ -1,26 +1,17 @@
 package me.pugabear.gitkoda.utils;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import static me.pugabear.gitkoda.GitKoda.CONFIG;
+
+import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
 public class Utils 
 {
-	
-	public static String getToken(String service) 
+	// Method to hide messages in a channel with a webhook enabled
+	public static void reply(CommandEvent event, String message)
 	{
-		String token = null;
-		try 
+		if (!event.getChannel().getId().equals(CONFIG.webhookChannelId))
 		{
-			InputStream in = Utils.class.getResourceAsStream("/" + service + ".token");
-			BufferedReader input = new BufferedReader(new InputStreamReader(in));
-			token = input.readLine();
-		} 
-		catch (Exception ex)
-		{
-			System.out.println(ex.getMessage());
+			event.reply(message);
 		}
-		
-		return token;
 	}
 }

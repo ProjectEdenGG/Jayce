@@ -1,8 +1,7 @@
 package me.pugabear.gitkoda.managers;
 
 import static me.pugabear.gitkoda.GitKoda.SERVICES;
-import static me.pugabear.gitkoda.GitKoda.USER;
-import static me.pugabear.gitkoda.GitKoda.REPO;
+import static me.pugabear.gitkoda.GitKoda.CONFIG;
 
 import org.eclipse.egit.github.core.Issue;
 import org.eclipse.egit.github.core.Repository;
@@ -20,7 +19,7 @@ public class IssueManager
 			Issue issue = new Issue();
 			issue.setTitle(title);
 			issue.setBody("**" + name + "**: " + body);
-			Issue result = SERVICES.issues.createIssue(USER, REPO, issue);
+			Issue result = SERVICES.issues.createIssue(CONFIG.githubUser, CONFIG.githubRepo, issue);
 
 			return result.getNumber();
 		} 
@@ -35,7 +34,7 @@ public class IssueManager
 	{
 		try 
 		{
-			Issue issue = SERVICES.issues.getIssue(USER, REPO, Integer.parseInt(id));
+			Issue issue = SERVICES.issues.getIssue(CONFIG.githubUser, CONFIG.githubRepo, Integer.parseInt(id));
 			if (what.equalsIgnoreCase("title")) 
 			{
 				issue.setTitle(content);
@@ -47,8 +46,8 @@ public class IssueManager
 			else {
 				return false;
 			}
-			
-			SERVICES.issues.editIssue(USER, REPO, issue);
+
+			SERVICES.issues.editIssue(CONFIG.githubUser, CONFIG.githubRepo, issue);
 			return true;
 		} 
 		catch (Exception ex) 
@@ -57,13 +56,13 @@ public class IssueManager
 			return false;
 		}
 	}
-	
-	public static boolean closeIssue(String id)
+
+	public static boolean changeState(String id, String state)
 	{
 		try 
 		{
-			Issue issue = SERVICES.issues.getIssue(USER, REPO, Integer.parseInt(id));
-			SERVICES.issues.editIssue(USER, REPO, issue.setState("closed"));
+			Issue issue = SERVICES.issues.getIssue(CONFIG.githubUser, CONFIG.githubRepo, Integer.parseInt(id));
+			SERVICES.issues.editIssue(CONFIG.githubUser, CONFIG.githubRepo, issue.setState(state));
 			return true;
 		} 
 		catch (Exception ex) 
@@ -72,28 +71,13 @@ public class IssueManager
 			return false;
 		}
 	}
-	
-	public static boolean openIssue(String id)
-	{
-		try 
-		{
-			Issue issue = SERVICES.issues.getIssue(USER, REPO, Integer.parseInt(id));
-			SERVICES.issues.editIssue(USER, REPO, issue.setState("open"));
-			return true;
-		} 
-		catch (Exception ex) 
-		{
-			ex.printStackTrace();
-			return false;
-		}
-	}
-	
+
 	public static boolean assign(String id, String user)
 	{
 		try 
 		{
-			Issue issue = SERVICES.issues.getIssue(USER, REPO, Integer.parseInt(id));
-			SERVICES.issues.editIssue(USER, REPO, issue.setAssignee(SERVICES.users.getUser(user)));
+			Issue issue = SERVICES.issues.getIssue(CONFIG.githubUser, CONFIG.githubRepo, Integer.parseInt(id));
+			SERVICES.issues.editIssue(CONFIG.githubUser, CONFIG.githubRepo, issue.setAssignee(SERVICES.users.getUser(user)));
 
 			return true;
 		} 
@@ -103,11 +87,11 @@ public class IssueManager
 			return false;
 		}
 	}
-	
+
 	public static boolean comment(String id, String comment, String name)
 	{
 		try {
-			SERVICES.issues.createComment(USER, REPO, id, "**" + name + "**: " + comment);
+			SERVICES.issues.createComment(CONFIG.githubUser, CONFIG.githubRepo, id, "**" + name + "**: " + comment);
 
 			return true;
 		} 
@@ -117,12 +101,12 @@ public class IssueManager
 			return false;
 		}
 	}
-	
+
 	public static List<SearchIssue> search(String state, String query)
 	{
 		try
 		{
-			Repository repo = SERVICES.repos.getRepository(USER, REPO);
+			Repository repo = SERVICES.repos.getRepository(CONFIG.githubUser, CONFIG.githubRepo);
 			return SERVICES.issues.searchIssues(repo, state, query);
 		} 
 		catch (IOException e)

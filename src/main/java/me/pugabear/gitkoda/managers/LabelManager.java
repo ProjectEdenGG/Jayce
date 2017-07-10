@@ -1,8 +1,7 @@
 package me.pugabear.gitkoda.managers;
 
 import static me.pugabear.gitkoda.GitKoda.SERVICES;
-import static me.pugabear.gitkoda.GitKoda.USER;
-import static me.pugabear.gitkoda.GitKoda.REPO;
+import static me.pugabear.gitkoda.GitKoda.CONFIG;
 
 import org.eclipse.egit.github.core.Issue;
 import org.eclipse.egit.github.core.Label;
@@ -15,14 +14,14 @@ public class LabelManager
 	{
 		try
 		{
-			Issue issue = SERVICES.issues.getIssue(USER, REPO, Integer.parseInt(id));
+			Issue issue = SERVICES.issues.getIssue(CONFIG.githubUser, CONFIG.githubRepo, Integer.parseInt(id));
 			List<Label> issueLabels = issue.getLabels();
 			for (String label : labels)
 			{
-				issueLabels.add(SERVICES.labels.getLabel(USER, REPO, label));	
+				issueLabels.add(SERVICES.labels.getLabel(CONFIG.githubUser, CONFIG.githubRepo, label));	
 			}
-			
-			SERVICES.labels.setLabels(USER, REPO, id, issueLabels);
+
+			SERVICES.labels.setLabels(CONFIG.githubUser, CONFIG.githubRepo, id, issueLabels);
 			return true;
 		}
 		catch (Exception ex)
@@ -31,19 +30,19 @@ public class LabelManager
 			return false;
 		}
 	}
-	
+
 	public static boolean removeLabels(String id, String[] labels)
 	{
 		try
 		{
-			Issue issue = SERVICES.issues.getIssue(USER, REPO, Integer.parseInt(id));
+			Issue issue = SERVICES.issues.getIssue(CONFIG.githubUser, CONFIG.githubRepo, Integer.parseInt(id));
 			List<Label> issueLabels = issue.getLabels();
 			for (String label : labels)
 			{
-				issueLabels.remove(SERVICES.labels.getLabel(USER, REPO, label));
+				issueLabels.remove(SERVICES.labels.getLabel(CONFIG.githubUser, CONFIG.githubRepo, label));
 			}
-			
-			SERVICES.labels.setLabels(USER, REPO, id, issueLabels);
+
+			SERVICES.labels.setLabels(CONFIG.githubUser, CONFIG.githubRepo, id, issueLabels);
 			return true;
 		}
 		catch (Exception ex)

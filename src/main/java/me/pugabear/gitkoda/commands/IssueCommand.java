@@ -2,9 +2,9 @@ package me.pugabear.gitkoda.commands;
 
 import me.pugabear.gitkoda.managers.IssueManager;
 import me.pugabear.gitkoda.managers.LabelManager;
+import me.pugabear.gitkoda.utils.Utils;
 
-import static me.pugabear.gitkoda.GitKoda.USER;
-import static me.pugabear.gitkoda.GitKoda.REPO;
+import static me.pugabear.gitkoda.GitKoda.CONFIG;
 
 import org.eclipse.egit.github.core.SearchIssue;
 
@@ -49,13 +49,14 @@ public class IssueCommand extends Command
 		{
 			name = event.getAuthor().getName();
 		}
-		
+
 		System.out.println(name + ": " + event.getArgs());
 
 		switch (args[0].toLowerCase())
 		{
 			case "create":
 			{
+				// TODO Allow setting more options on creation (assignees, labels...)
 				String[] content = event.getArgs().split(" ", 2)[1].split("( \\| )", 2);
 				int id = 0;
 				try
@@ -69,64 +70,65 @@ public class IssueCommand extends Command
 	
 				if (id != 0)
 				{
-					event.reply("https://github.com/" + USER + "/" + REPO + "/issues/" + id);
+					Utils.reply(event, "https://github.com/" + CONFIG.githubUser + "/" + CONFIG.githubRepo + "/issues/" + id);
 				}
 				else
 				{
 					event.reply("Issue creation failed");
 				}
-				
+	
 				break;
 			}
-			
+	
 			case "edit":
 			{
 				String id = args[1];
 				String what = args[2].toLowerCase(); 
 				String content =  String.join(" ", Arrays.copyOfRange(args, 3, args.length));
-				
+	
 				if (IssueManager.editIssue(id, what, content))
 				{
-					event.reply("Issue updated");
+					event.reply(":thumbsup:");
 				}
 				else 
 				{
 					event.reply("Could not edit issue");
 				}
-				
+	
 				break;
 			}
-			
+	
 			case "close":
 			{
-				if (IssueManager.closeIssue(args[1]))
+				if (IssueManager.changeState(args[1], "closed"))
 				{
-					event.reply("Closed issue");
+					Utils.reply(event, "Closed issue: <https://github.com/" + CONFIG.githubUser + "/" + CONFIG.githubRepo + "/issues/" + args[1] + ">");
 				}
 				else
 				{
 					event.reply("Could not close issue");
 				}
-				
+	
 				break;
 			}
-			
+	
 			case "open":
 			{
-				if (IssueManager.openIssue(args[1]))
+				if (IssueManager.changeState(args[1], "open"))
 				{
-					event.reply("Opened issue");
+					Utils.reply(event, "Opened issue: <https://github.com/" + CONFIG.githubUser + "/" + CONFIG.githubRepo + "/issues/" + args[1] + ">");
 				}
 				else
 				{
 					event.reply("Could not open issue");
 				}
-				
+	
 				break;
 			}
-			
+	
 			case "label": case "labels":
 			{
+				// TODO Allow adding multiple labels at once
 				String id = args[1];
 				String action = args[2].toLowerCase();
 				String[] labels = Arrays.copyOfRange(args, 3, args.length);
@@ -143,51 +145,52 @@ public class IssueCommand extends Command
 				{
 					event.reply("Unknown action");
 				}
-				
+	
 				if (result)
 				{
-					event.reply("Successfully " + (action.equalsIgnoreCase("add") ? "added" : "removed") + " label" + (labels.length > 1 ? "s" : ""));
+					event.reply(":thumbsup:");
 				}
 				else
 				{
 					event.reply("Could not modify labels");
 				}
-				
+	
 				break;
 			}
-			
+	
 			case "assign":
 			{
+				// TODO Allow assigning multiple people at once
 				String id = args[1];
 				String user = args[2];
 				if (IssueManager.assign(id, user))
 				{
-					event.reply("Successfully assigned " + user + " to issue #" + id);
+					event.reply(":thumbsup:");
 				}
 				else
 				{
 					event.reply("Couldn't assign user to issue");
 				}
-				
+	
 				break;
 			}
-			
+	
 			case "comment":
 			{
 				String id = args[1];
 				String comment =  String.join(" ", Arrays.copyOfRange(args, 2, args.length));
 				if (IssueManager.comment(id, comment, name))
 				{
-					event.reply("Successfully added comment to issue #" + id);
+					Utils.reply(event, "Successfully added comment to issue #" + id);
 				}
 				else
 				{
 					event.reply("Couldn't add comment");
 				}
-				
+	
 				break;
 			}
-			
+	
 			case "search":
 			{
 				String state = "open";
@@ -197,24 +200,24 @@ public class IssueCommand extends Command
 					state = args[1];
 					i = 2;	
 				}
-				
+	
 				String query =  String.join(" ", Arrays.copyOfRange(args, i, args.length));
 				List<SearchIssue> results = IssueManager.search(state, query);
 				String body = "";
 				// 
 				for (SearchIssue issue : results) {
-					body += "#" + issue.getNumber() + ": " + "[" + issue.getTitle() + "](https://github.com/" + USER + "/" + REPO + "/issues/" + issue.getNumber() + ") " + " - " + issue.getUser();
+					body += "#" + issue.getNumber() + ": " + "[" + issue.getTitle() + "](https://github.com/" + CONFIG.githubUser + "/" + CONFIG.githubRepo + "/issues/" + issue.getNumber() + ") " + " - " + issue.getUser();
 					body += System.lineSeparator() + System.lineSeparator();
 				}
-				
+	
 				event.reply(new EmbedBuilder()
-						.setAuthor("Found " + results.size() + " issue" + (results.size() > 1 ? "s" : ""), "https://github.com/" + USER + "/" + REPO + "/issues", "https://cdn.discordapp.com/avatars/252601425941495828/661dd6e25bcac8634e3362504b9705e7.webp?size=256")
+						.setAuthor("Found " + results.size() + " issue" + (results.size() != 1 ? "s" : ""), "https://github.com/" + CONFIG.githubUser + "/" + CONFIG.githubRepo + "/issues", CONFIG.iconUrl)
 						.setDescription(body)
 						.build());
-				
+	
 				break;
 			}
-			
+
 			default:
 				event.reply("Invalid action");
 		}
