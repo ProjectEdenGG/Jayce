@@ -32,4 +32,5 @@ target/
 dependency-reduced-pom.xml
 
 # config
-gitkodaconfig.txt
+config.txt
+aliases.txt

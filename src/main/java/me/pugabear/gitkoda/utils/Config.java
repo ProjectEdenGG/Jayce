@@ -21,7 +21,7 @@ public class Config
 	
 	public Config() throws IOException
 	{
-		List<String> config = Files.readAllLines(Paths.get("gitkodaconfig.txt"));
+		List<String> config = Files.readAllLines(Paths.get("GitKoda" + FileSystems.getDefault().getSeparator() + "config.txt"));
 		for (String line : config) 
 		{
 			String[] setting = line.split(": ");

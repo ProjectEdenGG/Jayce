@@ -1,0 +1,23 @@
+package me.pugabear.gitkoda.utils;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.FileSystems;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+
+public class Aliases
+{
+	public HashMap<String, String> aliases = new HashMap<String, String>();
+	
+	public Aliases() throws IOException
+	{
+		List<String> config = Files.readAllLines(Paths.get("GitKoda" + FileSystems.getDefault().getSeparator() + "aliases.txt"));
+		for (String line : config) 
+		{
+			String[] setting = line.split(": ");
+			aliases.put(setting[0], setting[1]);
+		}
+	}
+}

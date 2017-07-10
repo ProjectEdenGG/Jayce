@@ -9,8 +9,9 @@ import static me.pugabear.gitkoda.GitKoda.CONFIG;
 import org.eclipse.egit.github.core.SearchIssue;
 
 import net.dv8tion.jda.core.EmbedBuilder;
-import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import net.dv8tion.jda.core.entities.User;
 import com.jagrosh.jdautilities.commandclient.Command;
+import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,11 +21,11 @@ public class IssueCommand extends Command
 	public IssueCommand() 
 	{
 		this.name = CONFIG.commandName;
+		this.aliases = CONFIG.commandAliases;
 		if (!CONFIG.requiredRole.isEmpty())
 		{
 			this.requiredRole = CONFIG.requiredRole;
 		}
-		this.aliases = CONFIG.commandAliases;
 	}
 
 	protected void execute(CommandEvent event)
@@ -131,7 +132,6 @@ public class IssueCommand extends Command
 	
 			case "label": case "labels":
 			{
-				// TODO Allow adding multiple labels at once
 				String id = args[1];
 				String action = args[2].toLowerCase();
 				String[] labels = Arrays.copyOfRange(args, 3, args.length);
@@ -163,16 +163,19 @@ public class IssueCommand extends Command
 	
 			case "assign":
 			{
-				// TODO Allow assigning multiple people at once
 				String id = args[1];
-				String user = args[2];
-				if (IssueManager.assign(id, user))
+				List<String> userIds = new ArrayList<String>();
+				for (User user : event.getMessage().getMentionedUsers())
+				{
+					userIds.add(User.getId());
+				}
+				if (IssueManager.assign(id, userIds))
 				{
 					event.reply(":thumbsup:");
 				}
 				else
 				{
-					event.reply("Couldn't assign user to issue");
+					event.reply("Couldn't assign users to issue");
 				}
 	
 				break;

@@ -1,7 +1,8 @@
 package me.pugabear.gitkoda.managers;
 
-import static me.pugabear.gitkoda.GitKoda.SERVICES;
+import static me.pugabear.gitkoda.GitKoda.ALIASES;
 import static me.pugabear.gitkoda.GitKoda.CONFIG;
+import static me.pugabear.gitkoda.GitKoda.SERVICES;
 
 import org.eclipse.egit.github.core.Issue;
 import org.eclipse.egit.github.core.Repository;
@@ -72,12 +73,16 @@ public class IssueManager
 		}
 	}
 
-	public static boolean assign(String id, String user)
+	public static boolean assign(String id, List<String> users)
 	{
 		try 
 		{
 			Issue issue = SERVICES.issues.getIssue(CONFIG.githubUser, CONFIG.githubRepo, Integer.parseInt(id));
-			SERVICES.issues.editIssue(CONFIG.githubUser, CONFIG.githubRepo, issue.setAssignee(SERVICES.users.getUser(user)));
+			for (String userId : userIds)
+			{
+				issue.setAssignee(SERVICES.users.getUser(ALIASES.aliases.get(userId)));
+			}
+			SERVICES.issues.editIssue(CONFIG.githubUser, CONFIG.githubRepo, issue);
 
 			return true;
 		} 
