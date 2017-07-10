@@ -7,13 +7,14 @@ import java.util.List;
 
 public class Config
 {
-	public String githubToken, 
+	public String githubToken,
 				  discordToken, 
-				  ownerId, 
+				  ownerId,
+				  requiredRole,
 				  iconUrl,
-				  githubUser, 
+				  githubUser,
 				  githubRepo,
-				  webhookChannelId, 
+				  webhookChannelId,
 				  commandPrefix,
 				  commandName;
 	public String[] commandAliases;
@@ -34,6 +35,9 @@ public class Config
 					break;
 				case "ownerId":
 					this.ownerId = setting[1];
+					break;
+				case "requiredRole":
+					this.requiredRole = setting[1];
 					break;
 				case "iconUrl":
 					this.iconUrl = setting[1];

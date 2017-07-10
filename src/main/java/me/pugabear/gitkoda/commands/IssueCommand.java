@@ -19,9 +19,12 @@ public class IssueCommand extends Command
 {
 	public IssueCommand() 
 	{
-		this.name = "issue";
-		this.requiredRole = "Staff";
-		this.aliases = new String[]{"issues"};
+		this.name = CONFIG.commandName;
+		if (!CONFIG.requiredRole.isEmpty())
+		{
+			this.requiredRole = CONFIG.requiredRole;
+		}
+		this.aliases = CONFIG.commandAliases;
 	}
 
 	protected void execute(CommandEvent event)
@@ -203,8 +206,8 @@ public class IssueCommand extends Command
 	
 				String query =  String.join(" ", Arrays.copyOfRange(args, i, args.length));
 				List<SearchIssue> results = IssueManager.search(state, query);
+				
 				String body = "";
-				// 
 				for (SearchIssue issue : results) {
 					body += "#" + issue.getNumber() + ": " + "[" + issue.getTitle() + "](https://github.com/" + CONFIG.githubUser + "/" + CONFIG.githubRepo + "/issues/" + issue.getNumber() + ") " + " - " + issue.getUser();
 					body += System.lineSeparator() + System.lineSeparator();
