@@ -1,4 +1,4 @@
-githugToken: abcdefghijklmnopqrstuvwxyz
+githubToken: abcdefghijklmnopqrstuvwxyz
 discordToken: zyxwvutsrqponmlkjihgfedcba
 ownerId: 123456789012343567
 requiredRole: 
