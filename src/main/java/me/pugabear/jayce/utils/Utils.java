@@ -1,6 +1,6 @@
-package me.pugabear.gitkoda.utils;
+package me.pugabear.jayce.utils;
 
-import static me.pugabear.gitkoda.GitKoda.CONFIG;
+import static me.pugabear.jayce.Jayce.CONFIG;
 
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 

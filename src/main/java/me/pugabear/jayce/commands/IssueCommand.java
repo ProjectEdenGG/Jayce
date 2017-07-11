@@ -1,10 +1,10 @@
-package me.pugabear.gitkoda.commands;
+package me.pugabear.jayce.commands;
 
-import me.pugabear.gitkoda.managers.IssueManager;
-import me.pugabear.gitkoda.managers.LabelManager;
-import me.pugabear.gitkoda.utils.Utils;
+import me.pugabear.jayce.managers.IssueManager;
+import me.pugabear.jayce.managers.LabelManager;
+import me.pugabear.jayce.utils.Utils;
 
-import static me.pugabear.gitkoda.GitKoda.CONFIG;
+import static me.pugabear.jayce.Jayce.CONFIG;
 
 import org.eclipse.egit.github.core.SearchIssue;
 

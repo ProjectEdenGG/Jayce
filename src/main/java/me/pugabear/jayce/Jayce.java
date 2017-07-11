@@ -1,14 +1,14 @@
-package me.pugabear.gitkoda;
+package me.pugabear.jayce;
 
-import me.pugabear.gitkoda.commands.*;
-import me.pugabear.gitkoda.utils.*;
+import me.pugabear.jayce.commands.*;
+import me.pugabear.jayce.utils.*;
 
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 
-public class GitKoda
+public class Jayce
 {
 	public static Services SERVICES;
 	public static Config CONFIG;

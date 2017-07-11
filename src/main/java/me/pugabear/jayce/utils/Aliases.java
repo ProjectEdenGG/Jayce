@@ -1,4 +1,4 @@
-package me.pugabear.gitkoda.utils;
+package me.pugabear.jayce.utils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,7 +13,7 @@ public class Aliases
 	
 	public Aliases() throws IOException
 	{
-		List<String> config = Files.readAllLines(Paths.get("GitKoda" + FileSystems.getDefault().getSeparator() + "aliases.txt"));
+		List<String> config = Files.readAllLines(Paths.get("Jayce" + FileSystems.getDefault().getSeparator() + "aliases.txt"));
 		for (String line : config) 
 		{
 			String[] setting = line.split(" ");

@@ -1,4 +1,4 @@
-package me.pugabear.gitkoda.utils;
+package me.pugabear.jayce.utils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,7 +22,7 @@ public class Config
 	
 	public Config() throws IOException
 	{
-		List<String> config = Files.readAllLines(Paths.get("GitKoda" + FileSystems.getDefault().getSeparator() + "config.txt"));
+		List<String> config = Files.readAllLines(Paths.get("Jayce" + FileSystems.getDefault().getSeparator() + "config.txt"));
 		for (String line : config) 
 		{
 			String[] setting = line.split(": ");

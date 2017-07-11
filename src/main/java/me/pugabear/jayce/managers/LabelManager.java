@@ -1,7 +1,7 @@
-package me.pugabear.gitkoda.managers;
+package me.pugabear.jayce.managers;
 
-import static me.pugabear.gitkoda.GitKoda.CONFIG;
-import static me.pugabear.gitkoda.GitKoda.SERVICES;
+import static me.pugabear.jayce.Jayce.CONFIG;
+import static me.pugabear.jayce.Jayce.SERVICES;
 
 import org.eclipse.egit.github.core.Issue;
 import org.eclipse.egit.github.core.Label;
