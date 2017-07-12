@@ -38,9 +38,7 @@ public class IssueCommand extends Command
 		}
 
 		System.out.println("Processing command by " + name + ": " + event.getArgs());
-		
 
-		
 		try
 		{
 

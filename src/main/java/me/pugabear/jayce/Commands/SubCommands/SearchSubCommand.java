@@ -25,12 +25,14 @@ public class SearchSubCommand
 		
 		String body = "";
 		for (SearchIssue issue : results) {
-			body += "#" + issue.getNumber() + ": " + "[" + issue.getTitle() + "](https://github.com/" + CONFIG.githubUser + "/" + CONFIG.githubRepo + "/issues/" + issue.getNumber() + ") " + " - " + issue.getUser();
+			body += "#" + issue.getNumber() + ": " + "[" + issue.getTitle() + "](https://github.com/" + CONFIG.githubUser 
+					+ "/" + CONFIG.githubRepo + "/issues/" + issue.getNumber() + ") " + " - " + issue.getUser();
 			body += System.lineSeparator() + System.lineSeparator();
 		}
 
 		event.reply(new EmbedBuilder()
-				.setAuthor("Found " + results.size() + " issue" + (results.size() != 1 ? "s" : ""), "https://github.com/" + CONFIG.githubUser + "/" + CONFIG.githubRepo + "/issues", CONFIG.iconUrl)
+				.setAuthor("Found " + results.size() + " issue" + (results.size() != 1 ? "s" : ""), 
+						"https://github.com/" + CONFIG.githubUser + "/" + CONFIG.githubRepo + "/issues", CONFIG.iconUrl)
 				.setDescription(body)
 				.build());
 	}
