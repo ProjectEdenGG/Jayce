@@ -54,12 +54,9 @@ public class LabelSubCommand
 					throw new InvalidArgumentException("Label \"" + label + "\" does not exist!");
 		
 			if (modifyLabels(id, action, labels))
-			{
 				event.reply(":thumbsup:");
-				return;
-			}
-			
-			event.reply("Could not modify labels");	
+			else
+				event.reply("Could not modify labels");	
 		}
 		
 	}

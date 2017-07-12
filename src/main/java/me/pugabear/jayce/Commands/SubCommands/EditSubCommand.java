@@ -38,11 +38,9 @@ public class EditSubCommand
 			
 		
 		if (edit(id, what, content))
-		{
 			event.reply(":thumbsup:");
-			return;
-		}
-		event.reply("Could not edit issue");
+		else
+			event.reply("Could not edit issue");
 	}
 	
 	public boolean edit(int id, String what, String content)

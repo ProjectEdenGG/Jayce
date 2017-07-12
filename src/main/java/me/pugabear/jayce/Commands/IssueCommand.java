@@ -53,8 +53,7 @@ public class IssueCommand extends Command
 				{
 					try 
 					{
-						String idString = args[1];
-						id = Integer.parseInt(idString);
+						id = Integer.parseInt(args[1]);
 					}
 					catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) 
 					{
@@ -71,8 +70,7 @@ public class IssueCommand extends Command
 				{
 					try 
 					{
-						String idString = args[1];
-						id = Integer.parseInt(idString);
+						id = Integer.parseInt(args[1]);
 					}
 					catch (ArrayIndexOutOfBoundsException ex) {}
 					break;
@@ -82,45 +80,32 @@ public class IssueCommand extends Command
 			switch (args[0].toLowerCase())
 			{
 				case "create":
-				{
 					new CreateSubCommand(name, event);
 					break;
-				}
 		
 				case "search":
-				{
 					new SearchSubCommand(event);
 					break;
-				}
 		
 				case "edit":
-				{
 					new EditSubCommand(id, event);
 					break;
-				}
 		
 				case "close":
 				case "open":
-				{
 					new ChangeStateSubCommand(id, event);
 					break;
-				}
 		
 				case "assign":
-				{
 					new AssignSubCommand(id, event);
 					break;
-				}
 		
 				case "comment":
-				{
 					new CommentSubCommand(id, name, event);
 					break;
-				}
 		
 				case "label": 
 				case "labels":
-				{
 					String action = null;
 					String[] labels = null;
 					if (id == 0)
@@ -134,7 +119,6 @@ public class IssueCommand extends Command
 						catch (ArrayIndexOutOfBoundsException ex) {}
 					new LabelSubCommand(id, action, labels, event);
 					break;
-				}
 	
 				default:
 					if (args[0].trim().length() < 1)

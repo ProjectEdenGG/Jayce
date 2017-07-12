@@ -28,12 +28,9 @@ public class AssignSubCommand
 			userIds.add(user.getId());
 		
 		if (assign(id, userIds))
-		{
 			event.reply(":thumbsup:");
-			return;
-		}
-		
-		event.reply("Couldn't assign users to issue");
+		else
+			event.reply("Couldn't assign users to issue");
 	}
 	
 	public boolean assign(int id, List<String> userIds)

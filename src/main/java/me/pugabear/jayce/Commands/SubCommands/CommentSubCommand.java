@@ -21,12 +21,9 @@ public class CommentSubCommand
 			throw new InvalidArgumentException("You need to supply a message for the comment");
 		
 		if (comment(id, comment, name))
-		{
 			Utils.reply(event, "Successfully added comment to issue #" + id);
-			return;
-		}
-		
-		event.reply("Couldn't add comment");
+		else		
+			event.reply("Couldn't add comment");
 	}
 
 	public static boolean comment(int id, String comment, String name)

@@ -32,13 +32,10 @@ public class ChangeStateSubCommand
 			throw new InvalidArgumentException(Jayce.USAGE + USAGE);
 		
 		if (changeState(id, state))
-		{
 			Utils.reply(event, (state.equals("open") ? "Opened" : "Closed") + " issue: " 
 					+ "<https://github.com/" + CONFIG.githubUser + "/" + CONFIG.githubRepo + "/issues/" + id + ">");
-			return;
-		}
-		
-		event.reply("Could not " + state + " issue");
+		else		
+			event.reply("Could not " + state + " issue");
 	}
 	
 	public boolean changeState(int id, String state)
