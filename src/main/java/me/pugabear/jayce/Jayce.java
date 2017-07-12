@@ -29,6 +29,7 @@ public class Jayce
 			CommandClientBuilder client = new CommandClientBuilder();
 			client.setPrefix(CONFIG.commandPrefix);
 			client.setOwnerId(CONFIG.ownerId);
+			client.setPlaying(CONFIG.commandPrefix + CONFIG.commandName);
 			client.addCommand(new IssueCommand());
 
 			JDA jda = new JDABuilder(AccountType.BOT)
