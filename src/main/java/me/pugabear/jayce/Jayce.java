@@ -1,7 +1,7 @@
 package me.pugabear.jayce;
 
-import me.pugabear.jayce.commands.*;
-import me.pugabear.jayce.utils.*;
+import me.pugabear.jayce.Commands.*;
+import me.pugabear.jayce.Utils.*;
 
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
@@ -10,9 +10,11 @@ import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 
 public class Jayce
 {
-	public static Services SERVICES;
-	public static Config CONFIG;
 	public static Aliases ALIASES;
+	public static Config CONFIG;
+	public static Services SERVICES;
+	
+	public static String USAGE;
 
 	public static void main(String[] args) throws Exception 
 	{
@@ -22,10 +24,11 @@ public class Jayce
 			ALIASES = new Aliases();
 			SERVICES = new Services();
 
+			USAGE = "Correct usage: " + CONFIG.commandPrefix + CONFIG.commandName + " ";
+			
 			CommandClientBuilder client = new CommandClientBuilder();
 			client.setPrefix(CONFIG.commandPrefix);
 			client.setOwnerId(CONFIG.ownerId);
-			client.setPlaying(CONFIG.commandPrefix + CONFIG.commandName);
 			client.addCommand(new IssueCommand());
 
 			JDA jda = new JDABuilder(AccountType.BOT)

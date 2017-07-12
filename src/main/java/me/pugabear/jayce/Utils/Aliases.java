@@ -1,4 +1,4 @@
-package me.pugabear.jayce.utils;
+package me.pugabear.jayce.Utils;
 
 import java.io.IOException;
 import java.nio.file.Files;

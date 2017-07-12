@@ -1,4 +1,4 @@
-package me.pugabear.jayce.utils;
+package me.pugabear.jayce.Utils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,7 +26,6 @@ public class Config
 		for (String line : config) 
 		{
 			String[] setting = line.split(": ");
-			System.out.println(setting[0] + " = " + setting[1]);
 			switch (setting[0]) 
 			{
 				case "githubToken":
