@@ -10,8 +10,6 @@ public class Utils
 	public static void reply(CommandEvent event, String message)
 	{
 		if (!event.getChannel().getId().equals(CONFIG.webhookChannelId))
-		{
 			event.reply(message);
-		}
 	}
 }

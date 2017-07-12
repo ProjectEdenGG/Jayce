@@ -33,7 +33,6 @@ public class CommentSubCommand
 	{
 		try {
 			SERVICES.issues.createComment(CONFIG.githubUser, CONFIG.githubRepo, id, "**" + name + "**: " + comment);
-
 			return true;
 		} 
 		catch (Exception ex) 

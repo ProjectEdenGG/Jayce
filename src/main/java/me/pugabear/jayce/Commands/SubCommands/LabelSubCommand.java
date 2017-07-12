@@ -70,13 +70,13 @@ public class LabelSubCommand
 		{
 			Issue issue = SERVICES.issues.getIssue(CONFIG.githubUser, CONFIG.githubRepo, id);
 			List<Label> issueLabels = issue.getLabels();
-			for (String label : labels)
-			{
-				if (action.equals("add"))
+			if (action.equals("add"))
+				for (String label : labels)
 					issueLabels.add(SERVICES.labels.getLabel(CONFIG.githubUser, CONFIG.githubRepo, label));	
-				else if (action.equals("remove"))
+				
+			else if (action.equals("remove"))
+				for (String label : labels)
 					issueLabels.remove(SERVICES.labels.getLabel(CONFIG.githubUser, CONFIG.githubRepo, label));
-			}
 			
 			SERVICES.labels.setLabels(CONFIG.githubUser, CONFIG.githubRepo, String.valueOf(id), issueLabels);
 			return true;
