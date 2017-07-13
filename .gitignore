@@ -22,10 +22,11 @@
 hs_err_pid*
 /bin/
 
-# eclipse
+# eclipse and IDEA
 .classpath
 .project
 .settings
+.idea/
 
 # maven
 target/
