@@ -23,16 +23,15 @@ public class SearchSubCommand
 		List<SearchIssue> results = search(event.getArgs().replaceFirst("search ", ""));
 		
 		String body = "";
-		String url = "https://github.com/" + CONFIG.githubUser + "/" + CONFIG.githubRepo + "/issues/";
+		String url = "https://github.com/" + CONFIG.githubUser + "/" + CONFIG.githubRepo + "/issues";
 		
 		for (SearchIssue issue : results)
 			body += "#" + issue.getNumber() + ": " + "[" + issue.getTitle() + "]" 
-						+ "(" + url + issue.getNumber() + ") " + " - " + issue.getUser()
+						+ "(" + url + "/" + issue.getNumber() + ") " + " - " + issue.getUser()
 						+ System.lineSeparator() + System.lineSeparator();
 
 		event.reply(new EmbedBuilder()
-				.setAuthor("Found " + results.size() + " issue" + (results.size() != 1 ? "s" : ""), 
-						"https://github.com/" + CONFIG.githubUser + "/" + CONFIG.githubRepo + "/issues", CONFIG.iconUrl)
+				.setAuthor("Found " + results.size() + " issue" + (results.size() != 1 ? "s" : ""), url, CONFIG.iconUrl)
 				.setDescription(body)
 				.build());
 	}
