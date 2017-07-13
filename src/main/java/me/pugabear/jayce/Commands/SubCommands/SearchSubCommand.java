@@ -12,7 +12,6 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 public class SearchSubCommand
@@ -21,14 +20,15 @@ public class SearchSubCommand
 
 	public SearchSubCommand(CommandEvent event) throws InvalidArgumentException 
 	{
-		List<SearchIssue> results = search(String.join(" ", Arrays.copyOfRange(event.getArgs().split(" "), 1, event.getArgs().split(" ").length)));
+		List<SearchIssue> results = search(event.getArgs().replaceFirst("search ", ""));
 		
 		String body = "";
-		for (SearchIssue issue : results) {
-			body += "#" + issue.getNumber() + ": " + "[" + issue.getTitle() + "](https://github.com/" + CONFIG.githubUser 
-					+ "/" + CONFIG.githubRepo + "/issues/" + issue.getNumber() + ") " + " - " + issue.getUser();
-			body += System.lineSeparator() + System.lineSeparator();
-		}
+		String url = "https://github.com/" + CONFIG.githubUser + "/" + CONFIG.githubRepo + "/issues/";
+		
+		for (SearchIssue issue : results)
+			body += "#" + issue.getNumber() + ": " + "[" + issue.getTitle() + "]" 
+						+ "(" + url + issue.getNumber() + ") " + " - " + issue.getUser()
+						+ System.lineSeparator() + System.lineSeparator();
 
 		event.reply(new EmbedBuilder()
 				.setAuthor("Found " + results.size() + " issue" + (results.size() != 1 ? "s" : ""), 
