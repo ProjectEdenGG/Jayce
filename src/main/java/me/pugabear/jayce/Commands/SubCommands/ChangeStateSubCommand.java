@@ -13,7 +13,7 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
 public class ChangeStateSubCommand
 {
-	public static final String USAGE = "<open|close> <id>";
+	private static final String USAGE = "<open|close> <id>";
 	
 	public ChangeStateSubCommand(int id, CommandEvent event) throws InvalidArgumentException 
 	{
@@ -38,7 +38,7 @@ public class ChangeStateSubCommand
 			event.reply("Could not " + state + " issue");
 	}
 	
-	public boolean changeState(int id, String state)
+	private boolean changeState(int id, String state)
 	{
 		try 
 		{

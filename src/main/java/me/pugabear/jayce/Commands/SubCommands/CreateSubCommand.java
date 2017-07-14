@@ -13,16 +13,16 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
 public class CreateSubCommand
 {
-	public static final String USAGE = "create <short desc> | <longer description>";
+	private static final String USAGE = "create <short desc> | <longer description>";
 	
 	public CreateSubCommand(String name, CommandEvent event) throws InvalidArgumentException 
 	{
 		// TODO Allow setting more options on creation (assignees, labels...)
-		String[] content = null;
+		String[] content;
 		try {
 			content = event.getArgs().split(" ", 2)[1].split("( \\| )", 2);
 		
-			if (content[0].isEmpty() || content[0] == null)
+			if (content[0].isEmpty())
 				throw new InvalidArgumentException(Jayce.USAGE + USAGE);
 		}
 		catch (ArrayIndexOutOfBoundsException ex)
@@ -46,7 +46,7 @@ public class CreateSubCommand
 			event.reply("Issue creation failed");
 	}
 	
-	public int create(String title, String body, String name)
+	private int create(String title, String body, String name)
 	{
 		try 
 		{

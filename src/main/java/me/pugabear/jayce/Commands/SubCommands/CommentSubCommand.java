@@ -26,7 +26,7 @@ public class CommentSubCommand
 			event.reply("Couldn't add comment");
 	}
 
-	public static boolean comment(int id, String comment, String name)
+	private static boolean comment(int id, String comment, String name)
 	{
 		try {
 			SERVICES.issues.createComment(CONFIG.githubUser, CONFIG.githubRepo, id, "**" + name + "**: " + comment);

@@ -9,10 +9,10 @@ import org.eclipse.egit.github.core.service.UserService;
 
 public class Services
 {
-	public IssueService issues = new IssueService();
-	public LabelService labels = new LabelService();
-	public UserService users = new UserService();
-	public RepositoryService repos = new RepositoryService();
+	public final IssueService issues = new IssueService();
+	public final LabelService labels = new LabelService();
+	public final UserService users = new UserService();
+	public final RepositoryService repos = new RepositoryService();
 
 	public Services()
 	{

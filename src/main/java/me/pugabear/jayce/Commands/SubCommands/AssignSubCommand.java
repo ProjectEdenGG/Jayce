@@ -23,7 +23,7 @@ public class AssignSubCommand
 		if (event.getMessage().getMentionedUsers().size() == 0)
 			throw new InvalidArgumentException("You didn't supply a user to assign to the issue");
 		
-		List<String> userIds = new ArrayList<String>();
+		List<String> userIds = new ArrayList<>();
 		for (User user : event.getMessage().getMentionedUsers())
 			userIds.add(user.getId());
 		
@@ -33,7 +33,7 @@ public class AssignSubCommand
 			event.reply("Couldn't assign users to issue");
 	}
 	
-	public boolean assign(int id, List<String> userIds)
+	private boolean assign(int id, List<String> userIds)
 	{
 		try 
 		{

@@ -24,7 +24,7 @@ public class IssueCommand extends Command
 	{
 		String[] args = event.getArgs().split(" ");
 
-		String name = null;
+		String name;
 		try
 		{
 			if (event.getMember().getNickname().equals("null"))
@@ -131,7 +131,6 @@ public class IssueCommand extends Command
 		catch (InvalidArgumentException ex)
 		{
 			event.reply(ex.getMessage());
-			return;
 		}
 		catch (ArrayIndexOutOfBoundsException ex)
 		{

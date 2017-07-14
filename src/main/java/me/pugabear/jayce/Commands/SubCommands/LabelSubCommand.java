@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class LabelSubCommand
 {
-	public static final String USAGE = "label[s] [<id> <add|remove> <labels>]";
+	private static final String USAGE = "label[s] [<id> <add|remove> <labels>]";
 	
 	public LabelSubCommand(int id, String action, String[] labels, CommandEvent event) throws InvalidArgumentException
 	{
@@ -29,7 +29,7 @@ public class LabelSubCommand
 		if (!action.equals("get") && labels.length == 0)
 			throw new InvalidArgumentException(Jayce.USAGE + USAGE);
 
-		List<String> _validLabels = null;
+		List<String> _validLabels;
 		try
 		{
 			_validLabels = SERVICES.labels.getLabels(CONFIG.githubUser, CONFIG.githubRepo).stream()
@@ -39,7 +39,7 @@ public class LabelSubCommand
 		catch (IOException ex)
 		{
 			ex.printStackTrace();
-			event.reply("Error occured trying to get valid labels");
+			event.reply("Error occurred trying to get valid labels");
 			return;
 		}
 		
@@ -50,7 +50,7 @@ public class LabelSubCommand
 		else
 		{
 			for (String label : labels)
-				if (!Arrays.stream(validLabels).anyMatch(label::equals))
+				if (Arrays.stream(validLabels).noneMatch(label::equals))
 					throw new InvalidArgumentException("Label \"" + label + "\" does not exist!");
 		
 			if (modifyLabels(id, action, labels))
@@ -61,7 +61,7 @@ public class LabelSubCommand
 		
 	}
 
-	public static boolean modifyLabels(int id, String action, String[] labels)
+	private static boolean modifyLabels(int id, String action, String[] labels)
 	{
 		try
 		{

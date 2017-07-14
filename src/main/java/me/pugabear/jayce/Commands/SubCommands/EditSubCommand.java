@@ -14,7 +14,7 @@ import com.jagrosh.jdautilities.commandclient.CommandEvent;
 
 public class EditSubCommand
 {
-	public static final String USAGE = "edit <id> <title|body> <content>";
+	private static final String USAGE = "edit <id> <title|body> <content>";
 	
 	public EditSubCommand(int id, CommandEvent event) throws InvalidArgumentException 
 	{
@@ -33,7 +33,7 @@ public class EditSubCommand
 		
 		if (!(what.equals("title") || what.equals("body")))
 			throw new InvalidArgumentException("You must edit the title or the body");
-		if (content.isEmpty() || content == null)
+		if (content.isEmpty())
 			throw new InvalidArgumentException("You must supply content for the " + what);
 			
 		
@@ -43,7 +43,7 @@ public class EditSubCommand
 			event.reply("Could not edit issue");
 	}
 	
-	public boolean edit(int id, String what, String content)
+	private boolean edit(int id, String what, String content)
 	{
 		try 
 		{

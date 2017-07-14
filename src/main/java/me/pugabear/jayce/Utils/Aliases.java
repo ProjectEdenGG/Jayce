@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Aliases
 {
-	public HashMap<String, String> aliases = new HashMap<String, String>();
+	public final HashMap<String, String> aliases = new HashMap<>();
 	
 	public Aliases() throws IOException
 	{
