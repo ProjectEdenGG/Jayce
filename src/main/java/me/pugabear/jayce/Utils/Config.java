@@ -1,35 +1,31 @@
 package me.pugabear.jayce.Utils;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class Config
-{
+public class Config {
 	public String githubToken,
-				  discordToken, 
-				  ownerId,
-				  requiredRole,
-				  iconUrl,
-				  githubUser,
-				  githubRepo,
-				  webhookChannelId,
-				  commandPrefix,
-				  commandName;
+			discordToken,
+			ownerId,
+			requiredRole,
+			iconUrl,
+			githubUser,
+			githubRepo,
+			webhookChannelId,
+			commandPrefix,
+			commandName;
 	public String[] commandAliases;
-	
-	public Config() throws IOException
-	{
+
+	public Config() throws IOException {
 		List<String> config = Files.readAllLines(Paths.get("Jayce" + FileSystems.getDefault().getSeparator() + "config.txt"));
-		for (String line : config) 
-		{
+		for (String line : config) {
 			String[] setting = line.split(": ");
-			switch (setting[0]) 
-			{
+			switch (setting[0]) {
 				case "githubToken":
-					this.githubToken = setting[1]; 
+					this.githubToken = setting[1];
 					break;
 				case "discordToken":
 					this.discordToken = setting[1];

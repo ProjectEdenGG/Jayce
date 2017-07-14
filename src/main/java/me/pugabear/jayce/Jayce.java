@@ -1,31 +1,29 @@
 package me.pugabear.jayce;
 
-import me.pugabear.jayce.Commands.*;
-import me.pugabear.jayce.Utils.*;
-
+import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
+import me.pugabear.jayce.Commands.IssueCommand;
+import me.pugabear.jayce.Utils.Aliases;
+import me.pugabear.jayce.Utils.Config;
+import me.pugabear.jayce.Utils.Services;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
-import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
 
-public class Jayce
-{
+public class Jayce {
 	public static Aliases ALIASES;
 	public static Config CONFIG;
 	public static Services SERVICES;
-	
+
 	public static String USAGE;
 
-	public static void main(String[] args) throws Exception 
-	{
-		try
-		{
+	public static void main(String[] args) throws Exception {
+		try {
 			CONFIG = new Config();
 			ALIASES = new Aliases();
 			SERVICES = new Services();
 
 			USAGE = "Correct usage: " + CONFIG.commandPrefix + CONFIG.commandName + " ";
-			
+
 			CommandClientBuilder client = new CommandClientBuilder();
 			client.setPrefix(CONFIG.commandPrefix);
 			client.setOwnerId(CONFIG.ownerId);
@@ -37,9 +35,7 @@ public class Jayce
 					.buildAsync();
 
 			jda.addEventListener(client.build());
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
 			ex.printStackTrace();
 		}
