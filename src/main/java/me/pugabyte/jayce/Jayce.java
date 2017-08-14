@@ -1,10 +1,10 @@
-package me.pugabear.jayce;
+package me.pugabyte.jayce;
 
 import com.jagrosh.jdautilities.commandclient.CommandClientBuilder;
-import me.pugabear.jayce.Commands.IssueCommand;
-import me.pugabear.jayce.Utils.Aliases;
-import me.pugabear.jayce.Utils.Config;
-import me.pugabear.jayce.Utils.Services;
+import me.pugabyte.jayce.Commands.IssueCommand;
+import me.pugabyte.jayce.Utils.Aliases;
+import me.pugabyte.jayce.Utils.Config;
+import me.pugabyte.jayce.Utils.Services;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;

@@ -1,13 +1,12 @@
-package me.pugabear.jayce.Utils;
+package me.pugabyte.jayce.Utils;
 
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
-
-import static me.pugabear.jayce.Jayce.CONFIG;
+import me.pugabyte.jayce.Jayce;
 
 public class Utils {
 	// Method to hide messages in a channel with a webhook enabled
 	public static void reply(CommandEvent event, String message) {
-		if (!event.getChannel().getId().equals(CONFIG.webhookChannelId))
+		if (!event.getChannel().getId().equals(Jayce.CONFIG.webhookChannelId))
 			event.reply(message);
 	}
 }

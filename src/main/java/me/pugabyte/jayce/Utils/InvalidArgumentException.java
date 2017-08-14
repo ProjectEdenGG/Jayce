@@ -1,4 +1,4 @@
-package me.pugabear.jayce.Utils;
+package me.pugabyte.jayce.Utils;
 
 public class InvalidArgumentException extends Exception {
 	private static final long serialVersionUID = 350342632708492047L;
