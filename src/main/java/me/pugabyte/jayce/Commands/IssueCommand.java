@@ -1,20 +1,18 @@
-package me.pugabear.jayce.Commands;
+package me.pugabyte.jayce.Commands;
 
 import com.jagrosh.jdautilities.commandclient.Command;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
-import me.pugabear.jayce.Commands.SubCommands.*;
-import me.pugabear.jayce.Utils.InvalidArgumentException;
+import me.pugabyte.jayce.Commands.SubCommands.AssignSubCommand;
+import me.pugabyte.jayce.Jayce;
 
 import java.util.Arrays;
 
-import static me.pugabear.jayce.Jayce.CONFIG;
-
 public class IssueCommand extends Command {
 	public IssueCommand() {
-		this.name = CONFIG.commandName;
-		this.aliases = CONFIG.commandAliases;
-		if (!CONFIG.requiredRole.isEmpty())
-			this.requiredRole = CONFIG.requiredRole;
+		this.name = Jayce.CONFIG.commandName;
+		this.aliases = Jayce.CONFIG.commandAliases;
+		if (!Jayce.CONFIG.requiredRole.isEmpty())
+			this.requiredRole = Jayce.CONFIG.requiredRole;
 	}
 
 	protected void execute(CommandEvent event) {
@@ -44,11 +42,11 @@ public class IssueCommand extends Command {
 					try {
 						id = Integer.parseInt(args[1]);
 					} catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) {
-						throw new InvalidArgumentException("You didn't supply a valid issue ID!");
+						throw new me.pugabyte.jayce.Utils.InvalidArgumentException("You didn't supply a valid issue ID!");
 					}
 
 					if (id < 1)
-						throw new InvalidArgumentException("You didn't supply a valid issue ID!");
+						throw new me.pugabyte.jayce.Utils.InvalidArgumentException("You didn't supply a valid issue ID!");
 
 					break;
 				}
@@ -64,20 +62,20 @@ public class IssueCommand extends Command {
 
 			switch (args[0].toLowerCase()) {
 				case "create":
-					new CreateSubCommand(name, event);
+					new me.pugabyte.jayce.Commands.SubCommands.CreateSubCommand(name, event);
 					break;
 
 				case "search":
-					new SearchSubCommand(event);
+					new me.pugabyte.jayce.Commands.SubCommands.SearchSubCommand(event);
 					break;
 
 				case "edit":
-					new EditSubCommand(id, event);
+					new me.pugabyte.jayce.Commands.SubCommands.EditSubCommand(id, event);
 					break;
 
 				case "close":
 				case "open":
-					new ChangeStateSubCommand(id, event);
+					new me.pugabyte.jayce.Commands.SubCommands.ChangeStateSubCommand(id, event);
 					break;
 
 				case "assign":
@@ -85,7 +83,7 @@ public class IssueCommand extends Command {
 					break;
 
 				case "comment":
-					new CommentSubCommand(id, name, event);
+					new me.pugabyte.jayce.Commands.SubCommands.CommentSubCommand(id, name, event);
 					break;
 
 				case "label":
@@ -100,17 +98,17 @@ public class IssueCommand extends Command {
 							labels = Arrays.copyOfRange(args, 3, args.length);
 						} catch (ArrayIndexOutOfBoundsException ex) {
 						}
-					new LabelSubCommand(id, action, labels, event);
+					new me.pugabyte.jayce.Commands.SubCommands.LabelSubCommand(id, action, labels, event);
 					break;
 
 				default:
 					if (args[0].trim().length() < 1)
-						event.reply("<https://github.com/" + CONFIG.githubUser + "/" + CONFIG.githubRepo + "/issues>");
+						event.reply("<https://github.com/" + Jayce.CONFIG.githubUser + "/" + Jayce.CONFIG.githubRepo + "/issues>");
 					else
 						event.reply("Invalid action");
 					break;
 			}
-		} catch (InvalidArgumentException ex) {
+		} catch (me.pugabyte.jayce.Utils.InvalidArgumentException ex) {
 			event.reply(ex.getMessage());
 		} catch (ArrayIndexOutOfBoundsException ex) {
 			ex.printStackTrace();

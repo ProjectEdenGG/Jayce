@@ -28,11 +28,14 @@ hs_err_pid*
 .settings
 .idea/
 Jayce.iml
+main.iml
 
 # maven
 target/
 dependency-reduced-pom.xml
+Jayce-*.jar
 
 # config
+Jayce/
 config.txt
 aliases.txt

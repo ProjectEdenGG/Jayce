@@ -1,14 +1,14 @@
-package me.pugabear.jayce.Commands.SubCommands;
+package me.pugabyte.jayce.Commands.SubCommands;
 
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
-import me.pugabear.jayce.Jayce;
-import me.pugabear.jayce.Utils.InvalidArgumentException;
+import me.pugabyte.jayce.Jayce;
+import me.pugabyte.jayce.Utils.InvalidArgumentException;
 import org.eclipse.egit.github.core.Issue;
 
 import java.util.Arrays;
 
-import static me.pugabear.jayce.Jayce.CONFIG;
-import static me.pugabear.jayce.Jayce.SERVICES;
+import static me.pugabyte.jayce.Jayce.CONFIG;
+import static me.pugabyte.jayce.Jayce.SERVICES;
 
 public class EditSubCommand {
 	private static final String USAGE = "edit <id> <title|body> <content>";

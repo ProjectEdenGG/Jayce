@@ -1,11 +1,10 @@
-package me.pugabear.jayce.Utils;
+package me.pugabyte.jayce.Utils;
 
+import me.pugabyte.jayce.Jayce;
 import org.eclipse.egit.github.core.service.IssueService;
 import org.eclipse.egit.github.core.service.LabelService;
 import org.eclipse.egit.github.core.service.RepositoryService;
 import org.eclipse.egit.github.core.service.UserService;
-
-import static me.pugabear.jayce.Jayce.CONFIG;
 
 public class Services {
 	public final IssueService issues = new IssueService();
@@ -14,9 +13,9 @@ public class Services {
 	public final RepositoryService repos = new RepositoryService();
 
 	public Services() {
-		issues.getClient().setOAuth2Token(CONFIG.githubToken);
-		labels.getClient().setOAuth2Token(CONFIG.githubToken);
-		users.getClient().setOAuth2Token(CONFIG.githubToken);
-		repos.getClient().setOAuth2Token(CONFIG.githubToken);
+		issues.getClient().setOAuth2Token(Jayce.CONFIG.githubToken);
+		labels.getClient().setOAuth2Token(Jayce.CONFIG.githubToken);
+		users.getClient().setOAuth2Token(Jayce.CONFIG.githubToken);
+		repos.getClient().setOAuth2Token(Jayce.CONFIG.githubToken);
 	}
 }
