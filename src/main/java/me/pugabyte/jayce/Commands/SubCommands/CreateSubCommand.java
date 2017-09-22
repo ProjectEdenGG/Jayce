@@ -37,7 +37,11 @@ public class CreateSubCommand {
 		try {
 			Issue issue = new Issue();
 			issue.setTitle(title);
-			issue.setBody("**" + name + "**: " + body);
+			if (body.isEmpty() || body == null) {
+				issue.setBody("Submitted by **" + name + "**");
+			} else {
+				issue.setBody("**" + name + "**: " + body);
+			}
 			Issue result = me.pugabyte.jayce.Jayce.SERVICES.issues.createIssue(me.pugabyte.jayce.Jayce.CONFIG.githubUser, me.pugabyte.jayce.Jayce.CONFIG.githubRepo, issue);
 
 			return result.getNumber();
