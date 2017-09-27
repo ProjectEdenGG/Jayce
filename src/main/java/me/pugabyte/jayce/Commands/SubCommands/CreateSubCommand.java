@@ -1,6 +1,7 @@
 package me.pugabyte.jayce.Commands.SubCommands;
 
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import me.pugabyte.jayce.Jayce;
 import me.pugabyte.jayce.Utils.InvalidArgumentException;
 import me.pugabyte.jayce.Utils.Utils;
 import org.eclipse.egit.github.core.Issue;
@@ -15,9 +16,9 @@ public class CreateSubCommand {
             content = event.getArgs().split(" ", 2)[1].split("( \\| )", 2);
 
             if (content[0].isEmpty())
-                throw new InvalidArgumentException(me.pugabyte.jayce.Jayce.USAGE + USAGE);
+                throw new InvalidArgumentException(Jayce.USAGE + USAGE);
         } catch (ArrayIndexOutOfBoundsException ex) {
-            throw new InvalidArgumentException(me.pugabyte.jayce.Jayce.USAGE + USAGE);
+            throw new InvalidArgumentException(Jayce.USAGE + USAGE);
         }
 
         int id = 0;
@@ -28,7 +29,7 @@ public class CreateSubCommand {
         }
 
         if (id != 0)
-            Utils.reply(event, "https://github.com/" + me.pugabyte.jayce.Jayce.CONFIG.githubUser + "/" + me.pugabyte.jayce.Jayce.CONFIG.githubRepo + "/issues/" + id);
+            Utils.reply(event, "https://github.com/" + Jayce.CONFIG.githubUser + "/" + Jayce.CONFIG.githubRepo + "/issues/" + id);
         else
             event.reply("Issue creation failed");
     }
@@ -42,7 +43,7 @@ public class CreateSubCommand {
             } else {
                 issue.setBody("**" + name + "**: " + body);
             }
-            Issue result = me.pugabyte.jayce.Jayce.SERVICES.issues.createIssue(me.pugabyte.jayce.Jayce.CONFIG.githubUser, me.pugabyte.jayce.Jayce.CONFIG.githubRepo, issue);
+            Issue result = Jayce.SERVICES.issues.createIssue(Jayce.CONFIG.githubUser, Jayce.CONFIG.githubRepo, issue);
 
             return result.getNumber();
         } catch (Exception ex) {

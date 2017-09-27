@@ -2,16 +2,17 @@ package me.pugabyte.jayce.Commands.SubCommands;
 
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import me.pugabyte.jayce.Jayce;
+import me.pugabyte.jayce.Utils.InvalidArgumentException;
 
 import java.util.Arrays;
 
 public class CommentSubCommand {
     public static final String USAGE = "comment <id> <comment>";
 
-    public CommentSubCommand(int id, String name, CommandEvent event) throws me.pugabyte.jayce.Utils.InvalidArgumentException {
+    public CommentSubCommand(int id, String name, CommandEvent event) throws InvalidArgumentException {
         String comment = String.join(" ", Arrays.copyOfRange(event.getArgs().split(" "), 2, event.getArgs().split(" ").length));
         if (comment == null || comment.trim().length() < 1)
-            throw new me.pugabyte.jayce.Utils.InvalidArgumentException("You need to supply a message for the comment");
+            throw new InvalidArgumentException("You need to supply a message for the comment");
 
         if (comment(id, comment, name))
             me.pugabyte.jayce.Utils.Utils.reply(event, "Successfully added comment to issue #" + id);
