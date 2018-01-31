@@ -23,9 +23,9 @@ public class CreateSubCommand {
 
         int id = 0;
         try {
-            id = create(content[0], content[1], name);
+            id = create(content[0], "**" + name + "**: " + content[1]);
         } catch (ArrayIndexOutOfBoundsException ex) {
-            id = create(content[0], "", name);
+            id = create(content[0], "Submitted by **" + name + "**");
         }
 
         if (id != 0)
@@ -34,15 +34,11 @@ public class CreateSubCommand {
             event.reply("Issue creation failed");
     }
 
-    private int create(String title, String body, String name) {
+    private int create(String title, String body) {
         try {
             Issue issue = new Issue();
             issue.setTitle(title);
-            if (body.isEmpty() || body == null) {
-                issue.setBody("Submitted by **" + name + "**");
-            } else {
-                issue.setBody("**" + name + "**: " + body);
-            }
+            issue.setBody(body);
             Issue result = Jayce.SERVICES.issues.createIssue(Jayce.CONFIG.githubUser, Jayce.CONFIG.githubRepo, issue);
 
             return result.getNumber();

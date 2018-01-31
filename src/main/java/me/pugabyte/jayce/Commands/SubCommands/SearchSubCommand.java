@@ -13,7 +13,7 @@ public class SearchSubCommand {
     public static final String USAGE = "search <query>";
 
     public SearchSubCommand(CommandEvent event) {
-        List<SearchIssue> results = search(event.getArgs().replaceFirst("search ", ""));
+        List<SearchIssue> results = search(event.getArgs().replaceFirst("search ", ""), (!event.getArgs().contains(" is:closed")));
 
         StringBuilder body = new StringBuilder();
         String url = "https://github.com/" + Jayce.CONFIG.githubUser + "/" + Jayce.CONFIG.githubRepo + "/issues";
@@ -29,10 +29,10 @@ public class SearchSubCommand {
                 .build());
     }
 
-    private static List<SearchIssue> search(String query) {
+    private static List<SearchIssue> search(String query, boolean state) {
         try {
             Repository repo = Jayce.SERVICES.repos.getRepository(Jayce.CONFIG.githubUser, Jayce.CONFIG.githubRepo);
-            return Jayce.SERVICES.issues.searchIssues(repo, "open", query);
+            return Jayce.SERVICES.issues.searchIssues(repo, (state ? "open" : "closed"), query);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
