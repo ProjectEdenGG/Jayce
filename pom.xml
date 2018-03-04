@@ -59,13 +59,17 @@
       <name>jcenter-bintray</name>
       <url>http://jcenter.bintray.com</url>
     </repository>
+    <repository>
+      <id>eclipse-repo</id>
+      <url>https://repo.eclipse.org/content/groups/releases/</url>
+    </repository>
   </repositories>
   <dependencies>
     <!-- Github API -->
     <dependency>
       <groupId>org.eclipse.mylyn.github</groupId>
       <artifactId>org.eclipse.egit.github.core</artifactId>
-      <version>2.1.5</version>
+      <version>4.10.0.201712302008-r</version>
     </dependency>
     <!-- JDA -->
     <dependency>
