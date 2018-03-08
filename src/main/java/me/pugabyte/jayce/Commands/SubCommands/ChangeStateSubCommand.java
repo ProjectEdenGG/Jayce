@@ -18,14 +18,16 @@ public class ChangeStateSubCommand {
             throw new InvalidArgumentException(Jayce.USAGE + USAGE);
         }
 
-        if (!(state.equals("open") || state.equals("close")))
+        if (!(state.equals("open") || state.equals("close"))) {
             throw new InvalidArgumentException(Jayce.USAGE + USAGE);
+        }
 
-        if (changeState(id, state))
+        if (changeState(id, state)) {
             Utils.reply(event, (state.equals("open") ? "Opened" : "Closed") + " issue: "
                     + "<https://github.com/" + Jayce.CONFIG.githubUser + "/" + Jayce.CONFIG.githubRepo + "/issues/" + id + ">");
-        else
+        } else {
             event.reply("Could not " + state + " issue");
+        }
     }
 
     private boolean changeState(int id, String state) {

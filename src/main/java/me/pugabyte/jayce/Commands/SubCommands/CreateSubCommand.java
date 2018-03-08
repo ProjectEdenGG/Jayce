@@ -15,23 +15,24 @@ public class CreateSubCommand {
         try {
             content = event.getArgs().split(" ", 2)[1].split("( \\| )", 2);
 
-            if (content[0].isEmpty())
+            if (content[0].isEmpty()) {
                 throw new InvalidArgumentException(Jayce.USAGE + USAGE);
+            }
         } catch (ArrayIndexOutOfBoundsException ex) {
             throw new InvalidArgumentException(Jayce.USAGE + USAGE);
         }
 
-        int id = 0;
+        int id;
         try {
             id = create(content[0], "**" + name + "**: " + content[1]);
         } catch (ArrayIndexOutOfBoundsException ex) {
             id = create(content[0], "Submitted by **" + name + "**");
         }
-
-        if (id != 0)
+        if (id != 0) {
             Utils.reply(event, "https://github.com/" + Jayce.CONFIG.githubUser + "/" + Jayce.CONFIG.githubRepo + "/issues/" + id);
-        else
-            event.reply("Issue creation failed");
+        } else {
+            Utils.reply(event, "Issue creation failed");
+        }
     }
 
     private int create(String title, String body) {

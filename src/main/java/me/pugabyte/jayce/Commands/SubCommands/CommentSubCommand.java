@@ -3,6 +3,7 @@ package me.pugabyte.jayce.Commands.SubCommands;
 import com.jagrosh.jdautilities.commandclient.CommandEvent;
 import me.pugabyte.jayce.Jayce;
 import me.pugabyte.jayce.Utils.InvalidArgumentException;
+import me.pugabyte.jayce.Utils.Utils;
 
 import java.util.Arrays;
 
@@ -10,14 +11,17 @@ public class CommentSubCommand {
     public static final String USAGE = "comment <id> <comment>";
 
     public CommentSubCommand(int id, String name, CommandEvent event) throws InvalidArgumentException {
-        String comment = String.join(" ", Arrays.copyOfRange(event.getArgs().split(" "), 2, event.getArgs().split(" ").length));
-        if (comment == null || comment.trim().length() < 1)
+        String[] args = event.getArgs().split(" ");
+        String comment = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
+        if (comment == null || comment.trim().length() < 1) {
             throw new InvalidArgumentException("You need to supply a message for the comment");
+        }
 
-        if (comment(id, comment, name))
-            me.pugabyte.jayce.Utils.Utils.reply(event, "Successfully added comment to issue #" + id);
-        else
+        if (comment(id, comment, name)) {
+            Utils.reply(event, "Successfully added comment to issue #" + id);
+        } else {
             event.reply("Couldn't add comment");
+        }
     }
 
     private static boolean comment(int id, String comment, String name) {

@@ -24,16 +24,19 @@ public class EditSubCommand {
             throw new InvalidArgumentException(Jayce.USAGE + USAGE);
         }
 
-        if (!(what.equals("title") || what.equals("body")))
+        if (!(what.equals("title") || what.equals("body"))) {
             throw new InvalidArgumentException("You must edit the title or the body");
-        if (content.isEmpty())
+        }
+        if (content.isEmpty()) {
             throw new InvalidArgumentException("You must supply content for the " + what);
+        }
 
 
-        if (edit(id, what, content))
+        if (edit(id, what, content)) {
             event.reply(":thumbsup:");
-        else
+        } else {
             event.reply("Could not edit issue");
+        }
     }
 
     private boolean edit(int id, String what, String content) {
