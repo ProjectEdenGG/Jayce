@@ -18,18 +18,15 @@ public class MessageListener extends ListenerAdapter {
 
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
-		System.out.println("Processing message: " + event.getMessage().getContent());
 		if (event.getMessage().getContent().contains("git#")) {
 			String[] words = event.getMessage().getContent().split(" ");
 			for (String word : words) {
-				System.out.println(word);
 				if (word.startsWith("git#")) {
 					word = word.replaceAll("git#", "");
 					try {
 						int id = Integer.parseInt(word);
 						event.getTextChannel().sendMessage("<https://github.com/" + Jayce.CONFIG.githubUser + "/" + Jayce.CONFIG.githubRepo + "/issues/" + id + ">").queue();
 					} catch (NumberFormatException ex) {
-						System.out.println("Error parsing " + word);
 					}
 				}
 			}
