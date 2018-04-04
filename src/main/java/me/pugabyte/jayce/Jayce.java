@@ -16,7 +16,7 @@ public class Jayce {
 
 	public static String USAGE;
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		try {
 			CONFIG = new Config();
 			ALIASES = new Aliases();
@@ -35,6 +35,7 @@ public class Jayce {
 					.buildAsync();
 
 			jda.addEventListener(client.build());
+			jda.addEventListener(new MessageListener());
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
 			ex.printStackTrace();
