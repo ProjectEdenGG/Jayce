@@ -45,7 +45,7 @@ public class IssueCommand extends Command {
 						throw new InvalidArgumentException("You didn't supply a valid issue ID!");
 					}
 				}
-			} else {
+			} else if (!args[0].contains("create") && !args[0].contains("search")) {
 				try {
 					id = Integer.parseInt(args[1]);
 				} catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) {
