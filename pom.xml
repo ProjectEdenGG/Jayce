@@ -64,12 +64,12 @@
   <repositories>
     <repository>
       <id>apache</id>
-      <url>http://repo1.maven.org/maven2/</url>
+      <url>https://repo1.maven.org/maven2/</url>
     </repository>
     <repository>
       <id>jcenter</id>
       <name>jcenter-bintray</name>
-      <url>http://jcenter.bintray.com</url>
+      <url>https://jcenter.bintray.com</url>
     </repository>
     <repository>
       <id>eclipse-repo</id>
@@ -87,13 +87,20 @@
     <dependency>
       <groupId>net.dv8tion</groupId>
       <artifactId>JDA</artifactId>
-      <version>3.3.0_266</version>
+      <version>4.2.0_212</version>
+      <exclusions>
+        <exclusion>
+          <groupId>club.minnced</groupId>
+          <artifactId>opus-java</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- JDA-Utilities -->
     <dependency>
       <groupId>com.jagrosh</groupId>
-      <artifactId>JDA-Utilities</artifactId>
-      <version>1.7</version>
+      <artifactId>jda-utilities-command</artifactId>
+      <version>3.0.2</version>
+      <scope>compile</scope>
     </dependency>
     <!-- Gson -->
     <dependency>

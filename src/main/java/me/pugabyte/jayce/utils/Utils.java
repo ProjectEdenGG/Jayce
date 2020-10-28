@@ -1,6 +1,6 @@
 package me.pugabyte.jayce.utils;
 
-import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import com.jagrosh.jdautilities.command.CommandEvent;
 import me.pugabyte.jayce.Jayce;
 
 public class Utils {

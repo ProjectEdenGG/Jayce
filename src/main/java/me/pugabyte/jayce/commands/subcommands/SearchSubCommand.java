@@ -1,8 +1,8 @@
 package me.pugabyte.jayce.commands.subcommands;
 
-import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import com.jagrosh.jdautilities.command.CommandEvent;
 import me.pugabyte.jayce.Jayce;
-import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.api.EmbedBuilder;
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.SearchIssue;
 

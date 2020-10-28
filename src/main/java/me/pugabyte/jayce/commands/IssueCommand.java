@@ -1,7 +1,7 @@
 package me.pugabyte.jayce.commands;
 
-import com.jagrosh.jdautilities.commandclient.Command;
-import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import com.jagrosh.jdautilities.command.Command;
+import com.jagrosh.jdautilities.command.CommandEvent;
 import me.pugabyte.jayce.Jayce;
 import me.pugabyte.jayce.commands.subcommands.*;
 import me.pugabyte.jayce.utils.InvalidArgumentException;

@@ -1,9 +1,9 @@
 package me.pugabyte.jayce.commands.subcommands;
 
-import com.jagrosh.jdautilities.commandclient.CommandEvent;
+import com.jagrosh.jdautilities.command.CommandEvent;
 import me.pugabyte.jayce.Jayce;
 import me.pugabyte.jayce.utils.InvalidArgumentException;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.entities.User;
 import org.eclipse.egit.github.core.Issue;
 
 import java.util.ArrayList;

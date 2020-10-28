@@ -1,25 +1,13 @@
 package me.pugabyte.jayce;
 
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.exceptions.RateLimitedException;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
-
-import javax.security.auth.login.LoginException;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class MessageListener extends ListenerAdapter {
-	public static void main(String[] args)
-			throws LoginException, RateLimitedException, InterruptedException {
-		JDA jda = new JDABuilder(AccountType.BOT).setToken("token").buildBlocking();
-		jda.addEventListener(new MessageListener());
-	}
-
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
-		if (event.getMessage().getContent().contains("git#")) {
-			String[] words = event.getMessage().getContent().split(" ");
+		if (event.getMessage().getContentRaw().contains("git#")) {
+			String[] words = event.getMessage().getContentRaw().split(" ");
 			for (String word : words) {
 				if (word.startsWith("git#")) {
 					word = word.replaceAll("git#", "");
