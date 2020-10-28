@@ -30,7 +30,7 @@ public class Jayce {
 					.setActivity(Activity.playing(CONFIG.commandPrefix + CONFIG.commandName))
 					.addCommand(new IssueCommand());
 
-			JDA jda = JDABuilder.createDefault(CONFIG.discordToken)
+			JDABuilder.createDefault(CONFIG.discordToken)
 					.addEventListeners(client.build())
 					.addEventListeners(new MessageListener())
 					.build()
