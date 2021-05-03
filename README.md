@@ -1,2 +1,2 @@
 # Jayce
-A discord bot with github integration for Bear Nation's staff team
+A discord bot with github integration for Project Eden's staff team
