@@ -13,7 +13,7 @@ public class CreateSubCommand {
 		// TODO Allow setting more options on creation (assignees, labels...)
 		String[] content;
 		try {
-			content = event.getArgs().split(" ", 2)[1].split("( \\| )", 2);
+			content = event.getArgs().split(" ", 2)[1].split("( \\|[ \n])", 2);
 
 			if (content[0].isEmpty()) {
 				throw new InvalidArgumentException(Jayce.USAGE + USAGE);
