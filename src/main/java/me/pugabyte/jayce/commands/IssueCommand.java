@@ -44,32 +44,27 @@ public class IssueCommand {
 		if (mentionedUsers.size() == 0)
 			throw new EdenException("You must mention the user to assign to the issue");
 
-		Repos.main().issues().assign(id, mentionedUsers.iterator().next().getId());
-		event.thumbsup();
+		Repos.main().issues().assign(id, mentionedUsers.iterator().next().getId()).thenRun(event::thumbsup);
 	}
 
 	@CommandMethod("issue|issues open <id>")
 	private void open(CommandEvent event, @Argument("id") int id) {
-		Repos.main().issues().edit(id, issue -> issue.setState(IssueState.OPEN.name()));
-		event.thumbsup();
+		Repos.main().issues().edit(id, issue -> issue.setState(IssueState.OPEN.name())).thenRun(event::thumbsup);
 	}
 
 	@CommandMethod("issue|issues close <id>")
 	private void close(CommandEvent event, @Argument("id") int id) {
-		Repos.main().issues().edit(id, issue -> issue.setState(IssueState.CLOSED.name()));
-		event.thumbsup();
+		Repos.main().issues().edit(id, issue -> issue.setState(IssueState.CLOSED.name())).thenRun(event::thumbsup);
 	}
 
 	@CommandMethod("issue|issues edit <id> <field> <text>")
 	private void edit(CommandEvent event, @Argument("id") int id, @Argument("field") IssueField field, @Argument("text") @Greedy String text) {
-		Repos.main().issues().edit(id, issue -> field.edit(issue, text));
-		event.thumbsup();
+		Repos.main().issues().edit(id, issue -> field.edit(issue, text)).thenRun(event::thumbsup);
 	}
 
 	@CommandMethod("issue|issues comment <id> <text>")
 	private void comment(CommandEvent event, @Argument("id") int id, @Argument("text") @Greedy String text) {
-		Repos.main().issues().comment(id, "**" + event.getMember().getEffectiveName() + "**: " + text);
-		event.thumbsup();
+		Repos.main().issues().comment(id, "**" + event.getMember().getEffectiveName() + "**: " + text).thenRun(event::thumbsup);
 	}
 
 	@CommandMethod("issue|issues label|labels")
@@ -82,14 +77,12 @@ public class IssueCommand {
 
 	@CommandMethod("issue|issues label|labels add <id> <labels>")
 	private void labelsAdd(CommandEvent event, @Argument("id") int id, @Argument("labels") @Greedy String[] labels) {
-		Repos.main().labels().add(id, List.of(labels));
-		event.thumbsup();
+		Repos.main().labels().add(id, List.of(labels)).thenRun(event::thumbsup);
 	}
 
 	@CommandMethod("issue|issues label|labels remove <id> <labels>")
 	private void labelsRemove(CommandEvent event, @Argument("id") int id, @Argument("labels") @Greedy String[] labels) {
-		Repos.main().labels().remove(id, List.of(labels));
-		event.thumbsup();
+		Repos.main().labels().remove(id, List.of(labels)).thenRun(event::thumbsup);
 	}
 
 	@CommandMethod("issue|issues search <query>")
