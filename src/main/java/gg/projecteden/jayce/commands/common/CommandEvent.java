@@ -1,4 +1,4 @@
-package me.pugabyte.jayce.commands.common;
+package gg.projecteden.jayce.commands.common;
 
 import com.vdurmont.emoji.EmojiManager;
 import lombok.Data;

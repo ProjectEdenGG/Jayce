@@ -1,6 +1,6 @@
-package me.pugabyte.jayce.listeners;
+package gg.projecteden.jayce.listeners;
 
-import me.pugabyte.jayce.services.Repos;
+import gg.projecteden.jayce.services.Repos;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 

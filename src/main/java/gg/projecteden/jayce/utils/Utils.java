@@ -1,9 +1,9 @@
-package me.pugabyte.jayce.utils;
+package gg.projecteden.jayce.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import gg.projecteden.jayce.Jayce;
 import lombok.SneakyThrows;
-import me.pugabyte.jayce.Jayce;
 import org.eclipse.egit.github.core.service.GitHubService;
 
 import java.nio.file.FileSystems;

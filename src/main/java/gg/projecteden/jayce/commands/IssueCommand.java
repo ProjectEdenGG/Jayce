@@ -1,16 +1,16 @@
-package me.pugabyte.jayce.commands;
+package gg.projecteden.jayce.commands;
 
 import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.specifier.Greedy;
 import gg.projecteden.exceptions.EdenException;
+import gg.projecteden.jayce.commands.common.CommandEvent;
+import gg.projecteden.jayce.services.Issues.IssueField;
+import gg.projecteden.jayce.services.Issues.IssueState;
+import gg.projecteden.jayce.services.Repos;
+import gg.projecteden.jayce.utils.Config;
 import gg.projecteden.utils.StringUtils;
 import gg.projecteden.utils.Utils;
-import me.pugabyte.jayce.commands.common.CommandEvent;
-import me.pugabyte.jayce.services.Issues.IssueField;
-import me.pugabyte.jayce.services.Issues.IssueState;
-import me.pugabyte.jayce.services.Repos;
-import me.pugabyte.jayce.utils.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
 import org.eclipse.egit.github.core.Issue;

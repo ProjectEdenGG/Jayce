@@ -1,7 +1,7 @@
-package me.pugabyte.jayce.services;
+package gg.projecteden.jayce.services;
 
 import gg.projecteden.exceptions.EdenException;
-import me.pugabyte.jayce.utils.Utils;
+import gg.projecteden.jayce.utils.Utils;
 import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.service.UserService;
 

@@ -1,10 +1,10 @@
-package me.pugabyte.jayce.services;
+package gg.projecteden.jayce.services;
 
 import gg.projecteden.exceptions.EdenException;
-import me.pugabyte.jayce.services.Issues.IssueAction;
-import me.pugabyte.jayce.services.Labels.LabelAction;
-import me.pugabyte.jayce.utils.Config;
-import me.pugabyte.jayce.utils.Utils;
+import gg.projecteden.jayce.services.Issues.IssueAction;
+import gg.projecteden.jayce.services.Labels.LabelAction;
+import gg.projecteden.jayce.utils.Config;
+import gg.projecteden.jayce.utils.Utils;
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.service.RepositoryService;
 

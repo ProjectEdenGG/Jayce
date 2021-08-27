@@ -1,4 +1,4 @@
-package me.pugabyte.jayce;
+package gg.projecteden.jayce;
 
 import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.arguments.parser.StandardParameters;
@@ -10,12 +10,12 @@ import cloud.commandframework.jda.JDACommandSender;
 import cloud.commandframework.meta.CommandMeta;
 import gg.projecteden.EdenAPI;
 import gg.projecteden.exceptions.EdenException;
+import gg.projecteden.jayce.commands.IssueCommand;
+import gg.projecteden.jayce.commands.common.CommandEvent;
+import gg.projecteden.jayce.listeners.MessageListener;
+import gg.projecteden.jayce.utils.Config;
 import gg.projecteden.mongodb.DatabaseConfig;
 import gg.projecteden.utils.Env;
-import me.pugabyte.jayce.commands.IssueCommand;
-import me.pugabyte.jayce.commands.common.CommandEvent;
-import me.pugabyte.jayce.listeners.MessageListener;
-import me.pugabyte.jayce.utils.Config;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Role;

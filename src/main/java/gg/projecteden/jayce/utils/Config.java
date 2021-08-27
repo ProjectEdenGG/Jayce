@@ -1,4 +1,4 @@
-package me.pugabyte.jayce.utils;
+package gg.projecteden.jayce.utils;
 
 import java.util.Map;
 

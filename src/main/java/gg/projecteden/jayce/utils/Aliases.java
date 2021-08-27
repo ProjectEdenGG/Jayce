@@ -1,6 +1,6 @@
-package me.pugabyte.jayce.utils;
+package gg.projecteden.jayce.utils;
 
-import me.pugabyte.jayce.services.Users;
+import gg.projecteden.jayce.services.Users;
 import org.eclipse.egit.github.core.User;
 
 import java.util.Map;

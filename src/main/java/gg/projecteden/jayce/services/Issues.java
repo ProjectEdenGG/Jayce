@@ -1,10 +1,10 @@
-package me.pugabyte.jayce.services;
+package gg.projecteden.jayce.services;
 
 import gg.projecteden.exceptions.EdenException;
+import gg.projecteden.jayce.utils.Aliases;
+import gg.projecteden.jayce.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import me.pugabyte.jayce.utils.Aliases;
-import me.pugabyte.jayce.utils.Utils;
 import org.eclipse.egit.github.core.Comment;
 import org.eclipse.egit.github.core.Issue;
 import org.eclipse.egit.github.core.SearchIssue;
