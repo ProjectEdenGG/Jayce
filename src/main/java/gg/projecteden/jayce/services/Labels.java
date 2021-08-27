@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 public class Labels {
 	public static final LabelService LABELS = Utils.load(new LabelService());
 
-	public record LabelAction(String user, String repo) {
+	public record RepoLabelContext(String user, String repo) {
 
 		public CompletableFuture<Label> get(String labelId) {
 			try {

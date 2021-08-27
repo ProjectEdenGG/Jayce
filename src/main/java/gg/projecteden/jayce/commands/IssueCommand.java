@@ -34,8 +34,8 @@ public class IssueCommand {
 			issue.setBody("Submitted by **" + event.getName() + "**");
 
 		Repos.main().issues().create(issue).thenAccept(result -> {
-			if (!event.getChannel().getId().equals(Config.WEBHOOK_CHANNEL_ID))
-				event.reply(Repos.main().issues().url(result.getNumber()).embed(false).get());
+			if (!event.isWebhookChannel())
+				event.reply(Repos.main().issues().url(result).embed(false).get());
 		});
 	}
 

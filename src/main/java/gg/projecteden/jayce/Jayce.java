@@ -26,17 +26,17 @@ public class Jayce extends EdenAPI {
 	public static JDA JDA;
 	public static JDA4CommandManager<CommandEvent> COMMAND_MANAGER;
 
-	public Jayce() {
-		instance = this;
+	public static void main(String[] args) {
+		new Jayce();
 	}
 
-	public static void main(String[] args) {
+	public Jayce() {
+		instance = this;
+
 		try {
-			new Jayce();
 			jda();
 			cloud();
 		} catch (Exception ex) {
-			System.out.println(ex.getMessage());
 			ex.printStackTrace();
 		}
 	}
@@ -67,8 +67,7 @@ public class Jayce extends EdenAPI {
 			}
 		});
 
-		COMMAND_MANAGER.registerExceptionHandler(NoSuchCommandException.class, (event, ignore) -> {
-		});
+		COMMAND_MANAGER.registerExceptionHandler(NoSuchCommandException.class, (event, ignore) -> {});
 
 		final var annotationParser = new AnnotationParser<>(COMMAND_MANAGER, CommandEvent.class, params ->
 			CommandMeta.simple()

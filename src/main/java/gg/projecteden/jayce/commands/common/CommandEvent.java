@@ -1,6 +1,7 @@
 package gg.projecteden.jayce.commands.common;
 
 import com.vdurmont.emoji.EmojiManager;
+import gg.projecteden.jayce.utils.Config;
 import lombok.Data;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -24,6 +25,10 @@ public final class CommandEvent {
 
 	public String getName() {
 		return member.getEffectiveName();
+	}
+
+	public boolean isWebhookChannel() {
+		return event.getChannel().getId().equals(Config.WEBHOOK_CHANNEL_ID);
 	}
 
 	public void reply(String message) {

@@ -20,14 +20,13 @@ import java.util.function.Consumer;
 public class Issues {
 	public static final IssueService ISSUES = Utils.load(new IssueService());
 
-	public record IssueAction(String user, String repo) {
+	public record RepoIssueContext(String user, String repo) {
 
 		public CompletableFuture<Issue> create(Issue issue) {
 			try {
 				return CompletableFuture.completedFuture(ISSUES.createIssue(user, repo, issue));
 			} catch (IOException ex) {
-				ex.printStackTrace();
-				throw new EdenException("Error creating new issue in " + user + "/" + repo);
+				throw new EdenException("Error creating new issue in " + user + "/" + repo, ex);
 			}
 		}
 
@@ -82,7 +81,7 @@ public class Issues {
 		}
 
 		public IssueUrl url(Issue issue) {
-			return new IssueUrl((int) issue.getId());
+			return new IssueUrl(issue.getNumber());
 		}
 
 		public IssueUrl url(int id) {
