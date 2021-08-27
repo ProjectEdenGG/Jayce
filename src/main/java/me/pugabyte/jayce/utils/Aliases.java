@@ -1,20 +1,24 @@
 package me.pugabyte.jayce.utils;
 
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
+import me.pugabyte.jayce.services.Users;
+import org.eclipse.egit.github.core.User;
+
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class Aliases {
-	public final HashMap<String, String> aliases = new HashMap<>();
 
-	public Aliases() throws IOException {
-		List<String> config = Files.readAllLines(Paths.get("Jayce" + FileSystems.getDefault().getSeparator() + "aliases.txt"));
-		for (String line : config) {
-			String[] setting = line.split(" ");
-			aliases.put(setting[0], setting[1]);
-		}
+	public static Map<String, String> config = Utils.readConfig("aliases.json");
+
+	public static CompletableFuture<User> githubOf(String discordId) {
+		return Users.get(config.get(discordId)).execute();
 	}
+
+	public static String discordOf(String githubName) {
+		for (String discordId : config.keySet())
+			if (config.get(discordId).equalsIgnoreCase(githubName))
+				return discordId;
+		return null;
+	}
+
 }

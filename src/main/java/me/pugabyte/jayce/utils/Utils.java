@@ -1,12 +1,35 @@
 package me.pugabyte.jayce.utils;
 
-import com.jagrosh.jdautilities.command.CommandEvent;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import lombok.SneakyThrows;
 import me.pugabyte.jayce.Jayce;
+import org.eclipse.egit.github.core.service.GitHubService;
+
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Utils {
-	// Method to hide messages in a channel with a webhook enabled
-	public static void reply(CommandEvent event, String message) {
-		if (!event.getChannel().getId().equals(Jayce.CONFIG.webhookChannelId))
-			event.reply(message);
+
+	public static <T extends GitHubService> T load(T service) {
+		service.getClient().setOAuth2Token(Config.GITHUB_TOKEN);
+		return service;
 	}
+
+	@SneakyThrows
+	public static Map<String, String> readConfig(String file) {
+		try {
+			final String path = Jayce.class.getSimpleName() + FileSystems.getDefault().getSeparator() + file;
+			String json = String.join("", Files.readAllLines(Paths.get(path)));
+			return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
+			}.getType());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return new HashMap<>();
+		}
+	}
+
 }
