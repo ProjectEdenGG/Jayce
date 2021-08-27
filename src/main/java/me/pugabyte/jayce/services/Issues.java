@@ -4,7 +4,6 @@ import gg.projecteden.exceptions.EdenException;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import me.pugabyte.jayce.utils.Aliases;
-import me.pugabyte.jayce.utils.Config;
 import me.pugabyte.jayce.utils.Utils;
 import org.eclipse.egit.github.core.Comment;
 import org.eclipse.egit.github.core.Issue;
@@ -20,18 +19,6 @@ import java.util.function.Consumer;
 @SuppressWarnings("unused")
 public class Issues {
 	public static final IssueService ISSUES = Utils.load(new IssueService());
-
-	public static IssueAction repo() {
-		return repo(Config.GITHUB_REPO);
-	}
-
-	public static IssueAction repo(String repo) {
-		return repo(Config.GITHUB_USER, repo);
-	}
-
-	public static IssueAction repo(String user, String repo) {
-		return new IssueAction(user, repo);
-	}
 
 	public record IssueAction(String user, String repo) {
 

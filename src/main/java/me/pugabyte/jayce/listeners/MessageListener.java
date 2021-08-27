@@ -1,6 +1,6 @@
 package me.pugabyte.jayce.listeners;
 
-import me.pugabyte.jayce.services.Issues;
+import me.pugabyte.jayce.services.Repos;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -17,7 +17,7 @@ public class MessageListener extends ListenerAdapter {
 				continue;
 
 			final int id = Integer.parseInt(word.replaceAll("git#", ""));
-			final String url = Issues.repo().url(id).embed(false).get();
+			final String url = Repos.main().issues().url(id).embed(false).get();
 			event.getTextChannel().sendMessage(url).queue();
 		}
 	}

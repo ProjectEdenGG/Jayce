@@ -1,7 +1,6 @@
 package me.pugabyte.jayce.services;
 
 import gg.projecteden.exceptions.EdenException;
-import me.pugabyte.jayce.utils.Config;
 import me.pugabyte.jayce.utils.Utils;
 import org.eclipse.egit.github.core.Issue;
 import org.eclipse.egit.github.core.Label;
@@ -15,18 +14,6 @@ import java.util.function.Consumer;
 @SuppressWarnings("unused")
 public class Labels {
 	public static final LabelService LABELS = Utils.load(new LabelService());
-
-	public static LabelAction repo() {
-		return repo(Config.GITHUB_REPO);
-	}
-
-	public static LabelAction repo(String repo) {
-		return repo(Config.GITHUB_USER, repo);
-	}
-
-	public static LabelAction repo(String user, String repo) {
-		return new LabelAction(user, repo);
-	}
 
 	public record LabelAction(String user, String repo) {
 
@@ -61,7 +48,7 @@ public class Labels {
 		}
 
 		public CompletableFuture<Issue> edit(int id, Consumer<Issue> consumer) {
-			return Issues.repo(user, repo).edit(id, consumer);
+			return Repos.repo(user, repo).issues().edit(id, consumer);
 		}
 
 		public CompletableFuture<Issue> save(Issue issue) {

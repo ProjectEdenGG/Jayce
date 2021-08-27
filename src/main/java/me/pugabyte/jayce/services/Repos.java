@@ -1,6 +1,8 @@
 package me.pugabyte.jayce.services;
 
 import gg.projecteden.exceptions.EdenException;
+import me.pugabyte.jayce.services.Issues.IssueAction;
+import me.pugabyte.jayce.services.Labels.LabelAction;
 import me.pugabyte.jayce.utils.Config;
 import me.pugabyte.jayce.utils.Utils;
 import org.eclipse.egit.github.core.Repository;
@@ -13,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 public class Repos {
 	public static final RepositoryService REPOS = Utils.load(new RepositoryService());
 
-	public static RepoAction repo() {
+	public static RepoAction main() {
 		return repo(Config.GITHUB_REPO);
 	}
 
@@ -26,6 +28,14 @@ public class Repos {
 	}
 
 	public record RepoAction(String user, String repo) {
+
+		public IssueAction issues() {
+			return new IssueAction(user, repo);
+		}
+
+		public LabelAction labels() {
+			return new LabelAction(user, repo);
+		}
 
 		public CompletableFuture<Repository> get() {
 			try {
