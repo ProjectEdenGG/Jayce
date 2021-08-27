@@ -30,21 +30,21 @@ public class Issues {
 			}
 		}
 
-		public CompletableFuture<Issue> get(int id) {
+		public CompletableFuture<Issue> get(int issueId) {
 			try {
-				return CompletableFuture.completedFuture(ISSUES.getIssue(user, repo, id));
+				return CompletableFuture.completedFuture(ISSUES.getIssue(user, repo, issueId));
 			} catch (IOException ex) {
-				throw new EdenException("Error retrieving issue " + user + "/" + repo + "#" + id, ex);
+				throw new EdenException("Error retrieving issue " + user + "/" + repo + "#" + issueId, ex);
 			}
 		}
 
-		public CompletableFuture<Issue> assign(int id, String userId) {
+		public CompletableFuture<Issue> assign(int issueId, String userId) {
 			return Aliases.githubOf(userId).thenCompose(user ->
-				edit(id, issue -> issue.setAssignee(user)));
+				edit(issueId, issue -> issue.setAssignee(user)));
 		}
 
-		public CompletableFuture<Issue> edit(int id, Consumer<Issue> consumer) {
-			return get(id).thenCompose(result -> {
+		public CompletableFuture<Issue> edit(int issueId, Consumer<Issue> consumer) {
+			return get(issueId).thenCompose(result -> {
 				consumer.accept(result);
 				return save(result);
 			});
@@ -58,11 +58,11 @@ public class Issues {
 			}
 		}
 
-		public CompletableFuture<Comment> comment(int id, String text) {
+		public CompletableFuture<Comment> comment(int issueId, String text) {
 			try {
-				return CompletableFuture.completedFuture(ISSUES.createComment(user, repo, id, text));
+				return CompletableFuture.completedFuture(ISSUES.createComment(user, repo, issueId, text));
 			} catch (IOException ex) {
-				throw new EdenException("Error creating comment on issue " + user + "/" + repo + "#" + id, ex);
+				throw new EdenException("Error creating comment on issue " + user + "/" + repo + "#" + issueId, ex);
 			}
 		}
 
@@ -84,14 +84,14 @@ public class Issues {
 			return new IssueUrl(issue.getNumber());
 		}
 
-		public IssueUrl url(int id) {
-			return new IssueUrl(id);
+		public IssueUrl url(int issueId) {
+			return new IssueUrl(issueId);
 		}
 
 		@AllArgsConstructor
 		@RequiredArgsConstructor
 		public class IssueUrl {
-			private final int id;
+			private final int issueId;
 			private boolean embed = true;
 
 			public IssueUrl embed(boolean embed) {
@@ -100,7 +100,7 @@ public class Issues {
 			}
 
 			public String get() {
-				String url = String.format("https://github.com/%s/%s/issues/%s", user, repo, id > 0 ? String.valueOf(id) : "");
+				String url = String.format("https://github.com/%s/%s/issues/%s", user, repo, issueId > 0 ? String.valueOf(issueId) : "");
 				if (!embed)
 					url = "<" + url + ">";
 				return url;
@@ -113,6 +113,10 @@ public class Issues {
 		OPEN,
 		CLOSED,
 		;
+
+		public void set(Issue issue) {
+			issue.setState(name());
+		}
 
 		public static IssueState ofQuery(String text) {
 			for (IssueState state : values())

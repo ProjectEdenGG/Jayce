@@ -16,8 +16,8 @@ public class MessageListener extends ListenerAdapter {
 			if (!word.matches("^git#\\d+"))
 				continue;
 
-			final int id = Integer.parseInt(word.replaceAll("git#", ""));
-			final String url = Repos.main().issues().url(id).embed(false).get();
+			final int issueId = Integer.parseInt(word.replaceAll("git#", ""));
+			final String url = Repos.main().issues().url(issueId).embed(false).get();
 			event.getTextChannel().sendMessage(url).queue();
 		}
 	}

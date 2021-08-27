@@ -37,18 +37,18 @@ public class Labels {
 			}
 		}
 
-		public CompletableFuture<Issue> add(int id, List<String> labelIds) {
+		public CompletableFuture<Issue> add(int issueId, List<String> labelIds) {
 			return getMultiple(labelIds).thenCompose(labels ->
-				edit(id, issue -> issue.getLabels().addAll(labels)));
+				edit(issueId, issue -> issue.getLabels().addAll(labels)));
 		}
 
-		public CompletableFuture<Issue> remove(int id, List<String> labelIds) {
+		public CompletableFuture<Issue> remove(int issueId, List<String> labelIds) {
 			return getMultiple(labelIds).thenCompose(labels ->
-				edit(id, issue -> issue.getLabels().removeAll(labels)));
+				edit(issueId, issue -> issue.getLabels().removeAll(labels)));
 		}
 
-		public CompletableFuture<Issue> edit(int id, Consumer<Issue> consumer) {
-			return Repos.repo(user, repo).issues().edit(id, consumer);
+		public CompletableFuture<Issue> edit(int issueId, Consumer<Issue> consumer) {
+			return Repos.repo(user, repo).issues().edit(issueId, consumer);
 		}
 
 		public CompletableFuture<Issue> save(Issue issue) {
