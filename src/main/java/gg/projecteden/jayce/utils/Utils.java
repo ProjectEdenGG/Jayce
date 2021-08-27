@@ -26,7 +26,7 @@ public class Utils {
 		try {
 			final String path = Jayce.class.getSimpleName() + FileSystems.getDefault().getSeparator() + file;
 			String json = String.join("", Files.readAllLines(Paths.get(path)));
-			return new Gson().fromJson(json, new TypeToken<Map<String, Object>>() {
+			return new Gson().fromJson(json, new TypeToken<Map<String, String>>() {
 			}.getType());
 		} catch (Exception ex) {
 			ex.printStackTrace();

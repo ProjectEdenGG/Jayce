@@ -52,8 +52,7 @@ public class Jayce extends EdenAPI {
 		COMMAND_MANAGER = new JDA4CommandManager<>(
 			JDA,
 			event -> Config.COMMAND_PREFIX,
-			(event, command) -> event.getMember().getRoles().stream()
-				.map(Role::getName).anyMatch(role -> role.equalsIgnoreCase("Verified")),
+			(event, command) -> event.getMember().getRoles().stream().map(Role::getName).anyMatch(role -> role.equalsIgnoreCase("Verified")),
 			CommandExecutionCoordinator.simpleCoordinator(),
 			event -> new CommandEvent(event.getEvent().get(), event.getEvent().get().getMember(), event.getChannel()),
 			event -> JDACommandSender.of(event.getEvent())

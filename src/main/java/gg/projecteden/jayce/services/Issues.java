@@ -106,7 +106,6 @@ public class Issues {
 					url = "<" + url + ">";
 				return url;
 			}
-
 		}
 
 	}

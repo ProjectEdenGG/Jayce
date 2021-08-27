@@ -10,7 +10,6 @@ import gg.projecteden.jayce.services.Issues.IssueState;
 import gg.projecteden.jayce.services.Repos;
 import gg.projecteden.jayce.utils.Config;
 import gg.projecteden.utils.StringUtils;
-import gg.projecteden.utils.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
 import org.eclipse.egit.github.core.Issue;
@@ -18,7 +17,9 @@ import org.eclipse.egit.github.core.Label;
 import org.eclipse.egit.github.core.SearchIssue;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static gg.projecteden.utils.Utils.isNullOrEmpty;
+import static java.util.stream.Collectors.joining;
 
 public class IssueCommand {
 
@@ -28,13 +29,13 @@ public class IssueCommand {
 
 		final Issue issue = new Issue().setTitle(content[0]);
 		if (content.length > 1)
-			issue.setBody("**" + event.getMember().getEffectiveName() + "**: " + content[1]);
+			issue.setBody("**" + event.getName() + "**: " + content[1]);
 		else
-			issue.setBody("Submitted by **" + event.getMember().getEffectiveName() + "**");
+			issue.setBody("Submitted by **" + event.getName() + "**");
 
 		Repos.main().issues().create(issue).thenAccept(result -> {
 			if (!event.getChannel().getId().equals(Config.WEBHOOK_CHANNEL_ID))
-				event.getChannel().sendMessage(Repos.main().issues().url(result.getNumber()).embed(false).get()).queue();
+				event.reply(Repos.main().issues().url(result.getNumber()).embed(false).get());
 		});
 	}
 
@@ -64,15 +65,13 @@ public class IssueCommand {
 
 	@CommandMethod("issue|issues comment <id> <text>")
 	private void comment(CommandEvent event, @Argument("id") int id, @Argument("text") @Greedy String text) {
-		Repos.main().issues().comment(id, "**" + event.getMember().getEffectiveName() + "**: " + text).thenRun(event::thumbsup);
+		Repos.main().issues().comment(id, "**" + event.getName() + "**: " + text).thenRun(event::thumbsup);
 	}
 
 	@CommandMethod("issue|issues label|labels")
 	private void labels(CommandEvent event) {
-		Repos.main().labels().getAll().thenAccept(labels -> {
-			String names = labels.stream().map(Label::getName).collect(Collectors.joining(", "));
-			event.getChannel().sendMessage("Valid labels: " + names).queue();
-		});
+		Repos.main().labels().getAll().thenAccept(labels ->
+			event.reply("Available labels: " + labels.stream().map(Label::getName).collect(joining(", "))));
 	}
 
 	@CommandMethod("issue|issues label|labels add <id> <labels>")
@@ -88,8 +87,8 @@ public class IssueCommand {
 	@CommandMethod("issue|issues search <query>")
 	private void search(CommandEvent event, @Argument("query") @Greedy String query) {
 		Repos.main().issues().search(query).thenAccept(results -> {
-			if (Utils.isNullOrEmpty(results))
-				throw new EdenException("No results found idiot");
+			if (isNullOrEmpty(results))
+				throw new EdenException("No results found");
 
 			String body = "";
 			String url = Repos.main().issues().url().get();
