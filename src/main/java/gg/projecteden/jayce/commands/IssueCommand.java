@@ -18,6 +18,7 @@ import org.eclipse.egit.github.core.SearchIssue;
 
 import java.util.List;
 
+import static gg.projecteden.utils.StringUtils.ellipsis;
 import static gg.projecteden.utils.Utils.isNullOrEmpty;
 import static java.util.stream.Collectors.joining;
 
@@ -90,19 +91,17 @@ public class IssueCommand {
 			if (isNullOrEmpty(results))
 				throw new EdenException("No results found");
 
-			String body = "";
-			String url = Repos.main().issues().url().get();
+			final String title = "Found " + results.size() + StringUtils.plural(" issue", results.size());
+			final String url = Repos.main().issues().url().get();
+			final StringBuilder body = new StringBuilder();
 
 			for (SearchIssue issue : results)
-				body += "#" + issue.getNumber() + ": " + "[" + issue.getTitle() + "]"
-					+ "(" + url + issue.getNumber() + ") " + " - " + issue.getUser()
-					+ System.lineSeparator() + System.lineSeparator();
-
-			final String title = "Found " + results.size() + StringUtils.plural(" issue", results.size());
+				body.append(String.format("#%d [%s](%s) - %s%s", issue.getNumber(), ellipsis(issue.getTitle(), 50),
+					url + issue.getNumber(), issue.getUser(), System.lineSeparator() + System.lineSeparator()));
 
 			final EmbedBuilder embed = new EmbedBuilder()
 				.setAuthor(title, url, Config.ICON_URL)
-				.setDescription(body);
+				.setDescription(body.toString());
 
 			event.reply(embed);
 		});
