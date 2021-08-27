@@ -11,7 +11,6 @@ import org.eclipse.egit.github.core.Issue;
 import org.eclipse.egit.github.core.SearchIssue;
 import org.eclipse.egit.github.core.service.IssueService;
 
-import javax.annotation.CheckReturnValue;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -36,39 +35,59 @@ public class Issues {
 
 	public record IssueAction(String user, String repo) {
 
-		@CheckReturnValue
-		public IssueCreate create(Issue issue) {
-			return new IssueCreate(issue);
+		public CompletableFuture<Issue> create(Issue issue) {
+			try {
+				return CompletableFuture.completedFuture(ISSUES.createIssue(user, repo, issue));
+			} catch (IOException ex) {
+				ex.printStackTrace();
+				throw new EdenException("Error creating new issue in " + user + "/" + repo);
+			}
 		}
 
-		@CheckReturnValue
-		public IssueGet get(int id) {
-			return new IssueGet(id);
+		public CompletableFuture<Issue> get(int id) {
+			try {
+				return CompletableFuture.completedFuture(ISSUES.getIssue(user, repo, id));
+			} catch (IOException ex) {
+				throw new EdenException("Error retrieving issue " + user + "/" + repo + "#" + id, ex);
+			}
 		}
 
-		@CheckReturnValue
-		public IssueAssign assign(int id, String user) {
-			return new IssueAssign(id, user);
+		public CompletableFuture<Issue> assign(int id, String userId) {
+			return Aliases.githubOf(userId).thenCompose(user ->
+				edit(id, issue -> issue.setAssignee(user)));
 		}
 
-		@CheckReturnValue
-		public IssueEdit edit(int id, Consumer<Issue> consumer) {
-			return new IssueEdit(id, consumer);
+		public CompletableFuture<Issue> edit(int id, Consumer<Issue> consumer) {
+			return get(id).thenCompose(result -> {
+				consumer.accept(result);
+				return save(result);
+			});
 		}
 
-		@CheckReturnValue
-		public IssueSave save(Issue issue) {
-			return new IssueSave(issue);
+		public CompletableFuture<Issue> save(Issue issue) {
+			try {
+				return CompletableFuture.completedFuture(ISSUES.editIssue(user, repo, issue));
+			} catch (IOException ex) {
+				throw new EdenException("Error saving issue " + user + "/" + repo + "#" + issue.getNumber(), ex);
+			}
 		}
 
-		@CheckReturnValue
-		public IssueComment comment(int id, String text) {
-			return new IssueComment(id, text);
+		public CompletableFuture<Comment> comment(int id, String text) {
+			try {
+				return CompletableFuture.completedFuture(ISSUES.createComment(user, repo, id, text));
+			} catch (IOException ex) {
+				throw new EdenException("Error creating comment on issue " + user + "/" + repo + "#" + id, ex);
+			}
 		}
 
-		@CheckReturnValue
-		public IssueSearch search(String text) {
-			return new IssueSearch(text);
+		public CompletableFuture<List<SearchIssue>> search(String text) {
+			return Repos.repo(user, repo).get().thenCompose(repo -> {
+				try {
+					return CompletableFuture.completedFuture(ISSUES.searchIssues(repo, IssueState.ofQuery(text).name(), text));
+				} catch (IOException ex) {
+					throw new EdenException("Error searching issues in " + user + "/" + repo, ex);
+				}
+			});
 		}
 
 		public IssueUrl url() {
@@ -84,99 +103,6 @@ public class Issues {
 		}
 
 		@AllArgsConstructor
-		public class IssueCreate implements Executor<Issue> {
-			private final Issue issue;
-
-			public CompletableFuture<Issue> execute() {
-				try {
-					return CompletableFuture.completedFuture(ISSUES.createIssue(user, repo, issue));
-				} catch (IOException ex) {
-					ex.printStackTrace();
-					throw new EdenException("Error creating new issue in " + user + "/" + repo);
-				}
-			}
-		}
-
-		@AllArgsConstructor
-		public class IssueGet implements Executor<Issue> {
-			private final int id;
-
-			public CompletableFuture<Issue> execute() {
-				try {
-					return CompletableFuture.completedFuture(ISSUES.getIssue(user, repo, id));
-				} catch (IOException ex) {
-					throw new EdenException("Error retrieving issue " + user + "/" + repo + "#" + id, ex);
-				}
-			}
-		}
-
-		@AllArgsConstructor
-		public class IssueAssign implements Executor<Issue> {
-			private final int id;
-			private final String user;
-
-			public CompletableFuture<Issue> execute() {
-				return Aliases.githubOf(user).thenCompose(user ->
-					edit(id, issue -> issue.setAssignee(user)).execute());
-			}
-		}
-
-		@AllArgsConstructor
-		public class IssueEdit implements Executor<Issue> {
-			private final int id;
-			private final Consumer<Issue> consumer;
-
-			public CompletableFuture<Issue> execute() {
-				return get(id).execute().thenCompose(result -> {
-					consumer.accept(result);
-					return save(result).execute();
-				});
-			}
-		}
-
-		@AllArgsConstructor
-		public class IssueSave implements Executor<Issue> {
-			private final Issue issue;
-
-			public CompletableFuture<Issue> execute() {
-				try {
-					return CompletableFuture.completedFuture(ISSUES.editIssue(user, repo, issue));
-				} catch (IOException ex) {
-					throw new EdenException("Error saving issue " + user + "/" + repo + "#" + issue.getNumber(), ex);
-				}
-			}
-		}
-
-		@AllArgsConstructor
-		public class IssueComment implements Executor<Comment> {
-			private final int id;
-			private final String text;
-
-			public CompletableFuture<Comment> execute() {
-				try {
-					return CompletableFuture.completedFuture(ISSUES.createComment(user, repo, id, text));
-				} catch (IOException ex) {
-					throw new EdenException("Error creating comment on issue " + user + "/" + repo + "#" + id, ex);
-				}
-			}
-		}
-
-		@AllArgsConstructor
-		public class IssueSearch implements Executor<List<SearchIssue>> {
-			private final String text;
-
-			public CompletableFuture<List<SearchIssue>> execute() {
-				return Repos.repo(user, repo).get().execute().thenCompose(repo -> {
-					try {
-						return CompletableFuture.completedFuture(ISSUES.searchIssues(repo, IssueState.ofQuery(text).name(), text));
-					} catch (IOException ex) {
-						throw new EdenException("Error searching issues in " + user + "/" + repo, ex);
-					}
-				});
-			}
-		}
-
-		@AllArgsConstructor
 		@RequiredArgsConstructor
 		public class IssueUrl {
 			private final int id;
@@ -187,16 +113,16 @@ public class Issues {
 				return this;
 			}
 
-			public String execute() {
+			public String get() {
 				String url = String.format("https://github.com/%s/%s/issues/%s", user, repo, id > 0 ? String.valueOf(id) : "");
 				if (!embed)
 					url = "<" + url + ">";
 				return url;
 			}
+
 		}
 
 	}
-
 
 	public enum IssueState {
 		OPEN,

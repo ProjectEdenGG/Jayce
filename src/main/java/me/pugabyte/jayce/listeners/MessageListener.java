@@ -17,7 +17,7 @@ public class MessageListener extends ListenerAdapter {
 				continue;
 
 			final int id = Integer.parseInt(word.replaceAll("git#", ""));
-			final String url = Issues.repo().url(id).embed(false).execute();
+			final String url = Issues.repo().url(id).embed(false).get();
 			event.getTextChannel().sendMessage(url).queue();
 		}
 	}

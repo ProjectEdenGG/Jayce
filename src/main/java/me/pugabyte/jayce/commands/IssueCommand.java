@@ -33,9 +33,9 @@ public class IssueCommand {
 		else
 			issue.setBody("Submitted by **" + event.getMember().getEffectiveName() + "**");
 
-		Issues.repo().create(issue).execute().thenAccept(result -> {
+		Issues.repo().create(issue).thenAccept(result -> {
 			if (!event.getChannel().getId().equals(Config.WEBHOOK_CHANNEL_ID))
-				event.getChannel().sendMessage(Issues.repo().url(result.getNumber()).embed(false).execute()).queue();
+				event.getChannel().sendMessage(Issues.repo().url(result.getNumber()).embed(false).get()).queue();
 		});
 	}
 
@@ -45,37 +45,37 @@ public class IssueCommand {
 		if (mentionedUsers.size() == 0)
 			throw new EdenException("You must mention the user to assign to the issue");
 
-		Issues.repo().assign(id, mentionedUsers.iterator().next().getId()).execute();
+		Issues.repo().assign(id, mentionedUsers.iterator().next().getId());
 		event.thumbsup();
 	}
 
 	@CommandMethod("issue|issues open <id>")
 	private void open(CommandEvent event, @Argument("id") int id) {
-		Issues.repo().edit(id, issue -> issue.setState(IssueState.OPEN.name())).execute();
+		Issues.repo().edit(id, issue -> issue.setState(IssueState.OPEN.name()));
 		event.thumbsup();
 	}
 
 	@CommandMethod("issue|issues close <id>")
 	private void close(CommandEvent event, @Argument("id") int id) {
-		Issues.repo().edit(id, issue -> issue.setState(IssueState.CLOSED.name())).execute();
+		Issues.repo().edit(id, issue -> issue.setState(IssueState.CLOSED.name()));
 		event.thumbsup();
 	}
 
 	@CommandMethod("issue|issues edit <id> <field> <text>")
 	private void edit(CommandEvent event, @Argument("id") int id, @Argument("field") IssueField field, @Argument("text") @Greedy String text) {
-		Issues.repo().edit(id, issue -> field.edit(issue, text)).execute();
+		Issues.repo().edit(id, issue -> field.edit(issue, text));
 		event.thumbsup();
 	}
 
 	@CommandMethod("issue|issues comment <id> <text>")
 	private void comment(CommandEvent event, @Argument("id") int id, @Argument("text") @Greedy String text) {
-		Issues.repo().comment(id, "**" + event.getMember().getEffectiveName() + "**: " + text).execute();
+		Issues.repo().comment(id, "**" + event.getMember().getEffectiveName() + "**: " + text);
 		event.thumbsup();
 	}
 
 	@CommandMethod("issue|issues label|labels")
 	private void labels(CommandEvent event) {
-		Labels.repo().getAll().execute().thenAccept(labels -> {
+		Labels.repo().getAll().thenAccept(labels -> {
 			String names = labels.stream().map(Label::getName).collect(Collectors.joining(", "));
 			event.getChannel().sendMessage("Valid labels: " + names).queue();
 		});
@@ -83,24 +83,24 @@ public class IssueCommand {
 
 	@CommandMethod("issue|issues label|labels add <id> <labels>")
 	private void labelsAdd(CommandEvent event, @Argument("id") int id, @Argument("labels") @Greedy String[] labels) {
-		Labels.repo().add(id, List.of(labels)).execute();
+		Labels.repo().add(id, List.of(labels));
 		event.thumbsup();
 	}
 
 	@CommandMethod("issue|issues label|labels remove <id> <labels>")
 	private void labelsRemove(CommandEvent event, @Argument("id") int id, @Argument("labels") @Greedy String[] labels) {
-		Labels.repo().remove(id, List.of(labels)).execute();
+		Labels.repo().remove(id, List.of(labels));
 		event.thumbsup();
 	}
 
 	@CommandMethod("issue|issues search <query>")
 	private void search(CommandEvent event, @Argument("query") @Greedy String query) {
-		Issues.repo().search(query).execute().thenAccept(results -> {
+		Issues.repo().search(query).thenAccept(results -> {
 			if (Utils.isNullOrEmpty(results))
 				throw new EdenException("No results found idiot");
 
 			String body = "";
-			String url = Issues.repo().url().execute();
+			String url = Issues.repo().url().get();
 
 			for (SearchIssue issue : results)
 				body += "#" + issue.getNumber() + ": " + "[" + issue.getTitle() + "]"

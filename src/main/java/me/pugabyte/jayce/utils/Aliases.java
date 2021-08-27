@@ -11,7 +11,7 @@ public class Aliases {
 	public static Map<String, String> config = Utils.readConfig("aliases.json");
 
 	public static CompletableFuture<User> githubOf(String discordId) {
-		return Users.get(config.get(discordId)).execute();
+		return Users.get(config.get(discordId));
 	}
 
 	public static String discordOf(String githubName) {

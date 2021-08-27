@@ -6,7 +6,6 @@ import me.pugabyte.jayce.utils.Utils;
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.service.RepositoryService;
 
-import javax.annotation.CheckReturnValue;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
@@ -28,18 +27,11 @@ public class Repos {
 
 	public record RepoAction(String user, String repo) {
 
-		@CheckReturnValue
-		public RepoGet get() {
-			return new RepoGet();
-		}
-
-		public class RepoGet implements Executor<Repository> {
-			public CompletableFuture<Repository> execute() {
-				try {
-					return CompletableFuture.completedFuture(REPOS.getRepository(user, repo));
-				} catch (IOException ex) {
-					throw new EdenException("Error retrieving repository " + user + "/" + repo, ex);
-				}
+		public CompletableFuture<Repository> get() {
+			try {
+				return CompletableFuture.completedFuture(REPOS.getRepository(user, repo));
+			} catch (IOException ex) {
+				throw new EdenException("Error retrieving repository " + user + "/" + repo, ex);
 			}
 		}
 

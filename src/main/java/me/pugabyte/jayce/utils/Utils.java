@@ -10,7 +10,9 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class Utils {
 
@@ -30,6 +32,11 @@ public class Utils {
 			ex.printStackTrace();
 			return new HashMap<>();
 		}
+	}
+
+	public static <T> CompletableFuture<List<T>> join(List<CompletableFuture<T>> futures) {
+		return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new))
+			.thenApply($ -> futures.stream().map(CompletableFuture::join).toList());
 	}
 
 }
