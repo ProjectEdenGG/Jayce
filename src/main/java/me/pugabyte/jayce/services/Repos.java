@@ -28,8 +28,8 @@ public class Repos {
 
 	public record RepoAction(String user, String repo) {
 
-		public @CheckReturnValue
-		RepoGet get() {
+		@CheckReturnValue
+		public RepoGet get() {
 			return new RepoGet();
 		}
 
@@ -41,7 +41,6 @@ public class Repos {
 					throw new EdenException("Error retrieving repository " + user + "/" + repo, ex);
 				}
 			}
-
 		}
 
 	}

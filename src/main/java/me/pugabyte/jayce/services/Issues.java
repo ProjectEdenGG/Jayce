@@ -95,7 +95,6 @@ public class Issues {
 					throw new EdenException("Error creating new issue in " + user + "/" + repo);
 				}
 			}
-
 		}
 
 		@AllArgsConstructor
@@ -109,7 +108,6 @@ public class Issues {
 					throw new EdenException("Error retrieving issue " + user + "/" + repo + "#" + id, ex);
 				}
 			}
-
 		}
 
 		@AllArgsConstructor
@@ -121,7 +119,6 @@ public class Issues {
 				return Aliases.githubOf(user).thenCompose(user ->
 					edit(id, issue -> issue.setAssignee(user)).execute());
 			}
-
 		}
 
 		@AllArgsConstructor
@@ -135,7 +132,6 @@ public class Issues {
 					return save(result).execute();
 				});
 			}
-
 		}
 
 		@AllArgsConstructor
@@ -149,7 +145,6 @@ public class Issues {
 					throw new EdenException("Error saving issue " + user + "/" + repo + "#" + issue.getNumber(), ex);
 				}
 			}
-
 		}
 
 		@AllArgsConstructor
@@ -164,7 +159,6 @@ public class Issues {
 					throw new EdenException("Error creating comment on issue " + user + "/" + repo + "#" + id, ex);
 				}
 			}
-
 		}
 
 		@AllArgsConstructor
@@ -180,7 +174,6 @@ public class Issues {
 					}
 				});
 			}
-
 		}
 
 		@AllArgsConstructor
@@ -200,7 +193,6 @@ public class Issues {
 					url = "<" + url + ">";
 				return url;
 			}
-
 		}
 
 	}

@@ -32,38 +32,38 @@ public class Labels {
 
 	public record LabelAction(String user, String repo) {
 
-		public @CheckReturnValue
-		LabelGet get(String id) {
+		@CheckReturnValue
+		public LabelGet get(String id) {
 			return new LabelGet(id);
 		}
 
-		public @CheckReturnValue
-		LabelGetMultiple getMultiple(List<String> labelIds) {
+		@CheckReturnValue
+		public LabelGetMultiple getMultiple(List<String> labelIds) {
 			return new LabelGetMultiple(labelIds);
 		}
 
-		public @CheckReturnValue
-		LabelGetAll getAll() {
+		@CheckReturnValue
+		public LabelGetAll getAll() {
 			return new LabelGetAll();
 		}
 
-		public @CheckReturnValue
-		LabelAdd add(int id, List<String> labelIds) {
+		@CheckReturnValue
+		public LabelAdd add(int id, List<String> labelIds) {
 			return new LabelAdd(id, labelIds);
 		}
 
-		public @CheckReturnValue
-		LabelRemove remove(int id, List<String> labelIds) {
+		@CheckReturnValue
+		public LabelRemove remove(int id, List<String> labelIds) {
 			return new LabelRemove(id, labelIds);
 		}
 
-		public @CheckReturnValue
-		LabelEdit edit(int id, Consumer<Issue> consumer) {
+		@CheckReturnValue
+		public LabelEdit edit(int id, Consumer<Issue> consumer) {
 			return new LabelEdit(id, consumer);
 		}
 
-		public @CheckReturnValue
-		LabelSave save(Issue issue) {
+		@CheckReturnValue
+		public LabelSave save(Issue issue) {
 			return new LabelSave(issue);
 		}
 
@@ -78,7 +78,6 @@ public class Labels {
 					throw new EdenException("Error retrieving label " + labelId + " in " + user + "/" + repo, ex);
 				}
 			}
-
 		}
 
 		@AllArgsConstructor
@@ -88,7 +87,6 @@ public class Labels {
 			public CompletableFuture<List<Label>> execute() {
 				return Executor.join(labelIds.stream().map(labelId -> get(labelId).execute()).toList());
 			}
-
 		}
 
 		@AllArgsConstructor
@@ -100,7 +98,6 @@ public class Labels {
 					throw new EdenException("Error retrieving labels in " + user + "/" + repo, ex);
 				}
 			}
-
 		}
 
 		@AllArgsConstructor
@@ -112,7 +109,6 @@ public class Labels {
 				return getMultiple(labelIds).execute().thenCompose(labels ->
 					edit(id, issue -> issue.getLabels().addAll(labels)).execute());
 			}
-
 		}
 
 		@AllArgsConstructor
@@ -124,7 +120,6 @@ public class Labels {
 				return getMultiple(labelIds).execute().thenCompose(labels ->
 					edit(id, issue -> issue.getLabels().removeAll(labels)).execute());
 			}
-
 		}
 
 		@AllArgsConstructor
@@ -135,7 +130,6 @@ public class Labels {
 			public CompletableFuture<Issue> execute() {
 				return Issues.repo(user, repo).edit(id, consumer).execute();
 			}
-
 		}
 
 		@AllArgsConstructor
@@ -150,7 +144,6 @@ public class Labels {
 					throw new EdenException("Error saving labels of issue " + user + "/" + repo + "#" + issue.getNumber(), ex);
 				}
 			}
-
 		}
 
 	}
