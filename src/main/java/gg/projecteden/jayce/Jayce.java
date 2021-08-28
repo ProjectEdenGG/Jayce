@@ -8,6 +8,7 @@ import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.jda.JDA4CommandManager;
 import cloud.commandframework.jda.JDACommandSender;
 import cloud.commandframework.meta.CommandMeta;
+import com.spotify.github.v3.clients.GitHubClient;
 import gg.projecteden.EdenAPI;
 import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.jayce.commands.IssueCommand;
@@ -21,10 +22,12 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Role;
 
 import javax.security.auth.login.LoginException;
+import java.net.URI;
 
 public class Jayce extends EdenAPI {
 	public static JDA JDA;
 	public static JDA4CommandManager<CommandEvent> COMMAND_MANAGER;
+	public static GitHubClient GITHUB;
 
 	public static void main(String[] args) {
 		new Jayce();
@@ -36,19 +39,24 @@ public class Jayce extends EdenAPI {
 		try {
 			jda();
 			cloud();
+			github();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 
-	private static void jda() throws InterruptedException, LoginException {
+	private void github() {
+		GITHUB = GitHubClient.create(URI.create("https://api.github.com/"), Config.GITHUB_TOKEN);
+	}
+
+	private void jda() throws InterruptedException, LoginException {
 		JDA = JDABuilder.createDefault(Config.DISCORD_TOKEN)
 			.addEventListeners(new MessageListener())
 			.build()
 			.awaitReady();
 	}
 
-	private static void cloud() throws InterruptedException {
+	private void cloud() throws InterruptedException {
 		COMMAND_MANAGER = new JDA4CommandManager<>(
 			JDA,
 			event -> Config.COMMAND_PREFIX,

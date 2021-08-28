@@ -1,79 +1,94 @@
 package gg.projecteden.jayce.services;
 
-import gg.projecteden.exceptions.EdenException;
-import gg.projecteden.jayce.utils.Aliases;
+import com.spotify.github.v3.ImmutableUser;
+import com.spotify.github.v3.User;
+import com.spotify.github.v3.clients.IssueClient;
+import com.spotify.github.v3.clients.SearchClient;
+import com.spotify.github.v3.comment.Comment;
+import com.spotify.github.v3.issues.ImmutableIssue;
+import com.spotify.github.v3.issues.ImmutableLabel;
+import com.spotify.github.v3.issues.Issue;
+import com.spotify.github.v3.issues.Label;
+import com.spotify.github.v3.search.SearchIssues;
+import com.spotify.github.v3.search.requests.ImmutableSearchParameters;
+import gg.projecteden.jayce.services.Repos.RepoContext;
 import gg.projecteden.jayce.utils.Utils;
+import kotlin.Pair;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.eclipse.egit.github.core.Comment;
-import org.eclipse.egit.github.core.Issue;
-import org.eclipse.egit.github.core.SearchIssue;
-import org.eclipse.egit.github.core.service.IssueService;
 
-import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
+import static gg.projecteden.jayce.Jayce.GITHUB;
+import static gg.projecteden.jayce.utils.Utils.mutableCopyOf;
 
 @SuppressWarnings("unused")
 public class Issues {
-	public static final IssueService ISSUES = Utils.load(new IssueService());
+	private static final Map<Pair<String, String>, IssueClient> clients = new HashMap<>();
+	private static final SearchClient searchClient = GITHUB.createSearchClient();
 
-	public record RepoIssueContext(String user, String repo) {
+	public record RepoIssueContext(RepoContext repo) {
 
-		public CompletableFuture<Issue> create(Issue issue) {
-			try {
-				return CompletableFuture.completedFuture(ISSUES.createIssue(user, repo, issue));
-			} catch (IOException ex) {
-				throw new EdenException("Error creating new issue in " + user + "/" + repo, ex);
-			}
+		private IssueClient client() {
+			return clients.computeIfAbsent(new Pair<>(repo.user(), repo.repo()), $ ->
+				repo.client().createIssueClient());
 		}
 
-		public CompletableFuture<Issue> get(int issueId) {
-			try {
-				return CompletableFuture.completedFuture(ISSUES.getIssue(user, repo, issueId));
-			} catch (IOException ex) {
-				throw new EdenException("Error retrieving issue " + user + "/" + repo + "#" + issueId, ex);
-			}
+		public CompletableFuture<Issue> create(final Issue issue) {
+			return client().createIssue(issue);
 		}
 
-		public CompletableFuture<Issue> assign(int issueId, String userId) {
-			return Aliases.githubOf(userId).thenCompose(user ->
-				edit(issueId, issue -> issue.setAssignee(user)));
+		public CompletableFuture<Issue> get(final int issueId) {
+			return client().getIssue(issueId);
 		}
 
-		public CompletableFuture<Issue> edit(int issueId, Consumer<Issue> consumer) {
-			return get(issueId).thenCompose(result -> {
-				consumer.accept(result);
-				return save(result);
+		public CompletableFuture<Issue> assign(final int issueId, final List<String> userIds) {
+			return edit(issueId, issue -> {
+				List<User> assignees = mutableCopyOf(issue.assignees());
+				userIds.stream().map(userId -> ImmutableUser.builder().login(userId).build()).forEach(assignees::add);
+				return issue.withAssignees(assignees);
 			});
 		}
 
-		public CompletableFuture<Issue> save(Issue issue) {
-			try {
-				return CompletableFuture.completedFuture(ISSUES.editIssue(user, repo, issue));
-			} catch (IOException ex) {
-				throw new EdenException("Error saving issue " + user + "/" + repo + "#" + issue.getNumber(), ex);
-			}
-		}
-
-		public CompletableFuture<Comment> comment(int issueId, String text) {
-			try {
-				return CompletableFuture.completedFuture(ISSUES.createComment(user, repo, issueId, text));
-			} catch (IOException ex) {
-				throw new EdenException("Error creating comment on issue " + user + "/" + repo + "#" + issueId, ex);
-			}
-		}
-
-		public CompletableFuture<List<SearchIssue>> search(String text) {
-			return Repos.repo(user, repo).get().thenCompose(repo -> {
-				try {
-					return CompletableFuture.completedFuture(ISSUES.searchIssues(repo, IssueState.ofQuery(text).name(), text));
-				} catch (IOException ex) {
-					throw new EdenException("Error searching issues in " + user + "/" + repo, ex);
-				}
+		public CompletableFuture<Issue> addLabels(final int issueId, final List<String> labelIds) {
+			return edit(issueId, issue -> {
+				final List<Label> labels = Utils.mutableCopyOf(issue.labels());
+				labelIds.stream().map(label -> ImmutableLabel.builder().name(label).build()).forEach(labels::add);
+				return issue.withLabels(labels);
 			});
+		}
+
+		public CompletableFuture<Issue> removeLabels(final int issueId, final List<String> labelIds) {
+			return edit(issueId, issue -> {
+				final List<Label> labels = Utils.mutableCopyOf(issue.labels());
+				labels.removeIf(label -> labelIds.stream().anyMatch(labelId -> labelId.equalsIgnoreCase(label.name())));
+				return issue.withLabels(labels);
+			});
+		}
+
+		public CompletableFuture<Issue> edit(final int issueId, final Function<ImmutableIssue, ImmutableIssue> consumer) {
+			return get(issueId).thenCompose(issue -> save(consumer.apply(ImmutableIssue.copyOf(issue))));
+		}
+
+		public CompletableFuture<Issue> save(ImmutableIssue issue) {
+			return client().editIssue(issue).thenCompose(response -> CompletableFuture.completedFuture(issue));
+		}
+
+		public CompletableFuture<Comment> comment(final int issueId, final String text) {
+			return client().createComment(issueId, text);
+		}
+
+		public CompletableFuture<SearchIssues> search(final String text) {
+			return searchClient.issues(ImmutableSearchParameters.builder()
+				.q(String.format("repo:%s/%s %s", repo.user(), repo.repo(), text))
+				.build());
 		}
 
 		public IssueUrl url() {
@@ -81,14 +96,13 @@ public class Issues {
 		}
 
 		public IssueUrl url(Issue issue) {
-			return new IssueUrl(issue.getNumber());
+			return new IssueUrl(Objects.requireNonNull(issue.number(), "This issue does not have a number"));
 		}
 
-		public IssueUrl url(int issueId) {
+		public IssueUrl url(final int issueId) {
 			return new IssueUrl(issueId);
 		}
 
-		@AllArgsConstructor
 		@RequiredArgsConstructor
 		public class IssueUrl {
 			private final int issueId;
@@ -100,7 +114,8 @@ public class Issues {
 			}
 
 			public String get() {
-				String url = String.format("https://github.com/%s/%s/issues/%s", user, repo, issueId > 0 ? String.valueOf(issueId) : "");
+				final String number = issueId > 0 ? String.valueOf(issueId) : "";
+				String url = String.format("https://github.com/%s/%s/issues/%s", repo.user(), repo.repo(), number);
 				if (!embed)
 					url = "<" + url + ">";
 				return url;
@@ -114,29 +129,21 @@ public class Issues {
 		CLOSED,
 		;
 
-		public void set(Issue issue) {
-			issue.setState(name());
-		}
-
-		public static IssueState ofQuery(String text) {
-			for (IssueState state : values())
-				if (text.toLowerCase().contains("is:" + state.name().toLowerCase()))
-					return state;
-
-			return OPEN;
+		public ImmutableIssue set(ImmutableIssue issue) {
+			return issue.withState(name());
 		}
 	}
 
 	@AllArgsConstructor
 	public enum IssueField {
-		TITLE(Issue::setTitle),
-		BODY(Issue::setBody),
+		TITLE(ImmutableIssue::withTitle),
+		BODY((issue, text) -> issue.withBody(Optional.of(text))),
 		;
 
-		private final BiConsumer<Issue, String> consumer;
+		private final BiFunction<ImmutableIssue, String, ImmutableIssue> consumer;
 
-		public void edit(Issue issue, String text) {
-			consumer.accept(issue, text);
+		public ImmutableIssue edit(ImmutableIssue issue, String text) {
+			return consumer.apply(issue, text);
 		}
 	}
 

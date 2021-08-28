@@ -1,17 +1,20 @@
 package gg.projecteden.jayce.utils;
 
-import gg.projecteden.jayce.services.Users;
-import org.eclipse.egit.github.core.User;
+import net.dv8tion.jda.api.entities.Member;
 
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 public class Aliases {
 
 	public static Map<String, String> config = Utils.readConfig("aliases.json");
 
-	public static CompletableFuture<User> githubOf(String discordId) {
-		return Users.get(config.get(discordId));
+	public static List<String> githubOf(List<Member> members) {
+		return members.stream().map(Member::getId).map(Aliases::githubOf).toList();
+	}
+
+	public static String githubOf(String discordId) {
+		return config.get(discordId);
 	}
 
 	public static String discordOf(String githubName) {
