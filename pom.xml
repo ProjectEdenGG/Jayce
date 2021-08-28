@@ -111,6 +111,12 @@
   </repositories>
 
   <dependencies>
+    <!-- EdenAPI -->
+    <dependency>
+      <groupId>gg.projecteden</groupId>
+      <artifactId>eden-api</artifactId>
+      <version>1.4.13</version>
+    </dependency>
     <!-- Github API -->
     <dependency>
       <groupId>com.spotify</groupId>
@@ -129,72 +135,11 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <!-- JDA-Utilities -->
-    <dependency>
-      <groupId>com.jagrosh</groupId>
-      <artifactId>jda-utilities-command</artifactId>
-      <version>3.0.2</version>
-      <scope>compile</scope>
-    </dependency>
     <!-- Emoji Parser -->
     <dependency>
       <groupId>com.vdurmont</groupId>
       <artifactId>emoji-java</artifactId>
       <version>5.1.1</version>
-    </dependency>
-    <!-- EdenAPI -->
-    <dependency>
-      <groupId>gg.projecteden</groupId>
-      <artifactId>eden-api</artifactId>
-      <version>1.4.13</version>
-    </dependency>
-    <!-- Gson -->
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.8.1</version>
-    </dependency>
-    <!-- NV Websocket Client -->
-    <dependency>
-      <groupId>com.neovisionaries</groupId>
-      <artifactId>nv-websocket-client</artifactId>
-      <version>2.10</version>
-    </dependency>
-    <!-- Unirest -->
-    <dependency>
-      <groupId>com.mashape.unirest</groupId>
-      <artifactId>unirest-java</artifactId>
-      <version>1.4.9</version>
-    </dependency>
-    <!-- Apache Commons Lang3 -->
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.5</version>
-    </dependency>
-    <!-- Apache Commons Collections4 -->
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-collections4</artifactId>
-      <version>4.1</version>
-    </dependency>
-    <!-- org.json -->
-    <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>20160810</version>
-    </dependency>
-    <!-- JNA -->
-    <dependency>
-      <groupId>net.java.dev.jna</groupId>
-      <artifactId>jna</artifactId>
-      <version>4.4.0</version>
-    </dependency>
-    <!-- Trove4j -->
-    <dependency>
-      <groupId>net.sf.trove4j</groupId>
-      <artifactId>trove4j</artifactId>
-      <version>3.0.3</version>
     </dependency>
     <!-- Cloud -->
     <dependency>
