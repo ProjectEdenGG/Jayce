@@ -71,7 +71,7 @@ public class Jayce extends EdenAPI {
 				event.getChannel().sendMessage(edenException.getMessage()).queue();
 			else {
 				ex.printStackTrace();
-				event.getChannel().sendMessage("An internal error occurred while attempting to perform this command").queue();
+				event.reply("An internal error occurred while attempting to perform this command");
 			}
 		});
 
