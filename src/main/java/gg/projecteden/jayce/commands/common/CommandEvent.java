@@ -23,7 +23,7 @@ public final class CommandEvent {
 		getMessage().addReaction(EmojiManager.getForAlias("thumbsup").getUnicode()).queue();
 	}
 
-	public String getName() {
+	public String getMemberName() {
 		return member.getEffectiveName();
 	}
 

@@ -9,6 +9,7 @@ import com.spotify.github.v3.issues.ImmutableIssue;
 import com.spotify.github.v3.issues.ImmutableLabel;
 import com.spotify.github.v3.issues.Issue;
 import com.spotify.github.v3.issues.Label;
+import com.spotify.github.v3.search.SearchIssue;
 import com.spotify.github.v3.search.SearchIssues;
 import com.spotify.github.v3.search.requests.ImmutableSearchParameters;
 import gg.projecteden.jayce.services.Repos.RepoContext;
@@ -85,10 +86,10 @@ public class Issues {
 			return client().createComment(issueId, text);
 		}
 
-		public CompletableFuture<SearchIssues> search(final String text) {
+		public CompletableFuture<List<SearchIssue>> search(final String text) {
 			return searchClient.issues(ImmutableSearchParameters.builder()
 				.q(String.format("repo:%s/%s %s", repo.user(), repo.repo(), text))
-				.build());
+				.build()).thenApply(SearchIssues::items);
 		}
 
 		public IssueUrl url() {
@@ -113,7 +114,7 @@ public class Issues {
 				return this;
 			}
 
-			public String get() {
+			public String build() {
 				final String number = issueId > 0 ? String.valueOf(issueId) : "";
 				String url = String.format("https://github.com/%s/%s/issues/%s", repo.user(), repo.repo(), number);
 				if (!embed)

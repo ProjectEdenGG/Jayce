@@ -4,7 +4,7 @@ import gg.projecteden.jayce.services.Repos;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-public class MessageListener extends ListenerAdapter {
+public class IssueLinkListener extends ListenerAdapter {
 
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
@@ -17,7 +17,7 @@ public class MessageListener extends ListenerAdapter {
 				continue;
 
 			final int issueId = Integer.parseInt(word.replaceAll("git#", ""));
-			final String url = Repos.main().issues().url(issueId).embed(false).get();
+			final String url = Repos.main().issues().url(issueId).embed(false).build();
 			event.getTextChannel().sendMessage(url).queue();
 		}
 	}

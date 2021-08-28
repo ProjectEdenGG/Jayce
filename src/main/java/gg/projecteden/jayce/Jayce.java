@@ -14,7 +14,7 @@ import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.jayce.commands.IssueCommand;
 import gg.projecteden.jayce.commands.common.CommandEvent;
 import gg.projecteden.jayce.config.Config;
-import gg.projecteden.jayce.listeners.MessageListener;
+import gg.projecteden.jayce.listeners.IssueLinkListener;
 import gg.projecteden.mongodb.DatabaseConfig;
 import gg.projecteden.utils.Env;
 import net.dv8tion.jda.api.JDA;
@@ -51,7 +51,7 @@ public class Jayce extends EdenAPI {
 
 	private void jda() throws InterruptedException, LoginException {
 		JDA = JDABuilder.createDefault(Config.DISCORD_TOKEN)
-			.addEventListeners(new MessageListener())
+			.addEventListeners(new IssueLinkListener())
 			.build()
 			.awaitReady();
 	}
