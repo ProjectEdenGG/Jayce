@@ -1,7 +1,7 @@
 package gg.projecteden.jayce.commands.common;
 
 import com.vdurmont.emoji.EmojiManager;
-import gg.projecteden.jayce.utils.Config;
+import gg.projecteden.jayce.config.Config;
 import lombok.Data;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;

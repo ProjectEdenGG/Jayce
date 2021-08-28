@@ -12,7 +12,6 @@ import com.spotify.github.v3.issues.Label;
 import com.spotify.github.v3.search.SearchIssues;
 import com.spotify.github.v3.search.requests.ImmutableSearchParameters;
 import gg.projecteden.jayce.services.Repos.RepoContext;
-import gg.projecteden.jayce.utils.Utils;
 import kotlin.Pair;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static gg.projecteden.jayce.Jayce.GITHUB;
-import static gg.projecteden.jayce.utils.Utils.mutableCopyOf;
+import static gg.projecteden.utils.Utils.mutableCopyOf;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 
 @SuppressWarnings("unused")
 public class Issues {
@@ -59,7 +59,7 @@ public class Issues {
 
 		public CompletableFuture<Issue> addLabels(final int issueId, final List<String> labelIds) {
 			return edit(issueId, issue -> {
-				final List<Label> labels = Utils.mutableCopyOf(issue.labels());
+				final List<Label> labels = mutableCopyOf(issue.labels());
 				labelIds.stream().map(label -> ImmutableLabel.builder().name(label).build()).forEach(labels::add);
 				return issue.withLabels(labels);
 			});
@@ -67,7 +67,7 @@ public class Issues {
 
 		public CompletableFuture<Issue> removeLabels(final int issueId, final List<String> labelIds) {
 			return edit(issueId, issue -> {
-				final List<Label> labels = Utils.mutableCopyOf(issue.labels());
+				final List<Label> labels = mutableCopyOf(issue.labels());
 				labels.removeIf(label -> labelIds.stream().anyMatch(labelId -> labelId.equalsIgnoreCase(label.name())));
 				return issue.withLabels(labels);
 			});
@@ -78,7 +78,7 @@ public class Issues {
 		}
 
 		public CompletableFuture<Issue> save(ImmutableIssue issue) {
-			return client().editIssue(issue).thenCompose(response -> CompletableFuture.completedFuture(issue));
+			return client().editIssue(issue).thenCompose(response -> completedFuture(issue));
 		}
 
 		public CompletableFuture<Comment> comment(final int issueId, final String text) {

@@ -146,7 +146,7 @@
     <dependency>
       <groupId>gg.projecteden</groupId>
       <artifactId>eden-api</artifactId>
-      <version>1.4.12</version>
+      <version>1.4.13</version>
     </dependency>
     <!-- Gson -->
     <dependency>

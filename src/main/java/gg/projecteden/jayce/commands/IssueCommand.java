@@ -10,11 +10,11 @@ import com.spotify.github.v3.search.SearchIssue;
 import com.spotify.github.v3.search.SearchIssues;
 import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.jayce.commands.common.CommandEvent;
+import gg.projecteden.jayce.config.Aliases;
+import gg.projecteden.jayce.config.Config;
 import gg.projecteden.jayce.services.Issues.IssueField;
 import gg.projecteden.jayce.services.Issues.IssueState;
 import gg.projecteden.jayce.services.Repos;
-import gg.projecteden.jayce.utils.Aliases;
-import gg.projecteden.jayce.utils.Config;
 import gg.projecteden.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 

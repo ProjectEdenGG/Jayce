@@ -1,4 +1,4 @@
-package gg.projecteden.jayce.utils;
+package gg.projecteden.jayce.config;
 
 import net.dv8tion.jda.api.entities.Member;
 
@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class Aliases {
 
-	public static Map<String, String> config = Utils.readConfig("aliases.json");
+	public static Map<String, String> config = Config.read("aliases.json");
 
 	public static List<String> githubOf(List<Member> members) {
 		return members.stream().map(Member::getId).map(Aliases::githubOf).toList();

@@ -3,8 +3,8 @@ package gg.projecteden.jayce.services;
 import com.spotify.github.async.AsyncPage;
 import com.spotify.github.v3.clients.RepositoryClient;
 import com.spotify.github.v3.issues.Label;
+import gg.projecteden.jayce.config.Config;
 import gg.projecteden.jayce.services.Issues.RepoIssueContext;
-import gg.projecteden.jayce.utils.Config;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 
