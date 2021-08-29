@@ -6,6 +6,8 @@ import gg.projecteden.jayce.github.Issues.RepoIssueContext;
 import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.github.Repos.RepoContext;
 import gg.projecteden.jayce.listeners.common.DiscordListener;
+import gg.projecteden.utils.Tasks;
+import gg.projecteden.utils.TimeUtils.MillisTime;
 import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -16,11 +18,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
 
+import static gg.projecteden.utils.StringUtils.camelCase;
+
 public class SupportChannelListener extends DiscordListener {
 
 	@Override
 	public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
 		try {
+			if (shouldIgnore(event))
+				return;
+			
 			final TextChannel channel = event.getChannel();
 			final Category category = channel.getParent();
 			final Message message = event.getMessage();
@@ -29,27 +36,22 @@ public class SupportChannelListener extends DiscordListener {
 			if (member == null || category == null)
 				return;
 
-			if (member.getUser().isBot())
-				return;
-
-			if (shouldIgnore(event))
-				return;
-
 			if (!"Support".equalsIgnoreCase(category.getName()))
 				return;
 
-			final RepoContext repo = Repos.repo(channel.getName());
+			final RepoContext repo = Repos.repo(camelCase(channel.getName()));
 			final RepoIssueContext issues = repo.issues();
 			issues.create(member, member.getEffectiveName(), message.getContentDisplay()).thenAccept(issue -> {
 				final int number = getIssueNumber(issue);
 				final Category repoCategory = getRepoCategory(message, repo);
 
 				repoCategory.createTextChannel(repo.repo() + "-" + number).queue(newChannel -> {
-					newChannel.sendMessage("**" + member.getEffectiveName() + "**: " + message.getContentDisplay()).queue();
+					newChannel.sendMessage(member.getAsMention() + ": " + message.getContentDisplay()).queue();
 					newChannel.getManager().setTopic(issues.url(issue).build()).queue();
 					message.delete().queue();
-					channel.sendMessage(member.getAsMention() + " " + newChannel.getAsMention()).queue();
-				});
+					channel.sendMessage(member.getAsMention() + " " + newChannel.getAsMention()).queue(reply ->
+						Tasks.wait(MillisTime.MINUTE, () -> reply.delete().queue()));
+				}, ex -> handleException(event, ex));
 			}).exceptionally(ex -> {
 				handleException(event, ex);
 				return null;

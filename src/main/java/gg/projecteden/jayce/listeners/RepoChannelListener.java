@@ -15,23 +15,22 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.CompletableFuture;
+
 public class RepoChannelListener extends DiscordListener {
 
 	@Override
 	public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
 		try {
+			if (shouldIgnore(event))
+				return;
+
 			final TextChannel channel = event.getChannel();
 			final Category category = channel.getParent();
 			final Message message = event.getMessage();
 			final Member member = event.getMember();
 
 			if (member == null || category == null)
-				return;
-
-			if (member.getUser().isBot())
-				return;
-
-			if (shouldIgnore(event))
 				return;
 
 			final String channelName = channel.getName();
@@ -43,11 +42,11 @@ public class RepoChannelListener extends DiscordListener {
 
 			final RepoContext repo = Repos.repo(category.getName());
 			final RepoIssueContext issues = repo.issues();
-			verifyArchive(channel, issues, issueId);
-			issues.comment(issueId, getCommentBody(member, message)).exceptionally(ex -> {
-				handleException(event, ex);
-				return null;
-			});
+			verifyArchive(channel, issues, issueId).thenRun(() ->
+				issues.comment(issueId, getCommentBody(member, message)).exceptionally(ex -> {
+					handleException(event, ex);
+					return null;
+				}));
 		} catch (Exception ex) {
 			handleException(event, ex);
 		}
@@ -71,18 +70,19 @@ public class RepoChannelListener extends DiscordListener {
 	private String getCommentBody(Member member, Message message) {
 		final String json = new CommentMeta(message.getId(), member.getId()).serialize();
 		final String display = "**" + member.getEffectiveName() + "**: " + message.getContentDisplay();
-		final String nl = System.lineSeparator();
-		return "<!--" + nl + json + nl + "-->" + nl + display;
+		return String.format("<!--%n%s%n-->%n%s", json, display);
 	}
 
-	private void verifyArchive(TextChannel channel, RepoIssueContext issues, int issueId) {
-		if (true) return; // TODO
+	private CompletableFuture<Void> verifyArchive(TextChannel channel, RepoIssueContext issues, int issueId) {
+		// TODO
+		if (true)
+			return CompletableFuture.completedFuture(null);
 
-		issues.listAllComments(issueId).thenAccept(comments -> {
+		return issues.listAllComments(issueId).thenAccept(comments -> {
 			for (Comment comment : comments) {
 
 			}
-		});
+		}).thenCompose(null);
 	}
 
 }
