@@ -3,8 +3,6 @@ package gg.projecteden.jayce.commands;
 import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.specifier.Greedy;
-import com.spotify.github.v3.issues.ImmutableIssue;
-import com.spotify.github.v3.issues.ImmutableIssue.Builder;
 import com.spotify.github.v3.issues.Label;
 import com.spotify.github.v3.search.SearchIssue;
 import gg.projecteden.exceptions.EdenException;
@@ -20,7 +18,6 @@ import gg.projecteden.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 import static gg.projecteden.utils.StringUtils.ellipsis;
 import static gg.projecteden.utils.Utils.isNullOrEmpty;
@@ -34,15 +31,10 @@ public class IssueCommand {
 	private void create(CommandEvent event, @Argument("input") @Greedy String input) {
 		final String[] content = event.parseMentions(input).split("( \\|[ \n])", 2);
 
-		final Builder builder = ImmutableIssue.builder()
-			.title(content[0]);
+		final String title = content[0];
+		final String body = content.length > 1 ? content[1] : null;
 
-		if (content.length > 1)
-			builder.body(Optional.of("**" + event.getMemberName() + "**: " + content[1]));
-		else
-			builder.body(Optional.of("Submitted by **" + event.getMemberName() + "**"));
-
-		issues.create(builder.build()).thenAccept(result -> {
+		issues.create(event.getMember(), title, body).thenAccept(result -> {
 			if (!event.isWebhookChannel())
 				event.reply(issues.url(result).embed(false).build());
 		});

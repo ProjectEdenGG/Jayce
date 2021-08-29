@@ -1,5 +1,6 @@
 package gg.projecteden.jayce.github;
 
+import com.spotify.github.async.AsyncPage;
 import com.spotify.github.v3.ImmutableUser;
 import com.spotify.github.v3.User;
 import com.spotify.github.v3.clients.IssueClient;
@@ -16,8 +17,11 @@ import gg.projecteden.jayce.github.Repos.RepoContext;
 import kotlin.Pair;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import net.dv8tion.jda.api.entities.Member;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -27,8 +31,10 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static gg.projecteden.jayce.Jayce.GITHUB;
+import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 import static gg.projecteden.utils.Utils.mutableCopyOf;
 import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.stream.StreamSupport.stream;
 
 @SuppressWarnings("unused")
 public class Issues {
@@ -40,6 +46,18 @@ public class Issues {
 		private IssueClient client() {
 			return clients.computeIfAbsent(new Pair<>(repo.user(), repo.repo()), $ ->
 				repo.client().createIssueClient());
+		}
+
+		public CompletableFuture<Issue> create(final Member member, final String title, final String body) {
+			final ImmutableIssue.Builder builder = ImmutableIssue.builder()
+				.title(title);
+
+			if (isNullOrEmpty(body))
+				builder.body(Optional.of("**" + member.getEffectiveName() + "**: " + body));
+			else
+				builder.body(Optional.of("Submitted by **" + member.getEffectiveName() + "**"));
+
+			return create(builder.build());
 		}
 
 		public CompletableFuture<Issue> create(final Issue issue) {
@@ -84,6 +102,17 @@ public class Issues {
 
 		public CompletableFuture<Comment> comment(final int issueId, final String text) {
 			return client().createComment(issueId, text);
+		}
+
+		public Iterator<AsyncPage<Comment>> listComments(final int issueId) {
+			return client().listComments(issueId);
+		}
+
+		public @NotNull CompletableFuture<@NotNull List<Comment>> listAllComments(final int issueId) {
+			final Iterable<AsyncPage<Comment>> pages = () -> listComments(issueId);
+			return CompletableFuture.supplyAsync(() -> stream(pages.spliterator(), true)
+				.flatMap(page -> stream(page.spliterator(), true))
+				.toList());
 		}
 
 		public CompletableFuture<List<SearchIssue>> search(final String text) {

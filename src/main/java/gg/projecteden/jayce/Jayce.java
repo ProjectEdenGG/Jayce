@@ -14,15 +14,19 @@ import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.jayce.commands.IssueCommand;
 import gg.projecteden.jayce.commands.common.CommandEvent;
 import gg.projecteden.jayce.config.Config;
-import gg.projecteden.jayce.listeners.IssueLinkListener;
 import gg.projecteden.mongodb.DatabaseConfig;
 import gg.projecteden.utils.Env;
+import gg.projecteden.utils.Utils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.reflections.Reflections;
 
 import javax.security.auth.login.LoginException;
 import java.net.URI;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 public class Jayce extends EdenAPI {
 	public static JDA JDA;
@@ -51,7 +55,7 @@ public class Jayce extends EdenAPI {
 
 	private void jda() throws InterruptedException, LoginException {
 		JDA = JDABuilder.createDefault(Config.DISCORD_TOKEN)
-			.addEventListeners(new IssueLinkListener())
+			.addEventListeners(getListeners().toArray())
 			.build()
 			.awaitReady();
 	}
@@ -97,6 +101,20 @@ public class Jayce extends EdenAPI {
 			.password(Config.DATABASE_PASSWORD)
 			.env(getEnv())
 			.build();
+	}
+
+	private Stream<? extends ListenerAdapter> getListeners() {
+		final Reflections reflections = new Reflections(Jayce.class.getPackage().getName() + ".listeners");
+		return reflections.getSubTypesOf(ListenerAdapter.class).stream().map(clazz -> {
+			try {
+				if (Utils.canEnable(clazz))
+					return clazz.getConstructor().newInstance();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+
+			return null;
+		}).filter(Objects::nonNull);
 	}
 
 }
