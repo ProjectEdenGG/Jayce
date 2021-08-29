@@ -32,7 +32,7 @@ public class IssueCommand {
 
 	@CommandMethod("issue|issues create <input>")
 	private void create(CommandEvent event, @Argument("input") @Greedy String input) {
-		final String[] content = input.split("( \\|[ \n])", 2);
+		final String[] content = event.parseMentions(input).split("( \\|[ \n])", 2);
 
 		final Builder builder = ImmutableIssue.builder()
 			.title(content[0]);
@@ -65,12 +65,12 @@ public class IssueCommand {
 
 	@CommandMethod("issue|issues edit <issueId> <field> <text>")
 	private void edit(CommandEvent event, @Argument("issueId") int issueId, @Argument("field") IssueField field, @Argument("text") @Greedy String text) {
-		issues.edit(issueId, issue -> field.edit(issue, text)).thenRun(event::thumbsup);
+		issues.edit(issueId, issue -> field.edit(issue, event.parseMentions(text))).thenRun(event::thumbsup);
 	}
 
 	@CommandMethod("issue|issues comment <issueId> <text>")
 	private void comment(CommandEvent event, @Argument("issueId") int issueId, @Argument("text") @Greedy String text) {
-		issues.comment(issueId, "**" + event.getMemberName() + "**: " + text).thenRun(event::thumbsup);
+		issues.comment(issueId, "**" + event.getMemberName() + "**: " + event.parseMentions(text)).thenRun(event::thumbsup);
 	}
 
 	@CommandMethod("issue|issues label|labels")
@@ -91,7 +91,7 @@ public class IssueCommand {
 
 	@CommandMethod("issue|issues search <query>")
 	private void search(CommandEvent event, @Argument("query") @Greedy String query) {
-		issues.search(query).thenAccept(items -> {
+		issues.search(event.parseMentions(query)).thenAccept(items -> {
 			if (isNullOrEmpty(items))
 				throw new EdenException("No results found");
 
