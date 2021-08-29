@@ -11,11 +11,11 @@ import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.jayce.commands.common.CommandEvent;
 import gg.projecteden.jayce.config.Aliases;
 import gg.projecteden.jayce.config.Config;
-import gg.projecteden.jayce.services.Issues.IssueField;
-import gg.projecteden.jayce.services.Issues.IssueState;
-import gg.projecteden.jayce.services.Issues.RepoIssueContext;
-import gg.projecteden.jayce.services.Repos;
-import gg.projecteden.jayce.services.Repos.RepoContext;
+import gg.projecteden.jayce.github.Issues.IssueField;
+import gg.projecteden.jayce.github.Issues.IssueState;
+import gg.projecteden.jayce.github.Issues.RepoIssueContext;
+import gg.projecteden.jayce.github.Repos;
+import gg.projecteden.jayce.github.Repos.RepoContext;
 import gg.projecteden.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 
@@ -75,8 +75,7 @@ public class IssueCommand {
 
 	@CommandMethod("issue|issues label|labels")
 	private void labels(CommandEvent event) {
-		repo.listLabels().thenAccept(labels ->
-			event.reply("Available labels: " + labels.stream().map(Label::name).collect(joining(", "))));
+		repo.listLabels().thenAccept(labels -> event.reply("Available labels: " + labels.stream().map(Label::name).collect(joining(", "))));
 	}
 
 	@CommandMethod("issue|issues label|labels add <issueId> <labels>")
@@ -99,10 +98,9 @@ public class IssueCommand {
 			final String url = issues.url().build();
 			final StringBuilder body = new StringBuilder();
 
-			for (SearchIssue issue : items) {
+			for (SearchIssue issue : items)
 				body.append(String.format("#%d [%s](%s) - %s%s", issue.number(), ellipsis(issue.title(), 50),
 					url + issue.number(), issue.user().login(), System.lineSeparator() + System.lineSeparator()));
-			}
 
 			final EmbedBuilder embed = new EmbedBuilder()
 				.setAuthor(title, url, Config.ICON_URL)

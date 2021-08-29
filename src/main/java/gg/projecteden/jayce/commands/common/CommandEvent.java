@@ -16,6 +16,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.Objects.requireNonNull;
+
 @Data
 public final class CommandEvent {
 	private final MessageReceivedEvent event;
@@ -51,11 +53,9 @@ public final class CommandEvent {
 		final Message message = getMessage();
 
 		for (User user : message.getMentionedUsers()) {
-			String name;
+			String name = user.getName();
 			if (message.isFromGuild() && message.getGuild().isMember(user))
-				name = message.getGuild().getMember(user).getEffectiveName();
-			else
-				name = user.getName();
+				name = requireNonNull(message.getGuild().getMember(user)).getEffectiveName();
 			content = content.replaceAll("<@!?" + Pattern.quote(user.getId()) + '>', '@' + Matcher.quoteReplacement(name));
 		}
 

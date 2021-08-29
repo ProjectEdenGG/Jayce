@@ -1,13 +1,14 @@
 package gg.projecteden.jayce.listeners;
 
-import gg.projecteden.jayce.services.Repos;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import gg.projecteden.jayce.github.Repos;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 
 public class IssueLinkListener extends ListenerAdapter {
 
 	@Override
-	public void onMessageReceived(MessageReceivedEvent event) {
+	public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
 		if (!event.getMessage().getContentDisplay().contains("git#"))
 			return;
 
@@ -16,9 +17,9 @@ public class IssueLinkListener extends ListenerAdapter {
 			if (!word.matches("^git#\\d+"))
 				continue;
 
-			final int issueId = Integer.parseInt(word.replaceAll("git#", ""));
+			final int issueId = Integer.parseInt(word.replaceAll("git#", "").replaceAll("[^\\d]+", ""));
 			final String url = Repos.main().issues().url(issueId).embed(false).build();
-			event.getTextChannel().sendMessage(url).queue();
+			event.getChannel().sendMessage(url).queue();
 		}
 	}
 

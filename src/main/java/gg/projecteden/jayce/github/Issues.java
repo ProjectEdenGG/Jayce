@@ -1,4 +1,4 @@
-package gg.projecteden.jayce.services;
+package gg.projecteden.jayce.github;
 
 import com.spotify.github.v3.ImmutableUser;
 import com.spotify.github.v3.User;
@@ -12,7 +12,7 @@ import com.spotify.github.v3.issues.Label;
 import com.spotify.github.v3.search.SearchIssue;
 import com.spotify.github.v3.search.SearchIssues;
 import com.spotify.github.v3.search.requests.ImmutableSearchParameters;
-import gg.projecteden.jayce.services.Repos.RepoContext;
+import gg.projecteden.jayce.github.Repos.RepoContext;
 import kotlin.Pair;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
