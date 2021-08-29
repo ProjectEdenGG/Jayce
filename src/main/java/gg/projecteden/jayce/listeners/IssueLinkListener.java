@@ -10,10 +10,11 @@ public class IssueLinkListener extends DiscordListener {
 	@Override
 	public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
 		try {
-			if (!event.getMessage().getContentDisplay().contains("git#"))
+			final String content = event.getMessage().getContentDisplay();
+			if (!content.contains("git#"))
 				return;
 
-			String[] words = event.getMessage().getContentDisplay().split(" ");
+			String[] words = content.split(" ");
 			for (String word : words) {
 				if (!word.matches("^git#\\d+"))
 					continue;

@@ -53,9 +53,9 @@ public class Issues {
 				.title(title);
 
 			if (isNullOrEmpty(body))
-				builder.body(Optional.of("**" + member.getEffectiveName() + "**: " + body));
-			else
 				builder.body(Optional.of("Submitted by **" + member.getEffectiveName() + "**"));
+			else
+				builder.body(Optional.of("**" + member.getEffectiveName() + "**: " + body));
 
 			return create(builder.build());
 		}
