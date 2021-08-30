@@ -12,11 +12,12 @@ import org.jetbrains.annotations.NotNull;
 public abstract class DiscordListener extends ListenerAdapter {
 
 	protected void handleException(@NotNull GenericGuildMessageEvent event, Throwable ex) {
-		ex.printStackTrace();
 		if (ex instanceof EdenException edenEx)
 			event.getChannel().sendMessage(edenEx.getMessage()).queue();
-		if (ex.getCause() instanceof EdenException edenEx)
+		else if (ex.getCause() instanceof EdenException edenEx)
 			event.getChannel().sendMessage(edenEx.getMessage()).queue();
+		else
+			ex.printStackTrace();
 	}
 
 	protected boolean shouldIgnore(@NotNull GuildMessageReceivedEvent event) {

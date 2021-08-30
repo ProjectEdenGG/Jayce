@@ -1,0 +1,5 @@
+#!/bin/bash
+cd Jayce/repos/$1
+
+# `./install` hub from binary https://github.com/github/hub/releases
+hub issue transfer $2 $3

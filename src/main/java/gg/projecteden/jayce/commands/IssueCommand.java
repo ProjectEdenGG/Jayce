@@ -2,29 +2,32 @@ package gg.projecteden.jayce.commands;
 
 import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.CommandMethod;
+import cloud.commandframework.annotations.CommandPermission;
 import cloud.commandframework.annotations.specifier.Greedy;
+import com.spotify.github.v3.issues.Issue;
 import com.spotify.github.v3.issues.Label;
 import com.spotify.github.v3.search.SearchIssue;
 import gg.projecteden.exceptions.EdenException;
+import gg.projecteden.jayce.Jayce;
 import gg.projecteden.jayce.commands.common.CommandEvent;
 import gg.projecteden.jayce.config.Aliases;
 import gg.projecteden.jayce.config.Config;
 import gg.projecteden.jayce.github.Issues.IssueField;
-import gg.projecteden.jayce.github.Issues.IssueState;
 import gg.projecteden.jayce.github.Issues.RepoIssueContext;
 import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.github.Repos.RepoContext;
+import gg.projecteden.jayce.utils.Utils;
+import gg.projecteden.utils.Env;
 import gg.projecteden.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Objects;
 
 import static gg.projecteden.utils.StringUtils.ellipsis;
 import static gg.projecteden.utils.Utils.isNullOrEmpty;
 import static java.util.stream.Collectors.joining;
 
+@CommandPermission("staff")
 public class IssueCommand {
 	private final RepoContext repo = Repos.main();
 	private final RepoIssueContext issues = repo.issues();
@@ -47,14 +50,19 @@ public class IssueCommand {
 		issues.assign(issueId, Aliases.githubOf(event.getMessage().getMentionedMembers())).thenRun(event::thumbsup);
 	}
 
+	@CommandMethod("issue|issues unassign <issueId> <user>")
+	private void unassign(CommandEvent event, @Argument("issueId") int issueId, @Argument("user") @Greedy String[] members) {
+		issues.unassign(issueId, Aliases.githubOf(event.getMessage().getMentionedMembers())).thenRun(event::thumbsup);
+	}
+
 	@CommandMethod("issue|issues open <issueId>")
 	private void open(CommandEvent event, @Argument("issueId") int issueId) {
-		issues.edit(issueId, IssueState.OPEN::set).thenRun(event::thumbsup);
+		issues.open(issueId).thenRun(event::thumbsup);
 	}
 
 	@CommandMethod("issue|issues close <issueId>")
 	private void close(CommandEvent event, @Argument("issueId") int issueId) {
-		issues.edit(issueId, IssueState.CLOSED::set).thenRun(event::thumbsup);
+		issues.close(issueId).thenRun(event::thumbsup);
 	}
 
 	@CommandMethod("issue|issues edit <issueId> <field> <text>")
@@ -74,12 +82,12 @@ public class IssueCommand {
 
 	@CommandMethod("issue|issues label|labels add <issueId> <labels>")
 	private void labelsAdd(CommandEvent event, @Argument("issueId") int issueId, @Argument("labels") @Greedy String labels) {
-		issues.addLabels(issueId, labelsOf(labels)).thenRun(event::thumbsup);
+		issues.addLabels(issueId, Utils.labelsOf(event.parseMentions(labels))).thenRun(event::thumbsup);
 	}
 
 	@CommandMethod("issue|issues label|labels remove <issueId> <labels>")
 	private void labelsRemove(CommandEvent event, @Argument("issueId") int issueId, @Argument("labels") @Greedy String labels) {
-		issues.removeLabels(issueId, labelsOf(labels)).thenRun(event::thumbsup);
+		issues.removeLabels(issueId, Utils.labelsOf(event.parseMentions(labels))).thenRun(event::thumbsup);
 	}
 
 	@CommandMethod("issue|issues search <query>")
@@ -104,8 +112,16 @@ public class IssueCommand {
 		});
 	}
 
-	private List<String> labelsOf(String input) {
-		return List.of(input.split("(?<!:) "));
+	@CommandMethod("issue|issues closeall <repo>")
+	private void closeAll(CommandEvent event, @Argument("repo") String repo) {
+		if (Jayce.get().getEnv() != Env.DEV)
+			throw new EdenException("Development environment only command");
+
+		final RepoIssueContext issues = Repos.repo(repo).issues();
+		issues.listAll().thenAccept(allIssues -> {
+			for (Issue issue : allIssues)
+				issues.close(Objects.requireNonNull(issue.number()));
+		});
 	}
 
 }

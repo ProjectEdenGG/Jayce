@@ -1,10 +1,16 @@
 package gg.projecteden.jayce.commands.common;
 
 import com.vdurmont.emoji.EmojiManager;
+import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.jayce.config.Config;
+import gg.projecteden.jayce.github.Issues.RepoIssueContext;
+import gg.projecteden.jayce.github.Repos;
+import gg.projecteden.jayce.github.Repos.RepoContext;
+import gg.projecteden.jayce.utils.Utils;
 import lombok.Data;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Emote;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -24,12 +30,24 @@ public final class CommandEvent {
 	private final Member member;
 	private final MessageChannel channel;
 
+	public boolean hasRole(String requiredRole) {
+		return getMember().getRoles().stream().anyMatch(role -> role.getName().equalsIgnoreCase(requiredRole));
+	}
+
 	public Message getMessage() {
 		return event.getMessage();
 	}
 
 	public void thumbsup() {
 		getMessage().addReaction(EmojiManager.getForAlias("thumbsup").getUnicode()).queue();
+	}
+
+	public Guild getGuild() {
+		return getEvent().getGuild();
+	}
+
+	public TextChannel getTextChannel() {
+		return (TextChannel) channel;
 	}
 
 	public String getMemberName() {
@@ -59,20 +77,39 @@ public final class CommandEvent {
 			content = content.replaceAll("<@!?" + Pattern.quote(user.getId()) + '>', '@' + Matcher.quoteReplacement(name));
 		}
 
-		for (Emote emote : message.getEmotes()) {
+		for (Emote emote : message.getEmotes())
 			content = content.replace(emote.getAsMention(), ":" + emote.getName() + ":");
-		}
 
-		for (TextChannel mentionedChannel : message.getMentionedChannels()) {
+		for (TextChannel mentionedChannel : message.getMentionedChannels())
 			content = content.replace(mentionedChannel.getAsMention(), '#' + mentionedChannel.getName());
-		}
 
-		for (Role mentionedRole : message.getMentionedRoles()) {
+		for (Role mentionedRole : message.getMentionedRoles())
 			content = content.replace(mentionedRole.getAsMention(), '@' + mentionedRole.getName());
-		}
 
 		return content;
 	}
 
+	public void handleException(Throwable ex) {
+		if (ex instanceof EdenException edenEx)
+			event.getChannel().sendMessage(edenEx.getMessage()).queue();
+		else if (ex.getCause() instanceof EdenException edenEx)
+			event.getChannel().sendMessage(edenEx.getMessage()).queue();
+		else
+			ex.printStackTrace();
+	}
+
+	// Support channels
+
+	public int getIssueId() {
+		return Utils.getIssueId(getTextChannel());
+	}
+
+	public RepoContext repo() {
+		return Repos.repo(getTextChannel().getParent());
+	}
+
+	public RepoIssueContext issues() {
+		return repo().issues();
+	}
 
 }

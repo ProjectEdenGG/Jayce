@@ -12,6 +12,7 @@ import com.spotify.github.v3.clients.GitHubClient;
 import gg.projecteden.EdenAPI;
 import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.jayce.commands.IssueCommand;
+import gg.projecteden.jayce.commands.SupportChannelCommands;
 import gg.projecteden.jayce.commands.common.CommandEvent;
 import gg.projecteden.jayce.config.Config;
 import gg.projecteden.mongodb.DatabaseConfig;
@@ -19,7 +20,6 @@ import gg.projecteden.utils.Env;
 import gg.projecteden.utils.Utils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.reflections.Reflections;
 
@@ -64,7 +64,7 @@ public class Jayce extends EdenAPI {
 		COMMAND_MANAGER = new JDA4CommandManager<>(
 			JDA,
 			event -> Config.COMMAND_PREFIX,
-			(event, command) -> event.getMember().getRoles().stream().map(Role::getName).anyMatch(role -> role.equalsIgnoreCase("Verified")),
+			CommandEvent::hasRole,
 			CommandExecutionCoordinator.simpleCoordinator(),
 			event -> new CommandEvent(event.getEvent().get(), event.getEvent().get().getMember(), event.getChannel()),
 			event -> JDACommandSender.of(event.getEvent())
@@ -88,6 +88,7 @@ public class Jayce extends EdenAPI {
 		);
 
 		annotationParser.parse(new IssueCommand());
+		annotationParser.parse(new SupportChannelCommands());
 	}
 
 	@Override

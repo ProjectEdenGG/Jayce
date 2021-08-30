@@ -13,6 +13,7 @@ import com.spotify.github.v3.issues.Label;
 import com.spotify.github.v3.search.SearchIssue;
 import com.spotify.github.v3.search.SearchIssues;
 import com.spotify.github.v3.search.requests.ImmutableSearchParameters;
+import gg.projecteden.jayce.config.Aliases;
 import gg.projecteden.jayce.github.Repos.RepoContext;
 import kotlin.Pair;
 import lombok.AllArgsConstructor;
@@ -68,12 +69,55 @@ public class Issues {
 			return client().getIssue(issueId);
 		}
 
+		private @NotNull Iterator<AsyncPage<Issue>> list() {
+			return client().listIssues();
+		}
+
+		public CompletableFuture<List<Issue>> listAll() {
+			final Iterable<AsyncPage<Issue>> pages = this::list;
+			return CompletableFuture.supplyAsync(() -> stream(pages.spliterator(), true)
+				.flatMap(page -> stream(page.spliterator(), true))
+				.toList());
+		}
+
+		@NotNull
+		public ImmutableIssue addAssignees(final ImmutableIssue issue, final Member member) {
+			return addAssignees(issue, List.of(Aliases.githubOf(member.getId())));
+		}
+
+		@NotNull
+		public ImmutableIssue addAssignees(final ImmutableIssue issue, final List<String> userIds) {
+			List<User> assignees = mutableCopyOf(issue.assignees());
+			userIds.stream().map(userId -> ImmutableUser.builder().login(userId).build()).forEach(assignees::add);
+			return issue.withAssignees(assignees);
+		}
+
+		@NotNull
+		public ImmutableIssue removeAssignees(final ImmutableIssue issue, final Member member) {
+			return removeAssignees(issue, List.of(Aliases.githubOf(member.getId())));
+		}
+
+		@NotNull
+		public ImmutableIssue removeAssignees(final ImmutableIssue issue, final List<String> userIds) {
+			List<User> assignees = mutableCopyOf(issue.assignees());
+			assignees.removeIf(user -> userIds.stream().anyMatch(userId -> userId.equalsIgnoreCase(user.login())));
+			return issue.withAssignees(assignees);
+		}
+
+		public CompletableFuture<Issue> assign(final int issueId, final Member member) {
+			return edit(issueId, issue -> addAssignees(issue, member));
+		}
+
 		public CompletableFuture<Issue> assign(final int issueId, final List<String> userIds) {
-			return edit(issueId, issue -> {
-				List<User> assignees = mutableCopyOf(issue.assignees());
-				userIds.stream().map(userId -> ImmutableUser.builder().login(userId).build()).forEach(assignees::add);
-				return issue.withAssignees(assignees);
-			});
+			return edit(issueId, issue -> addAssignees(issue, userIds));
+		}
+
+		public CompletableFuture<Issue> unassign(final int issueId, final Member member) {
+			return unassign(issueId, List.of(Aliases.githubOf(member.getId())));
+		}
+
+		public CompletableFuture<Issue> unassign(final int issueId, final List<String> userIds) {
+			return edit(issueId, issue -> removeAssignees(issue, userIds));
 		}
 
 		public CompletableFuture<Issue> addLabels(final int issueId, final List<String> labelIds) {
@@ -90,6 +134,14 @@ public class Issues {
 				labels.removeIf(label -> labelIds.stream().anyMatch(labelId -> labelId.equalsIgnoreCase(label.name())));
 				return issue.withLabels(labels);
 			});
+		}
+
+		public CompletableFuture<Issue> open(final int issueId) {
+			return edit(issueId, IssueState.OPEN::set);
+		}
+
+		public CompletableFuture<Issue> close(final int issueId) {
+			return edit(issueId, IssueState.CLOSED::set);
 		}
 
 		public CompletableFuture<Issue> edit(final int issueId, final Function<ImmutableIssue, ImmutableIssue> consumer) {
