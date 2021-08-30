@@ -105,7 +105,7 @@ public class IssueCommand {
 	}
 
 	private List<String> labelsOf(String input) {
-		return List.of(input.split("(?<![:]) "));
+		return List.of(input.split("(?<!:) "));
 	}
 
 }
