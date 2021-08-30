@@ -104,6 +104,10 @@ public class Issues {
 			return client().createComment(issueId, text);
 		}
 
+		public CompletableFuture<Void> editComment(final int commentId, final String body) {
+			return client().editComment(commentId, body);
+		}
+
 		public Iterator<AsyncPage<Comment>> listComments(final int issueId) {
 			return client().listComments(issueId);
 		}
