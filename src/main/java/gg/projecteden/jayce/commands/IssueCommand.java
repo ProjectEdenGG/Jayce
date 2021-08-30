@@ -17,7 +17,9 @@ import gg.projecteden.jayce.github.Repos.RepoContext;
 import gg.projecteden.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import static gg.projecteden.utils.StringUtils.ellipsis;
 import static gg.projecteden.utils.Utils.isNullOrEmpty;
@@ -34,7 +36,7 @@ public class IssueCommand {
 		final String title = content[0];
 		final String body = content.length > 1 ? content[1] : null;
 
-		issues.create(event.getMember(), title, body).thenAccept(result -> {
+		issues.create(issues.of(event.getMember(), title, body).build()).thenAccept(result -> {
 			if (!event.isWebhookChannel())
 				event.reply(issues.url(result).embed(false).build());
 		});
@@ -71,13 +73,13 @@ public class IssueCommand {
 	}
 
 	@CommandMethod("issue|issues label|labels add <issueId> <labels>")
-	private void labelsAdd(CommandEvent event, @Argument("issueId") int issueId, @Argument("labels") @Greedy String[] labels) {
-		issues.addLabels(issueId, Arrays.asList(labels)).thenRun(event::thumbsup);
+	private void labelsAdd(CommandEvent event, @Argument("issueId") int issueId, @Argument("labels") @Greedy String labels) {
+		issues.addLabels(issueId, labelsOf(labels)).thenRun(event::thumbsup);
 	}
 
 	@CommandMethod("issue|issues label|labels remove <issueId> <labels>")
-	private void labelsRemove(CommandEvent event, @Argument("issueId") int issueId, @Argument("labels") @Greedy String[] labels) {
-		issues.removeLabels(issueId, Arrays.asList(labels)).thenRun(event::thumbsup);
+	private void labelsRemove(CommandEvent event, @Argument("issueId") int issueId, @Argument("labels") @Greedy String labels) {
+		issues.removeLabels(issueId, labelsOf(labels)).thenRun(event::thumbsup);
 	}
 
 	@CommandMethod("issue|issues search <query>")
@@ -100,6 +102,20 @@ public class IssueCommand {
 
 			event.reply(embed);
 		});
+	}
+
+	private List<String> labelsOf(String input) {
+		final List<String> labels = new ArrayList<>();
+		final Iterator<String> iterator = List.of(input.split(" ")).iterator();
+
+		while (iterator.hasNext()) {
+			String label = iterator.next();
+			if (label.endsWith(":") && iterator.hasNext())
+				label += " " + iterator.next();
+			labels.add(label);
+		}
+
+		return labels;
 	}
 
 }
