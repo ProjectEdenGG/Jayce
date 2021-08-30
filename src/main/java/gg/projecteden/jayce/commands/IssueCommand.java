@@ -105,17 +105,7 @@ public class IssueCommand {
 	}
 
 	private List<String> labelsOf(String input) {
-		final List<String> labels = new ArrayList<>();
-		final Iterator<String> iterator = List.of(input.split(" ")).iterator();
-
-		while (iterator.hasNext()) {
-			String label = iterator.next();
-			if (label.endsWith(":") && iterator.hasNext())
-				label += " " + iterator.next();
-			labels.add(label);
-		}
-
-		return labels;
+		return List.of(input.split("(?<!:) "));
 	}
 
 }
