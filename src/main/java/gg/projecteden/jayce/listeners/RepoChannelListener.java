@@ -14,8 +14,11 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
+
+import static java.util.Objects.requireNonNull;
 
 public class RepoChannelListener extends DiscordListener {
 
@@ -33,12 +36,9 @@ public class RepoChannelListener extends DiscordListener {
 			if (member == null || category == null)
 				return;
 
-			final String channelName = channel.getName();
-			final String channelPrefix = "(?i)" + category.getName() + "-";
-			if (!channelName.matches(channelPrefix + "\\d+"))
+			Integer issueId = getIssueId(channel);
+			if (issueId == null)
 				return;
-
-			int issueId = Integer.parseInt(channelName.replaceAll(channelPrefix, ""));
 
 			final RepoContext repo = Repos.repo(category.getName());
 			final RepoIssueContext issues = repo.issues();
@@ -50,6 +50,16 @@ public class RepoChannelListener extends DiscordListener {
 		} catch (Exception ex) {
 			handleException(event, ex);
 		}
+	}
+
+	@Nullable
+	private Integer getIssueId(TextChannel channel) {
+		final String channelName = channel.getName();
+		final String channelPrefix = "(?i)" + requireNonNull(channel.getParent()).getName() + "-";
+		if (!channelName.matches(channelPrefix + "\\d+"))
+			return null;
+
+		return Integer.parseInt(channelName.replaceAll(channelPrefix, ""));
 	}
 
 	@Data
