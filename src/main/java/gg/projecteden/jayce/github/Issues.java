@@ -48,16 +48,16 @@ public class Issues {
 				repo.client().createIssueClient());
 		}
 
-		public CompletableFuture<Issue> create(final Member member, final String title, final String body) {
+		public ImmutableIssue.Builder of(final Member member, final String title, final String body) {
 			final ImmutableIssue.Builder builder = ImmutableIssue.builder()
 				.title(title);
 
 			if (isNullOrEmpty(body))
-				builder.body(Optional.of("**" + member.getEffectiveName() + "**: " + body));
-			else
 				builder.body(Optional.of("Submitted by **" + member.getEffectiveName() + "**"));
+			else
+				builder.body(Optional.of("**" + member.getEffectiveName() + "**: " + body));
 
-			return create(builder.build());
+			return builder;
 		}
 
 		public CompletableFuture<Issue> create(final Issue issue) {
