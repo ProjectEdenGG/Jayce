@@ -53,8 +53,8 @@ public class SupportChannelCommands {
 	}
 
 	// Uses `hub` since GitHub's REST API does not support transferring issues (only their GraphQL API does)
-	@CommandMethod("move <repo>")
-	private void move(CommandEvent event, @Argument("repo") String repo) {
+	@CommandMethod("transfer|move <repo>")
+	private void transfer(CommandEvent event, @Argument("repo") String repo) {
 		try {
 			final String command = "./transfer-issue " + event.repo().repo() + " " + event.getIssueId() + " " + repo;
 			final String result = bash(command);

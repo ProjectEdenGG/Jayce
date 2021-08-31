@@ -96,13 +96,8 @@
       <url>https://repo1.maven.org/maven2/</url>
     </repository>
     <repository>
-      <id>jcenter</id>
-      <name>jcenter-bintray</name>
-      <url>https://jcenter.bintray.com</url>
-    </repository>
-    <repository>
-      <id>eclipse-repo</id>
-      <url>https://repo.eclipse.org/content/groups/releases/</url>
+      <id>jda-repo</id>
+      <url>https://m2.dv8tion.net/releases</url>
     </repository>
     <repository>
       <id>cloud-repo</id>
@@ -127,7 +122,7 @@
     <dependency>
       <groupId>net.dv8tion</groupId>
       <artifactId>JDA</artifactId>
-      <version>4.2.0_212</version>
+      <version>4.3.0_313</version>
       <exclusions>
         <exclusion>
           <groupId>club.minnced</groupId>
