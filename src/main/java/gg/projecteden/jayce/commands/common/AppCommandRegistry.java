@@ -1,6 +1,5 @@
 package gg.projecteden.jayce.commands.common;
 
-import gg.projecteden.jayce.commands.common.annotations.Command;
 import gg.projecteden.utils.DiscordId;
 import lombok.SneakyThrows;
 import net.dv8tion.jda.api.entities.Guild;
@@ -13,10 +12,8 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import org.reflections.Reflections;
 
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -26,12 +23,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static gg.projecteden.jayce.Jayce.JDA;
-import static gg.projecteden.jayce.commands.common.AppCommandBuilder.getCommandName;
 import static gg.projecteden.jayce.commands.common.AppCommandHandler.parseMentions;
 
 public record AppCommandRegistry(String packageName) {
-	static final Map<String, Class<? extends AppCommand>> COMMANDS = new HashMap<>();
-	static final Map<Class<? extends AppCommand>, Map<String, Method>> METHODS = new HashMap<>();
+	static final Map<String, AppCommandMeta<?>> COMMANDS = new HashMap<>();
 	static final Map<Class<?>, Function<OptionMapping, Object>> CONVERTERS = new HashMap<>();
 	static final Map<Class<?>, Supplier<List<Choice>>> CHOICES = new HashMap<>();
 	static final Map<Class<?>, List<Choice>> CHOICES_CACHE = new HashMap<>();
@@ -39,28 +34,25 @@ public record AppCommandRegistry(String packageName) {
 
 	@SneakyThrows
 	public void registerAll() {
-		var reflections = new Reflections(packageName);
-		for (var clazz : reflections.getSubTypesOf(AppCommand.class))
+		for (var clazz : new Reflections(packageName).getSubTypesOf(AppCommand.class))
 			register(clazz);
 	}
 
 	public static void register(Class<? extends AppCommand> clazz) {
 		try {
-			Class.forName(clazz.getName(), true, clazz.getClassLoader());
-			var command = new AppCommandBuilder(clazz).build();
-			register(command);
-			cache(command.getName(), clazz);
+			register(new AppCommandMeta<>(clazz));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 
-	private static void register(CommandData command) {
+	private static void register(AppCommandMeta<?> meta) {
+		COMMANDS.put(meta.getName(), meta);
+
+		var command = meta.getCommand();
+
 		for (Guild guild : JDA.getGuilds()) {
-			try {
-				Thread.sleep(300);
-			} catch (Exception ignored) {
-			}
+			try { Thread.sleep(300); } catch (Exception ignored) {}
 
 			if (guild.getId().equals(DiscordId.Guild.PROJECT_EDEN.getId()))
 				continue;
@@ -99,11 +91,10 @@ public record AppCommandRegistry(String packageName) {
 
 			System.out.println("/" + command.getName() + ": " + command.toData());
 
-			guild.upsertCommand(command).submit()
-				.thenAccept(response -> {
-					success.accept("COMMAND");
-					setPrivilege.accept(response);
-				}).exceptionally(ex -> {
+			guild.upsertCommand(command).submit().thenAccept(response -> {
+				success.accept("COMMAND");
+				setPrivilege.accept(response);
+			}).exceptionally(ex -> {
 				failure.accept("COMMAND");
 				ex.printStackTrace();
 				return null;
@@ -111,26 +102,7 @@ public record AppCommandRegistry(String packageName) {
 		}
 	}
 
-	private static void cache(String command, Class<? extends AppCommand> clazz) {
-		COMMANDS.put(command, clazz);
-
-		Map<String, Method> methods = new HashMap<>();
-		for (Method method : clazz.getDeclaredMethods()) {
-			if (method.getAnnotation(Command.class) == null)
-				continue;
-
-			method.setAccessible(true);
-			methods.put(getCommandName(clazz) + "/" + method.getName().replaceAll("_", "/"), method);
-		}
-
-		METHODS.put(clazz, methods);
-	}
-
-	public static void mapOptionType(Class<?> clazz, OptionType optionType) {
-		mapOptionType(List.of(clazz), optionType);
-	}
-
-	public static void mapOptionType(List<Class<?>> classes, OptionType optionType) {
+	public static void mapOptionType(OptionType optionType, Class<?>... classes) {
 		for (Class<?> clazz : classes)
 			OPTION_TYPE_MAP.put(clazz, optionType);
 	}
@@ -157,14 +129,14 @@ public record AppCommandRegistry(String packageName) {
 	}
 
 	static {
-		mapOptionType(String.class, OptionType.STRING);
-		mapOptionType(List.of(Boolean.class, Boolean.TYPE), OptionType.BOOLEAN);
-		mapOptionType(List.of(Integer.class, Long.class, Byte.class, Short.class, Integer.TYPE, Long.TYPE, Byte.TYPE, Short.TYPE), OptionType.INTEGER);
-		mapOptionType(List.of(Double.class, Float.class, Double.TYPE, Float.TYPE), OptionType.NUMBER);
-		mapOptionType(List.of(Member.class, User.class), OptionType.USER);
-		mapOptionType(List.of(GuildChannel.class, MessageChannel.class), OptionType.CHANNEL);
-		mapOptionType(Role.class, OptionType.ROLE);
-		mapOptionType(IMentionable.class, OptionType.MENTIONABLE);
+		mapOptionType(OptionType.STRING, String.class);
+		mapOptionType(OptionType.BOOLEAN, Boolean.class, Boolean.TYPE);
+		mapOptionType(OptionType.INTEGER, Integer.class, Long.class, Byte.class, Short.class, Integer.TYPE, Long.TYPE, Byte.TYPE, Short.TYPE);
+		mapOptionType(OptionType.NUMBER, Double.class, Float.class, Double.TYPE, Float.TYPE);
+		mapOptionType(OptionType.USER, Member.class, User.class);
+		mapOptionType(OptionType.CHANNEL, GuildChannel.class, MessageChannel.class);
+		mapOptionType(OptionType.ROLE, Role.class);
+		mapOptionType(OptionType.MENTIONABLE, IMentionable.class);
 
 		registerConverter(String.class, option -> parseMentions(option.getAsString()));
 		registerConverter(List.of(Boolean.class, Boolean.TYPE), OptionMapping::getAsBoolean);
