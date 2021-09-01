@@ -1,12 +1,11 @@
 package gg.projecteden.jayce.commands.common;
 
-import cloud.commandframework.annotations.CommandMethod;
 import gg.projecteden.annotations.Environments;
 import gg.projecteden.exceptions.EdenException;
-import gg.projecteden.jayce.Jayce;
 import gg.projecteden.utils.Env;
 import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.IMentionable;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
@@ -14,15 +13,13 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.jetbrains.annotations.NotNull;
-import org.reflections.Reflections;
 
-import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.HashMap;
 import java.util.Map;
 
-import static gg.projecteden.utils.StringUtils.replaceLast;
+import static gg.projecteden.jayce.commands.common.AppCommandRegistration.COMMANDS;
+import static gg.projecteden.jayce.commands.common.AppCommandRegistration.METHODS;
 
 /*
 TODO
@@ -37,49 +34,11 @@ TODO
 @Environments(Env.DEV)
 public class AppCommandHandler extends ListenerAdapter {
 
-	private static final Map<String, Class<? extends AppCommand>> commands = new HashMap<>() {{
-		var reflections = new Reflections(Jayce.class.getPackage().getName() + ".commands");
-		for (var clazz : reflections.getSubTypesOf(AppCommand.class))
-			put(getCommandName(clazz), clazz);
-	}};
-
-	private static final Map<Class<? extends AppCommand>, Map<String, Method>> methods = new HashMap<>() {{
-		commands.values().forEach(clazz -> {
-			Map<String, Method> methods = new HashMap<>();
-			for (Method method : clazz.getDeclaredMethods()) {
-				method.setAccessible(true);
-
-				final CommandMethod annotation = method.getAnnotation(CommandMethod.class);
-				if (annotation == null)
-					continue;
-
-				final String path = annotation.value();
-				final String literals = path.split(" [<\\[]", 2)[0];
-				methods.put(getCommandName(clazz) + "/" + literals.replaceAll(" ", "/"), method);
-			}
-
-			put(clazz, methods);
-		});
-	}};
-
-	@NotNull
-	private static String getCommandName(Class<? extends AppCommand> clazz) {
-		return replaceLast(clazz.getSimpleName(), "AppCommand", "").toLowerCase();
-	}
-
-	static {
-		methods.forEach((clazz, methods) -> {
-			System.out.println(clazz.getSimpleName() + " methods:");
-			methods.forEach((path, method) ->
-				System.out.println(path + ": " + method.getName()));
-		});
-	}
-
 	@Override
 	public void onSlashCommand(@NotNull SlashCommandEvent event) {
 		try {
-			final Class<? extends AppCommand> clazz = commands.get(event.getName());
-			final Map<String, Method> methods = AppCommandHandler.methods.get(clazz);
+			final Class<? extends AppCommand> clazz = COMMANDS.get(event.getName());
+			final Map<String, Method> methods = METHODS.get(clazz);
 			final Method method = methods.get(event.getCommandPath());
 
 			final Parameter[] parameters = method.getParameters();
@@ -135,7 +94,7 @@ public class AppCommandHandler extends ListenerAdapter {
 			return option.getAsMentionable();
 		else
 			throw new EdenException("Could not convert argument [input=" + option.getAsString() + ", type=" +
-				type.getSimpleName() + ", method=" + method.getName() + ", parameter=" + parameter.getName());
+				type.getSimpleName() + ", method=" + method.getName() + ", parameter=" + parameter.getName() + "]");
 	}
 
 	protected String parseMentions(String content) {
