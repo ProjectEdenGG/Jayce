@@ -2,6 +2,7 @@ package gg.projecteden.jayce.commands.common;
 
 import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.jayce.Jayce;
+import gg.projecteden.jayce.commands.common.annotations.Choices;
 import gg.projecteden.jayce.commands.common.annotations.Desc;
 import gg.projecteden.jayce.commands.common.annotations.Path;
 import gg.projecteden.utils.DiscordId;
@@ -16,6 +17,7 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -27,11 +29,13 @@ import org.reflections.Reflections;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static gg.projecteden.jayce.Jayce.JDA;
 import static gg.projecteden.utils.StringUtils.replaceLast;
@@ -40,10 +44,20 @@ import static java.util.stream.Collectors.joining;
 public class AppCommandRegistration {
 	static final Map<String, Class<? extends AppCommand>> COMMANDS = new HashMap<>();
 	static final Map<Class<? extends AppCommand>, Map<String, Method>> METHODS = new HashMap<>();
+	static final Map<Class<?>, Supplier<List<Choice>>> CHOICES = new HashMap<>();
+	static final Map<Class<?>, List<Choice>> CHOICES_CACHE = new HashMap<>();
 
 	@NotNull
 	private static String getCommandName(Class<? extends AppCommand> clazz) {
 		return replaceLast(clazz.getSimpleName(), "AppCommand", "").toLowerCase();
+	}
+
+	public static void supplyChoices(Class<?> clazz, Supplier<List<Choice>> supplier) {
+		CHOICES.put(clazz, supplier);
+	}
+
+	private static List<Choice> loadChoices(Class<?> clazz) {
+		return CHOICES_CACHE.computeIfAbsent(clazz, $ -> CHOICES.getOrDefault(clazz, Collections::emptyList).get());
 	}
 
 	@SneakyThrows
@@ -117,6 +131,7 @@ public class AppCommandRegistration {
 
 	public static void register(Class<? extends AppCommand> clazz) {
 		try {
+			Class.forName(clazz.getName(), true, clazz.getClassLoader());
 			var command = build(clazz);
 			register(command);
 			cache(command.getName(), clazz);
@@ -131,34 +146,38 @@ public class AppCommandRegistration {
 
 		Map<String, SubcommandGroupData> subcommands = new HashMap<>();
 		for (Method method : clazz.getDeclaredMethods()) {
-			final String methodId = clazz.getSimpleName() + "#" + method.getName();
+			try {
+				final String methodId = clazz.getSimpleName() + "#" + method.getName();
 
-			final Path pathAnnotation = method.getAnnotation(Path.class);
-			if (pathAnnotation == null)
-				continue;
+				final Path pathAnnotation = method.getAnnotation(Path.class);
+				if (pathAnnotation == null)
+					continue;
 
-			final String path = pathAnnotation.value();
-			final String desc = requireDescription(clazz, method);
+				final String path = pathAnnotation.value();
+				final String desc = requireDescription(clazz, method);
 
-			// TODO Use regex (Almost works: `^[\w\s]+(?![<\[])`)
-			final String literal = List.of(path.split(" ")).stream().filter(arg -> arg.matches("[\\w-]+")).collect(joining(" "));
-			final String args = path.replaceFirst(literal, "").trim();
+				// TODO Use regex (Almost works: `^[\w\s]+(?![<\[])`)
+				final String literal = List.of(path.split(" ")).stream().filter(arg -> arg.matches("[\\w-]+")).collect(joining(" "));
+				final String args = path.replaceFirst(literal, "").trim();
 
-			final List<OptionData> options = buildOptions(clazz, method, List.of(args.split(" ")));
+				final List<OptionData> options = buildOptions(clazz, method, List.of(args.split(" ")));
 
-			final String[] literals = literal.split(" ");
-			switch (literals.length) {
-				case 0 ->
-					command.addOptions(options);
-				case 1 ->
-					command.addSubcommands(new SubcommandData(literals[0], desc)
+				final String[] literals = literal.split(" ");
+				switch (literals.length) {
+					case 0 ->
+						command.addOptions(options);
+					case 1 ->
+						command.addSubcommands(new SubcommandData(literals[0], desc)
 						.addOptions(options));
-				case 2 ->
-					subcommands.computeIfAbsent(literals[0], $ -> new SubcommandGroupData(literals[0], desc))
-						.addSubcommands(new SubcommandData(literals[1], desc)
-							.addOptions(options));
-				default ->
-					throw new EdenException(methodId + " has more than 2 literal arguments");
+					case 2 ->
+						subcommands.computeIfAbsent(literals[0], $ -> new SubcommandGroupData(literals[0], desc))
+							.addSubcommands(new SubcommandData(literals[1], desc)
+								.addOptions(options));
+					default ->
+						throw new EdenException(methodId + " has more than 2 literal arguments");
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
 		}
 
@@ -206,25 +225,33 @@ public class AppCommandRegistration {
 
 	@Data
 	private static class AppCommandArgument {
+		private final Class<? extends AppCommand> command;
+		private final Method method;
 		private final Parameter parameter;
 		private final String pathArgument;
 		private final String description;
 		private final Class<?> type;
+		private final Class<?> choices;
 		private final boolean required;
 		private final OptionType optionType;
 
-		public AppCommandArgument(Class<?> clazz, Method method, Parameter parameter, String pathArgument) {
+		public AppCommandArgument(Class<? extends AppCommand> clazz, Method method, Parameter parameter, String pathArgument) {
+			this.command = clazz;
+			this.method = method;
 			this.parameter = parameter;
 			this.pathArgument = pathArgument;
 			this.description = requireDescription(clazz, method, parameter);
 			this.type = parameter.getType();
+			final Choices choicesAnnotation = parameter.getAnnotation(Choices.class);
+			this.choices = choicesAnnotation == null ? null : choicesAnnotation.value() == void.class ? null : choicesAnnotation.value();
 			this.required = pathArgument.startsWith("<");
 			this.optionType = resolveOptionType(this.type);
 		}
 
 		private OptionData asOption() {
 			final OptionData option = new OptionData(optionType, parameter.getName(), description, required);
-			// TODO Choices
+			if (choices != null)
+				option.addChoices(loadChoices(choices));
 			return option;
 		}
 	}

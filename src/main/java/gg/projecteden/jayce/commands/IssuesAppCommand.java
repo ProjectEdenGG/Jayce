@@ -1,11 +1,13 @@
 package gg.projecteden.jayce.commands;
 
 import com.spotify.github.v3.issues.Issue;
+import com.spotify.github.v3.issues.Label;
 import com.spotify.github.v3.search.SearchIssue;
 import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.jayce.Jayce;
 import gg.projecteden.jayce.commands.common.AppCommand;
 import gg.projecteden.jayce.commands.common.AppCommandEvent;
+import gg.projecteden.jayce.commands.common.annotations.Choices;
 import gg.projecteden.jayce.commands.common.annotations.Desc;
 import gg.projecteden.jayce.commands.common.annotations.Path;
 import gg.projecteden.jayce.commands.common.annotations.Role;
@@ -18,12 +20,15 @@ import gg.projecteden.utils.StringUtils;
 import gg.projecteden.utils.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static gg.projecteden.jayce.commands.common.AppCommandRegistration.supplyChoices;
 import static gg.projecteden.utils.StringUtils.ellipsis;
+import static java.util.Objects.requireNonNull;
 
 @Role("Staff")
 @Desc("Interact with GitHub issues")
@@ -88,13 +93,13 @@ public class IssuesAppCommand extends AppCommand {
 
 	@Desc("Add a label to an issue")
 	@Path("labels add <id> <label>")
-	void labels_add(@Desc("issue number") int id, @Desc("label") String label) {
+	void labels_add(@Desc("issue number") int id, @Desc("label") @Choices(Label.class) String label) {
 		issues.addLabels(id, List.of(label)).thenRun(this::thumbsup);
 	}
 
 	@Desc("Remove a label from an issue")
 	@Path("labels remove <id> <label>")
-	void labels_remove(@Desc("issue number") int id, @Desc("label") String label) {
+	void labels_remove(@Desc("issue number") int id, @Desc("label") @Choices(Label.class) String label) {
 		issues.removeLabels(id, List.of(label)).thenRun(this::thumbsup);
 	}
 
@@ -130,7 +135,23 @@ public class IssuesAppCommand extends AppCommand {
 		final RepoIssueContext issues = Repos.repo(repo).issues();
 		issues.listAll().thenAccept(allIssues -> {
 			for (Issue issue : allIssues)
-				issues.close(Objects.requireNonNull(issue.number()));
+				issues.close(requireNonNull(issue.number()));
+		});
+	}
+
+	static {
+		supplyChoices(Label.class, () -> {
+			try {
+				return Repos.main().listLabels().get().stream()
+					.map(Label::name)
+					.filter(Objects::nonNull)
+					.map(String::toLowerCase)
+					.map(label -> new Choice(label, label))
+					.toList();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				return null;
+			}
 		});
 	}
 
