@@ -3,7 +3,7 @@ package gg.projecteden.jayce.commands;
 import gg.projecteden.jayce.commands.common.AppCommand;
 import gg.projecteden.jayce.commands.common.AppCommandEvent;
 import gg.projecteden.jayce.commands.common.annotations.Desc;
-import gg.projecteden.jayce.commands.common.annotations.Path;
+import gg.projecteden.jayce.commands.common.annotations.NotRequired;
 import gg.projecteden.jayce.commands.common.annotations.Role;
 import gg.projecteden.jayce.github.Issues.IssueState;
 import gg.projecteden.jayce.github.Repos;
@@ -30,8 +30,7 @@ public class ChannelAppCommand extends AppCommand {
 
 	// TODO
 	@Desc("Mark this channel as resolved")
-	@Path("resolve [comment]")
-	void resolve(@Desc("resolution") String comment) {
+	void resolve(@Desc("resolution") @NotRequired String comment) {
 		final CompletableFuture<?> first;
 		if (!isNullOrEmpty(comment))
 			first = issues().comment(getIssueId(), CommentMeta.asComment(event.getEvent().getId(), member(), comment));
@@ -57,7 +56,6 @@ public class ChannelAppCommand extends AppCommand {
 
 	// Uses `hub` since GitHub's REST API does not support transferring issues (only their GraphQL API does)
 	@Desc("Transfer this issue to another repository")
-	@Path("transfer <repo>")
 	private void transfer(@Desc("destination repository") String repo) {
 		final String command = "./transfer-issue " + repo().repo() + " " + getIssueId() + " " + repo;
 		final String result = bash(command);

@@ -1,7 +1,7 @@
 package gg.projecteden.jayce.commands.common;
 
 import gg.projecteden.annotations.Environments;
-import gg.projecteden.exceptions.EdenException;
+import gg.projecteden.jayce.commands.common.exceptions.AppCommandMisconfiguredException;
 import gg.projecteden.utils.Env;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -12,9 +12,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Map;
 
-import static gg.projecteden.jayce.commands.common.AppCommandRegistration.COMMANDS;
-import static gg.projecteden.jayce.commands.common.AppCommandRegistration.CONVERTERS;
-import static gg.projecteden.jayce.commands.common.AppCommandRegistration.METHODS;
+import static gg.projecteden.jayce.commands.common.AppCommandRegistry.COMMANDS;
+import static gg.projecteden.jayce.commands.common.AppCommandRegistry.CONVERTERS;
+import static gg.projecteden.jayce.commands.common.AppCommandRegistry.METHODS;
 
 /*
 TODO
@@ -62,7 +62,7 @@ public class AppCommandHandler extends ListenerAdapter {
 
 	public static Object convert(Class<?> clazz, OptionMapping option) {
 		if (!CONVERTERS.containsKey(clazz))
-			throw new EdenException("No converter for " + clazz.getSimpleName() + " registered");
+			throw new AppCommandMisconfiguredException("No converter for " + clazz.getSimpleName() + " registered");
 
 		return CONVERTERS.get(clazz).apply(option);
 	}
