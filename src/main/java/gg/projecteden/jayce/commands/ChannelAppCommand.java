@@ -2,8 +2,9 @@ package gg.projecteden.jayce.commands;
 
 import gg.projecteden.jayce.commands.common.AppCommand;
 import gg.projecteden.jayce.commands.common.AppCommandEvent;
+import gg.projecteden.jayce.commands.common.annotations.Command;
 import gg.projecteden.jayce.commands.common.annotations.Desc;
-import gg.projecteden.jayce.commands.common.annotations.NotRequired;
+import gg.projecteden.jayce.commands.common.annotations.Optional;
 import gg.projecteden.jayce.commands.common.annotations.Role;
 import gg.projecteden.jayce.github.Issues.IssueState;
 import gg.projecteden.jayce.github.Repos;
@@ -21,7 +22,7 @@ import static java.time.LocalDateTime.now;
 import static java.util.Objects.requireNonNull;
 
 @Role("Staff")
-@Desc("Manage support channels")
+@Command("Manage support channels")
 public class ChannelAppCommand extends AppCommand {
 
 	public ChannelAppCommand(AppCommandEvent event) {
@@ -29,8 +30,8 @@ public class ChannelAppCommand extends AppCommand {
 	}
 
 	// TODO
-	@Desc("Mark this channel as resolved")
-	void resolve(@Desc("resolution") @NotRequired String comment) {
+	@Command("Mark this channel as resolved")
+	void resolve(@Desc("resolution") @Optional String comment) {
 		final CompletableFuture<?> first;
 		if (!isNullOrEmpty(comment))
 			first = issues().comment(getIssueId(), CommentMeta.asComment(event.getEvent().getId(), member(), comment));
@@ -55,7 +56,7 @@ public class ChannelAppCommand extends AppCommand {
 	}
 
 	// Uses `hub` since GitHub's REST API does not support transferring issues (only their GraphQL API does)
-	@Desc("Transfer this issue to another repository")
+	@Command("Transfer this issue to another repository")
 	private void transfer(@Desc("destination repository") String repo) {
 		final String command = "./transfer-issue " + repo().repo() + " " + getIssueId() + " " + repo;
 		final String result = bash(command);

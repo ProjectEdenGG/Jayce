@@ -8,6 +8,7 @@ import gg.projecteden.jayce.Jayce;
 import gg.projecteden.jayce.commands.common.AppCommand;
 import gg.projecteden.jayce.commands.common.AppCommandEvent;
 import gg.projecteden.jayce.commands.common.annotations.Choices;
+import gg.projecteden.jayce.commands.common.annotations.Command;
 import gg.projecteden.jayce.commands.common.annotations.Desc;
 import gg.projecteden.jayce.commands.common.annotations.Role;
 import gg.projecteden.jayce.config.Config;
@@ -30,7 +31,7 @@ import static gg.projecteden.utils.StringUtils.ellipsis;
 import static java.util.Objects.requireNonNull;
 
 @Role("Staff")
-@Desc("Interact with GitHub issues")
+@Command("Interact with GitHub issues")
 public class IssuesAppCommand extends AppCommand {
 	private final RepoContext repo = Repos.main();
 	private final RepoIssueContext issues = repo.issues();
@@ -39,7 +40,7 @@ public class IssuesAppCommand extends AppCommand {
 		super(event);
 	}
 
-	@Desc("Create an issue")
+	@Command("Create an issue")
 	void create(String title, String body) {
 		issues.create(issues.of(member(), title, body).build()).thenAccept(result -> {
 			if (!isWebhookChannel())
@@ -47,52 +48,52 @@ public class IssuesAppCommand extends AppCommand {
 		});
 	}
 
-	@Desc("Open an existing issue")
+	@Command("Open an existing issue")
 	void open(@Desc("issue number") int id) {
 		issues.open(id).thenRun(this::thumbsup);
 	}
 
-	@Desc("Close an issue")
+	@Command("Close an issue")
 	void close(@Desc("issue number") int id) {
 		issues.close(id).thenRun(this::thumbsup);
 	}
 
-	@Desc("Add a user to an issue's assignees")
+	@Command("Add a user to an issue's assignees")
 	void assign(@Desc("issue number") int id, Member user) {
 		issues.assign(id, user).thenRun(this::thumbsup);
 	}
 
-	@Desc("Remove a user from an issue's assignees")
+	@Command("Remove a user from an issue's assignees")
 	void unassign(@Desc("issue number") int id, Member user) {
 		issues.unassign(id, user).thenRun(this::thumbsup);
 	}
 
-	@Desc("Edit an issue's title")
+	@Command("Edit an issue's title")
 	void edit_title(@Desc("issue number") int id, String text) {
 		issues.edit(id, issue -> issue.withTitle(text)).thenRun(this::thumbsup);
 	}
 
-	@Desc("Edit an issue's body")
+	@Command("Edit an issue's body")
 	void edit_body(@Desc("issue number") int id, String text) {
 		issues.edit(id, issue -> issue.withBody(Optional.of(text))).thenRun(this::thumbsup);
 	}
 
-	@Desc("Comment on an issue")
+	@Command("Comment on an issue")
 	void comment(@Desc("issue number") int id, String text) {
 		issues.comment(id, "**" + name() + "**: " + text).thenRun(this::thumbsup);
 	}
 
-	@Desc("Add a label to an issue")
+	@Command("Add a label to an issue")
 	void labels_add(@Desc("issue number") int id, @Choices(Label.class) String label) {
 		issues.addLabels(id, List.of(label)).thenRun(this::thumbsup);
 	}
 
-	@Desc("Remove a label from an issue")
+	@Command("Remove a label from an issue")
 	void labels_remove(@Desc("issue number") int id, @Choices(Label.class) String label) {
 		issues.removeLabels(id, List.of(label)).thenRun(this::thumbsup);
 	}
 
-	@Desc("Search existing issues")
+	@Command("Search existing issues")
 	void search(String query) {
 		issues.search(query).thenAccept(items -> {
 			if (Utils.isNullOrEmpty(items))
@@ -114,7 +115,7 @@ public class IssuesAppCommand extends AppCommand {
 		});
 	}
 
-	@Desc("Close all issues in a repository")
+	@Command("Close all issues in a repository")
 	void closeAll(String repo) {
 		if (Jayce.get().getEnv() != Env.DEV)
 			throw new EdenException("Development environment only command");

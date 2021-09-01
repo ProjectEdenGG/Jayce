@@ -1,8 +1,9 @@
 package gg.projecteden.jayce.commands.common;
 
 import gg.projecteden.jayce.commands.common.annotations.Choices;
+import gg.projecteden.jayce.commands.common.annotations.Command;
 import gg.projecteden.jayce.commands.common.annotations.Desc;
-import gg.projecteden.jayce.commands.common.annotations.NotRequired;
+import gg.projecteden.jayce.commands.common.annotations.Optional;
 import gg.projecteden.jayce.commands.common.exceptions.AppCommandMisconfiguredException;
 import gg.projecteden.utils.Utils;
 import lombok.Data;
@@ -34,7 +35,7 @@ public record AppCommandBuilder(Class<? extends AppCommand> clazz) {
 		Map<String, SubcommandGroupData> subcommands = new HashMap<>();
 		for (Method method : clazz.getDeclaredMethods()) {
 			try {
-				final Desc annotation = method.getAnnotation(Desc.class);
+				final Command annotation = method.getAnnotation(Command.class);
 				if (annotation == null)
 					continue;
 
@@ -72,9 +73,9 @@ public record AppCommandBuilder(Class<? extends AppCommand> clazz) {
 
 	@NotNull
 	private static String requireDescription(Class<?> clazz) {
-		final Desc annotation = clazz.getAnnotation(Desc.class);
+		final Command annotation = clazz.getAnnotation(Command.class);
 		if (annotation == null)
-			throw new AppCommandMisconfiguredException(clazz.getSimpleName() + " does not have @" + Desc.class.getSimpleName());
+			throw new AppCommandMisconfiguredException(clazz.getSimpleName() + " does not have @" + Command.class.getSimpleName());
 
 		return annotation.value();
 	}
@@ -104,7 +105,7 @@ public record AppCommandBuilder(Class<? extends AppCommand> clazz) {
 			this.type = parameter.getType();
 			final Choices choicesAnnotation = parameter.getAnnotation(Choices.class);
 			this.choices = choicesAnnotation == null ? type : choicesAnnotation.value();
-			this.required = parameter.getAnnotation(NotRequired.class) == null;
+			this.required = parameter.getAnnotation(Optional.class) == null;
 			this.optionType = resolveOptionType(this.type);
 		}
 

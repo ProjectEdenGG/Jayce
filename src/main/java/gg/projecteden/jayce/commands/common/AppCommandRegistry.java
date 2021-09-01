@@ -1,6 +1,6 @@
 package gg.projecteden.jayce.commands.common;
 
-import gg.projecteden.jayce.commands.common.annotations.Desc;
+import gg.projecteden.jayce.commands.common.annotations.Command;
 import gg.projecteden.utils.DiscordId;
 import lombok.SneakyThrows;
 import net.dv8tion.jda.api.entities.Guild;
@@ -10,7 +10,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -83,7 +82,7 @@ public record AppCommandRegistry(String packageName) {
 			});
 			*/
 
-			Consumer<Command> setPrivilege = response -> {
+			Consumer<net.dv8tion.jda.api.interactions.commands.Command> setPrivilege = response -> {
 				/* TODO
 				final CommandPrivilege privilege = new CommandPrivilege(Type.ROLE, true, guild.getRolesByName());
 				guild.updateCommandPrivilegesById(response.getId(), privilege).submit()
@@ -117,7 +116,7 @@ public record AppCommandRegistry(String packageName) {
 
 		Map<String, Method> methods = new HashMap<>();
 		for (Method method : clazz.getDeclaredMethods()) {
-			if (method.getAnnotation(Desc.class) == null)
+			if (method.getAnnotation(Command.class) == null)
 				continue;
 
 			method.setAccessible(true);
