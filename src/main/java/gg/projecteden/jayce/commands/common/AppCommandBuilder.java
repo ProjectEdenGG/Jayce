@@ -4,6 +4,7 @@ import gg.projecteden.jayce.commands.common.annotations.Choices;
 import gg.projecteden.jayce.commands.common.annotations.Command;
 import gg.projecteden.jayce.commands.common.annotations.Desc;
 import gg.projecteden.jayce.commands.common.annotations.Optional;
+import gg.projecteden.jayce.commands.common.exceptions.AppCommandException;
 import gg.projecteden.jayce.commands.common.exceptions.AppCommandMisconfiguredException;
 import gg.projecteden.utils.Utils;
 import lombok.Data;
@@ -20,8 +21,10 @@ import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import static gg.projecteden.jayce.commands.common.AppCommandRegistry.CONVERTERS;
 import static gg.projecteden.jayce.commands.common.AppCommandRegistry.loadChoices;
 import static gg.projecteden.jayce.commands.common.AppCommandRegistry.resolveOptionType;
 import static gg.projecteden.utils.StringUtils.replaceLast;
@@ -31,8 +34,8 @@ public record AppCommandBuilder(Class<? extends AppCommand> clazz) {
 	@NotNull
 	CommandData build() {
 		final CommandData command = new CommandData(getCommandName(clazz), requireDescription(clazz));
+		final Map<String, SubcommandGroupData> subcommands = new HashMap<>();
 
-		Map<String, SubcommandGroupData> subcommands = new HashMap<>();
 		for (Method method : clazz.getDeclaredMethods()) {
 			try {
 				final Command annotation = method.getAnnotation(Command.class);
@@ -40,17 +43,16 @@ public record AppCommandBuilder(Class<? extends AppCommand> clazz) {
 					continue;
 
 				final String desc = annotation.value();
-				final String literal = method.getName().replaceAll("_", " ");
-				final List<OptionData> options = buildOptions(clazz, method);
+				final Supplier<List<OptionData>> options = () -> buildOptions(clazz, method);
 
-				final String[] literals = literal.toLowerCase().split(" ");
+				final String[] literals = method.getName().toLowerCase().split("_");
 				switch (literals.length) {
-					case 0 -> command.addOptions(options);
+					case 0 -> command.addOptions(options.get());
 					case 1 -> command.addSubcommands(new SubcommandData(literals[0], desc)
-							.addOptions(options));
+							.addOptions(options.get()));
 					case 2 -> subcommands.computeIfAbsent(literals[0], $ -> new SubcommandGroupData(literals[0], desc))
 							.addSubcommands(new SubcommandData(literals[1], desc)
-								.addOptions(options));
+								.addOptions(options.get()));
 					default -> throw new AppCommandMisconfiguredException((clazz.getSimpleName() + "#" + method.getName()) + " has more than 2 literal arguments");
 				}
 			} catch (Exception ex) {
@@ -58,8 +60,7 @@ public record AppCommandBuilder(Class<? extends AppCommand> clazz) {
 			}
 		}
 
-		command.addSubcommandGroups(subcommands.values());
-		return command;
+		return command.addSubcommandGroups(subcommands.values());
 	}
 
 	private static List<OptionData> buildOptions(Class<? extends AppCommand> clazz, Method method) {
@@ -110,6 +111,9 @@ public record AppCommandBuilder(Class<? extends AppCommand> clazz) {
 		}
 
 		private OptionData asOption() {
+			if (!CONVERTERS.containsKey(type))
+				throw new AppCommandException("No converter for " + type.getSimpleName() + " registered");
+
 			final OptionData option = new OptionData(optionType, parameter.getName().toLowerCase(), description, required);
 
 			if (choices != null) {
