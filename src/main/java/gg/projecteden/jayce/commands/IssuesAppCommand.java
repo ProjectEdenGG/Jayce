@@ -42,7 +42,7 @@ public class IssuesAppCommand extends AppCommand {
 
 	@Desc("Create an issue")
 	@Path("create <title> <body>")
-	void create(@Desc("issue title") String title, @Desc("issue body") String body) {
+	void create(String title, String body) {
 		issues.create(issues.of(member(), title, body).build()).thenAccept(result -> {
 			if (!isWebhookChannel())
 				reply(issues.url(result).embed(false).build());
@@ -63,49 +63,49 @@ public class IssuesAppCommand extends AppCommand {
 
 	@Desc("Add a user to an issue's assignees")
 	@Path("assign <id> <user>")
-	void assign(@Desc("issue number") int id, @Desc("user") Member user) {
+	void assign(@Desc("issue number") int id, Member user) {
 		issues.assign(id, user).thenRun(this::thumbsup);
 	}
 
 	@Desc("Remove a user from an issue's assignees")
 	@Path("unassign <id> <user>")
-	void unassign(@Desc("issue number") int id, @Desc("user") Member user) {
+	void unassign(@Desc("issue number") int id, Member user) {
 		issues.unassign(id, user).thenRun(this::thumbsup);
 	}
 
 	@Desc("Edit an issue's title")
 	@Path("edit title <id> <text>")
-	void edit_title(@Desc("issue number") int id, @Desc("issue title") String text) {
+	void edit_title(@Desc("issue number") int id, String text) {
 		issues.edit(id, issue -> issue.withTitle(text)).thenRun(this::thumbsup);
 	}
 
 	@Desc("Edit an issue's body")
 	@Path("edit body <id> <text>")
-	void edit_body(@Desc("issue number") int id, @Desc("issue body") String text) {
+	void edit_body(@Desc("issue number") int id, String text) {
 		issues.edit(id, issue -> issue.withBody(Optional.of(text))).thenRun(this::thumbsup);
 	}
 
 	@Desc("Comment on an issue")
 	@Path("comment <id> <text>")
-	void comment(@Desc("issue number") int id, @Desc("comment body") String text) {
+	void comment(@Desc("issue number") int id, String text) {
 		issues.comment(id, "**" + name() + "**: " + text).thenRun(this::thumbsup);
 	}
 
 	@Desc("Add a label to an issue")
 	@Path("labels add <id> <label>")
-	void labels_add(@Desc("issue number") int id, @Desc("label") @Choices(Label.class) String label) {
+	void labels_add(@Desc("issue number") int id, @Choices(Label.class) String label) {
 		issues.addLabels(id, List.of(label)).thenRun(this::thumbsup);
 	}
 
 	@Desc("Remove a label from an issue")
 	@Path("labels remove <id> <label>")
-	void labels_remove(@Desc("issue number") int id, @Desc("label") @Choices(Label.class) String label) {
+	void labels_remove(@Desc("issue number") int id, @Choices(Label.class) String label) {
 		issues.removeLabels(id, List.of(label)).thenRun(this::thumbsup);
 	}
 
 	@Desc("Search existing issues")
 	@Path("search <query>")
-	void search(@Desc("query") String query) {
+	void search(String query) {
 		issues.search(query).thenAccept(items -> {
 			if (Utils.isNullOrEmpty(items))
 				throw new EdenException("No results found");
@@ -128,7 +128,7 @@ public class IssuesAppCommand extends AppCommand {
 
 	@Desc("Close all issues in a repository")
 	@Path("closeall <repo>")
-	void closeAll(@Desc("repo") String repo) {
+	void closeAll(String repo) {
 		if (Jayce.get().getEnv() != Env.DEV)
 			throw new EdenException("Development environment only command");
 

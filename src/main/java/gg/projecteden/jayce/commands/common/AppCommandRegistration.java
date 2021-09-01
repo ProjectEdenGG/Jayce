@@ -154,7 +154,7 @@ public class AppCommandRegistration {
 					continue;
 
 				final String path = pathAnnotation.value();
-				final String desc = requireDescription(clazz, method);
+				final String desc = requireDescription(method);
 
 				// TODO Use regex (Almost works: `^[\w\s]+(?![<\[])`)
 				final String literal = List.of(path.split(" ")).stream().filter(arg -> arg.matches("[\\w-]+")).collect(joining(" "));
@@ -240,7 +240,7 @@ public class AppCommandRegistration {
 			this.method = method;
 			this.parameter = parameter;
 			this.pathArgument = pathArgument;
-			this.description = requireDescription(clazz, method, parameter);
+			this.description = requireDescription(parameter);
 			this.type = parameter.getType();
 			final Choices choicesAnnotation = parameter.getAnnotation(Choices.class);
 			this.choices = choicesAnnotation == null ? null : choicesAnnotation.value() == void.class ? null : choicesAnnotation.value();
@@ -260,25 +260,25 @@ public class AppCommandRegistration {
 	private static String requireDescription(Class<?> clazz) {
 		final Desc annotation = clazz.getAnnotation(Desc.class);
 		if (annotation == null)
-			throw new EdenException(clazz.getSimpleName() + " has no description");
+			return clazz.getSimpleName();
 
 		return annotation.value();
 	}
 
 	@NotNull
-	private static String requireDescription(Class<?> clazz, Method method) {
+	private static String requireDescription(Method method) {
 		final Desc annotation = method.getAnnotation(Desc.class);
 		if (annotation == null)
-			throw new EdenException(clazz.getSimpleName() + "#" + method.getName() + " has no description");
+			return method.getName();
 
 		return annotation.value();
 	}
 
 	@NotNull
-	private static String requireDescription(Class<?> clazz, Method method, Parameter parameter) {
+	private static String requireDescription(Parameter parameter) {
 		final Desc annotation = parameter.getAnnotation(Desc.class);
 		if (annotation == null)
-			throw new EdenException(clazz.getSimpleName() + "#" + method.getName() + "(" + parameter.getName() + ") has no description");
+			return parameter.getName();
 
 		return annotation.value();
 	}

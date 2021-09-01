@@ -31,7 +31,7 @@ public class ChannelAppCommand extends AppCommand {
 	// TODO
 	@Desc("Mark this channel as resolved")
 	@Path("resolve [comment]")
-	void resolve(@Desc("Resolution") String comment) {
+	void resolve(@Desc("resolution") String comment) {
 		final CompletableFuture<?> first;
 		if (!isNullOrEmpty(comment))
 			first = issues().comment(getIssueId(), CommentMeta.asComment(event.getEvent().getId(), member(), comment));
@@ -58,7 +58,7 @@ public class ChannelAppCommand extends AppCommand {
 	// Uses `hub` since GitHub's REST API does not support transferring issues (only their GraphQL API does)
 	@Desc("Transfer this issue to another repository")
 	@Path("transfer <repo>")
-	private void transfer(@Desc("Destination repository") String repo) {
+	private void transfer(@Desc("destination repository") String repo) {
 		final String command = "./transfer-issue " + repo().repo() + " " + getIssueId() + " " + repo;
 		final String result = bash(command);
 		final String[] split = result.split("/");

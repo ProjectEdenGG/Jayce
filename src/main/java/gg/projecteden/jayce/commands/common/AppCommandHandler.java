@@ -25,9 +25,7 @@ import static gg.projecteden.jayce.commands.common.AppCommandRegistration.METHOD
 TODO
 - Required args
 - Exception handling
-- Automatic command registration
 - Dynamic converters
-- Dynamic choices?
 - Permissions (Privileges)
  */
 
