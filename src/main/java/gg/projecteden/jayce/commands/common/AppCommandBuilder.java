@@ -6,7 +6,6 @@ import gg.projecteden.jayce.commands.common.annotations.NotRequired;
 import gg.projecteden.jayce.commands.common.exceptions.AppCommandMisconfiguredException;
 import gg.projecteden.utils.Utils;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -26,8 +25,6 @@ import static gg.projecteden.jayce.commands.common.AppCommandRegistry.loadChoice
 import static gg.projecteden.jayce.commands.common.AppCommandRegistry.resolveOptionType;
 import static gg.projecteden.utils.StringUtils.replaceLast;
 
-
-@RequiredArgsConstructor
 public record AppCommandBuilder(Class<? extends AppCommand> clazz) {
 
 	@NotNull
