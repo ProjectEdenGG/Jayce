@@ -4,7 +4,6 @@ import gg.projecteden.jayce.commands.common.annotations.Choices;
 import gg.projecteden.jayce.commands.common.annotations.Command;
 import gg.projecteden.jayce.commands.common.annotations.Desc;
 import gg.projecteden.jayce.commands.common.annotations.Optional;
-import gg.projecteden.jayce.commands.common.exceptions.AppCommandException;
 import gg.projecteden.jayce.commands.common.exceptions.AppCommandMisconfiguredException;
 import gg.projecteden.utils.Utils;
 import lombok.Data;
@@ -112,7 +111,7 @@ public record AppCommandBuilder(Class<? extends AppCommand> clazz) {
 
 		private OptionData asOption() {
 			if (!CONVERTERS.containsKey(type))
-				throw new AppCommandException("No converter for " + type.getSimpleName() + " registered");
+				throw new AppCommandMisconfiguredException("No converter for " + type.getSimpleName() + " registered");
 
 			final OptionData option = new OptionData(optionType, parameter.getName().toLowerCase(), description, required);
 
