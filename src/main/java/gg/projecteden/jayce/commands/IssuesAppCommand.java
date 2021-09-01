@@ -127,7 +127,7 @@ public class IssuesAppCommand extends AppCommand {
 	}
 
 	@Desc("Close all issues in a repository")
-	@Path("closeall <repo>")
+	@Path("closeAll <repo>")
 	void closeAll(String repo) {
 		if (Jayce.get().getEnv() != Env.DEV)
 			throw new EdenException("Development environment only command");

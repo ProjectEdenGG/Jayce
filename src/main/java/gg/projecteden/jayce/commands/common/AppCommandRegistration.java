@@ -18,6 +18,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -35,9 +36,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static gg.projecteden.jayce.Jayce.JDA;
+import static gg.projecteden.jayce.commands.common.AppCommandHandler.parseMentions;
 import static gg.projecteden.utils.StringUtils.replaceLast;
 import static java.util.stream.Collectors.joining;
 
@@ -46,10 +49,25 @@ public class AppCommandRegistration {
 	static final Map<Class<? extends AppCommand>, Map<String, Method>> METHODS = new HashMap<>();
 	static final Map<Class<?>, Supplier<List<Choice>>> CHOICES = new HashMap<>();
 	static final Map<Class<?>, List<Choice>> CHOICES_CACHE = new HashMap<>();
+	static final Map<Class<?>, Function<OptionMapping, Object>> CONVERTERS = new HashMap<>();
+	static final Map<Class<?>, OptionType> OPTION_TYPE_MAP = new HashMap<>();
 
-	@NotNull
-	private static String getCommandName(Class<? extends AppCommand> clazz) {
-		return replaceLast(clazz.getSimpleName(), "AppCommand", "").toLowerCase();
+	public static void mapOptionType(Class<?> clazz, OptionType optionType) {
+		mapOptionType(List.of(clazz),  optionType);
+	}
+
+	public static void mapOptionType(List<Class<?>> classes, OptionType optionType) {
+		for (Class<?> clazz : classes)
+			OPTION_TYPE_MAP.put(clazz, optionType);
+	}
+
+	public static void registerConverter(Class<?> clazz, Function<OptionMapping, Object> converter) {
+		registerConverter(List.of(clazz), converter);
+	}
+
+	public static void registerConverter(List<Class<?>> classes, Function<OptionMapping, Object> converter) {
+		for (Class<?> clazz : classes)
+			CONVERTERS.put(clazz, converter);
 	}
 
 	public static void supplyChoices(Class<?> clazz, Supplier<List<Choice>> supplier) {
@@ -58,6 +76,11 @@ public class AppCommandRegistration {
 
 	private static List<Choice> loadChoices(Class<?> clazz) {
 		return CHOICES_CACHE.computeIfAbsent(clazz, $ -> CHOICES.getOrDefault(clazz, Collections::emptyList).get());
+	}
+
+	@NotNull
+	private static String getCommandName(Class<? extends AppCommand> clazz) {
+		return replaceLast(clazz.getSimpleName(), "AppCommand", "").toLowerCase();
 	}
 
 	@SneakyThrows
@@ -162,7 +185,7 @@ public class AppCommandRegistration {
 
 				final List<OptionData> options = buildOptions(clazz, method, List.of(args.split(" ")));
 
-				final String[] literals = literal.split(" ");
+				final String[] literals = literal.toLowerCase().split(" ");
 				switch (literals.length) {
 					case 0 ->
 						command.addOptions(options);
@@ -243,13 +266,13 @@ public class AppCommandRegistration {
 			this.description = requireDescription(parameter);
 			this.type = parameter.getType();
 			final Choices choicesAnnotation = parameter.getAnnotation(Choices.class);
-			this.choices = choicesAnnotation == null ? null : choicesAnnotation.value() == void.class ? null : choicesAnnotation.value();
+			this.choices = choicesAnnotation == null ? type : choicesAnnotation.value();
 			this.required = pathArgument.startsWith("<");
 			this.optionType = resolveOptionType(this.type);
 		}
 
 		private OptionData asOption() {
-			final OptionData option = new OptionData(optionType, parameter.getName(), description, required);
+			final OptionData option = new OptionData(optionType, parameter.getName().toLowerCase(), description, required);
 			if (choices != null)
 				option.addChoices(loadChoices(choices));
 			return option;
@@ -259,61 +282,49 @@ public class AppCommandRegistration {
 	@NotNull
 	private static String requireDescription(Class<?> clazz) {
 		final Desc annotation = clazz.getAnnotation(Desc.class);
-		if (annotation == null)
-			return clazz.getSimpleName();
-
-		return annotation.value();
+		return annotation == null ? clazz.getSimpleName() : annotation.value();
 	}
 
 	@NotNull
 	private static String requireDescription(Method method) {
 		final Desc annotation = method.getAnnotation(Desc.class);
-		if (annotation == null)
-			return method.getName();
-
-		return annotation.value();
+		return annotation == null ? method.getName() : annotation.value();
 	}
 
 	@NotNull
 	private static String requireDescription(Parameter parameter) {
 		final Desc annotation = parameter.getAnnotation(Desc.class);
-		if (annotation == null)
-			return parameter.getName();
-
-		return annotation.value();
+		return annotation == null ? parameter.getName() : annotation.value();
 	}
 
 	private static OptionType resolveOptionType(Class<?> type) {
-		if (type == String.class)
-			return OptionType.STRING;
-		else if (type == Boolean.class || type == Boolean.TYPE)
-			return OptionType.BOOLEAN;
-		else if (type == Integer.class || type == Integer.TYPE)
-			return OptionType.INTEGER;
-		else if (type == Long.class || type == Long.TYPE)
-			return OptionType.INTEGER;
-		else if (type == Byte.class || type == Byte.TYPE)
-			return OptionType.INTEGER;
-		else if (type == Short.class || type == Short.TYPE)
-			return OptionType.INTEGER;
-		else if (type == Double.class || type == Double.TYPE)
-			return OptionType.NUMBER;
-		else if (type == Float.class || type == Float.TYPE)
-			return OptionType.NUMBER;
-		else if (type == Member.class)
-			return OptionType.USER;
-		else if (type == User.class)
-			return OptionType.USER;
-		else if (type == Role.class)
-			return OptionType.ROLE;
-		else if (type == GuildChannel.class)
-			return OptionType.CHANNEL;
-		else if (type == MessageChannel.class)
-			return OptionType.CHANNEL;
-		else if (type == IMentionable.class)
-			return OptionType.MENTIONABLE;
-		else
-			return OptionType.STRING;
+		return OPTION_TYPE_MAP.getOrDefault(type, OptionType.STRING);
+	}
+
+	static {
+		mapOptionType(String.class, OptionType.STRING);
+		mapOptionType(List.of(Boolean.class, Boolean.TYPE), OptionType.BOOLEAN);
+		mapOptionType(List.of(Integer.class, Long.class, Byte.class, Short.class, Integer.TYPE, Long.TYPE, Byte.TYPE, Short.TYPE), OptionType.INTEGER);
+		mapOptionType(List.of(Double.class, Float.class, Double.TYPE, Float.TYPE), OptionType.NUMBER);
+		mapOptionType(List.of(Member.class, User.class), OptionType.USER);
+		mapOptionType(List.of(GuildChannel.class, MessageChannel.class), OptionType.CHANNEL);
+		mapOptionType(Role.class, OptionType.ROLE);
+		mapOptionType(IMentionable.class, OptionType.MENTIONABLE);
+
+		registerConverter(String.class, option -> parseMentions(option.getAsString()));
+		registerConverter(List.of(Boolean.class, Boolean.TYPE), OptionMapping::getAsBoolean);
+		registerConverter(List.of(Long.class, Long.TYPE), OptionMapping::getAsLong);
+		registerConverter(List.of(Integer.class, Integer.TYPE), option -> Long.valueOf(option.getAsLong()).intValue());
+		registerConverter(List.of(Short.class, Short.TYPE), option -> Long.valueOf(option.getAsLong()).shortValue());
+		registerConverter(List.of(Byte.class, Byte.TYPE), option -> Long.valueOf(option.getAsLong()).byteValue());
+		registerConverter(List.of(Double.class, Double.TYPE), OptionMapping::getAsDouble);
+		registerConverter(List.of(Float.class, Float.TYPE), option -> Double.valueOf(option.getAsDouble()).floatValue());
+		registerConverter(Member.class, OptionMapping::getAsMember);
+		registerConverter(User.class, OptionMapping::getAsUser);
+		registerConverter(Role.class, OptionMapping::getAsRole);
+		registerConverter(GuildChannel.class, OptionMapping::getAsGuildChannel);
+		registerConverter(MessageChannel.class, OptionMapping::getAsMessageChannel);
+		registerConverter(IMentionable.class, OptionMapping::getAsMentionable);
 	}
 
 }
