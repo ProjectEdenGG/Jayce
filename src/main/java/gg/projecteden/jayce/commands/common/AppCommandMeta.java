@@ -40,6 +40,7 @@ public class AppCommandMeta<T extends AppCommand> {
 	public AppCommandMeta(Class<T> clazz) {
 		this.name = replaceLast(clazz.getSimpleName(), AppCommand.class.getSimpleName(), "").toLowerCase();
 		this.clazz = clazz;
+		this.command = new CommandData(name, requireDescription(clazz));
 
 		init();
 
@@ -52,8 +53,6 @@ public class AppCommandMeta<T extends AppCommand> {
 				put(name + "/" + method.getName().replaceAll("_", "/"), new AppCommandMethod(method));
 			}
 		}};
-
-		command = new CommandData(name, requireDescription(clazz));
 	}
 
 	private void init() {
@@ -165,7 +164,7 @@ public class AppCommandMeta<T extends AppCommand> {
 				switch (literals.length) {
 					case 0 -> command.addOptions(options);
 					case 1 -> command.addSubcommands(asSubcommand(0));
-					case 2 -> command.addSubcommandGroups(getGroup()).addSubcommands(asSubcommand(1));
+					case 2 -> getGroup().addSubcommands(asSubcommand(1));
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -177,7 +176,11 @@ public class AppCommandMeta<T extends AppCommand> {
 			return command.getSubcommandGroups().stream()
 				.filter(group -> group.getName().equals(literals[0]))
 				.findFirst()
-				.orElse(new SubcommandGroupData(literals[0], description));
+				.orElseGet(() -> {
+					final SubcommandGroupData group = new SubcommandGroupData(literals[0], description);
+					command.addSubcommandGroups(group);
+					return group;
+				});
 		}
 
 		@NotNull

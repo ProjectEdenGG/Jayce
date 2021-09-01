@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -74,7 +75,7 @@ public record AppCommandRegistry(String packageName) {
 			});
 			*/
 
-			Consumer<net.dv8tion.jda.api.interactions.commands.Command> setPrivilege = response -> {
+			Consumer<Command> setPrivilege = response -> {
 				/* TODO
 				final CommandPrivilege privilege = new CommandPrivilege(Type.ROLE, true, guild.getRolesByName());
 				guild.updateCommandPrivilegesById(response.getId(), privilege).submit()
@@ -129,7 +130,6 @@ public record AppCommandRegistry(String packageName) {
 	}
 
 	static {
-		mapOptionType(OptionType.STRING, String.class);
 		mapOptionType(OptionType.BOOLEAN, Boolean.class, Boolean.TYPE);
 		mapOptionType(OptionType.INTEGER, Integer.class, Long.class, Byte.class, Short.class, Integer.TYPE, Long.TYPE, Byte.TYPE, Short.TYPE);
 		mapOptionType(OptionType.NUMBER, Double.class, Float.class, Double.TYPE, Float.TYPE);
