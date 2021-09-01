@@ -7,6 +7,7 @@ import gg.projecteden.jayce.commands.common.annotations.Desc;
 import gg.projecteden.jayce.commands.common.annotations.Path;
 import gg.projecteden.utils.DiscordId;
 import gg.projecteden.utils.Env;
+import gg.projecteden.utils.Utils;
 import lombok.Data;
 import lombok.SneakyThrows;
 import net.dv8tion.jda.api.entities.Guild;
@@ -273,8 +274,13 @@ public class AppCommandRegistration {
 
 		private OptionData asOption() {
 			final OptionData option = new OptionData(optionType, parameter.getName().toLowerCase(), description, required);
-			if (choices != null)
-				option.addChoices(loadChoices(choices));
+
+			if (choices != null) {
+				final List<Choice> choices = loadChoices(this.choices);
+				if (!Utils.isNullOrEmpty(choices))
+					option.addChoices(choices);
+			}
+
 			return option;
 		}
 	}
