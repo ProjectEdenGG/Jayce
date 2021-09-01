@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static gg.projecteden.jayce.commands.common.AppCommandRegistry.COMMANDS;
 import static gg.projecteden.jayce.commands.common.AppCommandRegistry.CONVERTERS;
 import static gg.projecteden.jayce.commands.common.AppCommandRegistry.loadChoices;
 import static gg.projecteden.jayce.commands.common.AppCommandRegistry.resolveOptionType;
@@ -90,6 +91,10 @@ public class AppCommandMeta<T extends AppCommand> {
 			this.arguments = Stream.of(method.getParameters()).map(AppCommandArgument::new).toList();
 			this.options = this.arguments.stream().map(AppCommandArgument::asOption).toList();
 			build();
+		}
+
+		public static AppCommandMeta<?>.AppCommandMethod of(SlashCommandEvent event) {
+			return COMMANDS.get(event.getName()).getMethod(event.getCommandPath());
 		}
 
 		@SneakyThrows
@@ -185,8 +190,7 @@ public class AppCommandMeta<T extends AppCommand> {
 
 		@NotNull
 		private SubcommandData asSubcommand(int index) {
-			return new SubcommandData(literals[index], description)
-				.addOptions(options);
+			return new SubcommandData(literals[index], description).addOptions(options);
 		}
 
 	}

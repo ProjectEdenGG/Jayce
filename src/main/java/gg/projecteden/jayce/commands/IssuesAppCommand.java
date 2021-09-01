@@ -3,7 +3,6 @@ package gg.projecteden.jayce.commands;
 import com.spotify.github.v3.issues.Issue;
 import com.spotify.github.v3.issues.Label;
 import com.spotify.github.v3.search.SearchIssue;
-import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.jayce.Jayce;
 import gg.projecteden.jayce.commands.common.AppCommand;
 import gg.projecteden.jayce.commands.common.AppCommandEvent;
@@ -11,6 +10,7 @@ import gg.projecteden.jayce.commands.common.annotations.Choices;
 import gg.projecteden.jayce.commands.common.annotations.Command;
 import gg.projecteden.jayce.commands.common.annotations.Desc;
 import gg.projecteden.jayce.commands.common.annotations.Role;
+import gg.projecteden.jayce.commands.common.exceptions.AppCommandException;
 import gg.projecteden.jayce.config.Config;
 import gg.projecteden.jayce.github.Issues.RepoIssueContext;
 import gg.projecteden.jayce.github.Repos;
@@ -97,7 +97,7 @@ public class IssuesAppCommand extends AppCommand {
 	void search(String query) {
 		issues.search(query).thenAccept(items -> {
 			if (Utils.isNullOrEmpty(items))
-				throw new EdenException("No results found");
+				throw new AppCommandException("No results found");
 
 			final String title = "Found " + items.size() + StringUtils.plural(" issue", items.size());
 			final String url = issues.url().build();
@@ -112,13 +112,16 @@ public class IssuesAppCommand extends AppCommand {
 				.setDescription(body.toString());
 
 			reply(embed);
+		}).exceptionally(ex -> {
+			ex.printStackTrace();
+			return null;
 		});
 	}
 
 	@Command("Close all issues in a repository")
 	void closeAll(String repo) {
 		if (Jayce.get().getEnv() != Env.DEV)
-			throw new EdenException("Development environment only command");
+			throw new AppCommandException("Development environment only command");
 
 		final RepoIssueContext issues = Repos.repo(repo).issues();
 		issues.listAll().thenAccept(allIssues -> {
