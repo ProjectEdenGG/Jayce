@@ -47,7 +47,7 @@ public class Jayce extends EdenAPI {
 			.build()
 			.awaitReady();
 
-		final String commandsPackage = Jayce.class.getSimpleName() + ".commands";
+		final String commandsPackage = Jayce.class.getPackage().getName() + ".commands";
 		new AppCommandRegistry(commandsPackage).registerAll();
 	}
 

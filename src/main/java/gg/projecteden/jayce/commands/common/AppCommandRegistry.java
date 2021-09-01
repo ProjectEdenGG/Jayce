@@ -42,7 +42,7 @@ public record AppCommandRegistry(String packageName) {
 	public void registerAll() {
 		var reflections = new Reflections(packageName);
 		for (var clazz : reflections.getSubTypesOf(AppCommand.class))
-			AppCommandRegistry.register(clazz);
+			register(clazz);
 	}
 
 	public static void register(Class<? extends AppCommand> clazz) {
