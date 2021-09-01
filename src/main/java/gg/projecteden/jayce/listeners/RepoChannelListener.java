@@ -161,9 +161,12 @@ public class RepoChannelListener extends DiscordListener {
 
 		@NotNull
 		public static String asComment(Message message) {
-			final Member member = requireNonNull(message.getMember());
-			final String json = new CommentMeta(message.getId(), member.getId()).asCommentComment();
-			final String display = "**" + member.getEffectiveName() + "**: " + message.getContentDisplay();
+			return asComment(message.getId(), requireNonNull(message.getMember()), message.getContentDisplay());
+		}
+
+		public static String asComment(String eventId, Member member, String content) {
+			final String json = new CommentMeta(eventId, member.getId()).asCommentComment();
+			final String display = "**" + member.getEffectiveName() + "**: " + content;
 			return String.format("%s%n%s", json, display);
 		}
 

@@ -110,31 +110,13 @@
     <dependency>
       <groupId>gg.projecteden</groupId>
       <artifactId>eden-api</artifactId>
-      <version>1.5.3</version>
+      <version>1.5.4</version>
     </dependency>
     <!-- Github API -->
     <dependency>
       <groupId>com.spotify</groupId>
       <artifactId>github-client</artifactId>
       <version>0.0.29-SNAPSHOT</version>
-    </dependency>
-    <!-- JDA -->
-    <dependency>
-      <groupId>net.dv8tion</groupId>
-      <artifactId>JDA</artifactId>
-      <version>4.3.0_313</version>
-      <exclusions>
-        <exclusion>
-          <groupId>club.minnced</groupId>
-          <artifactId>opus-java</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <!-- Emoji Parser -->
-    <dependency>
-      <groupId>com.vdurmont</groupId>
-      <artifactId>emoji-java</artifactId>
-      <version>5.1.1</version>
     </dependency>
     <!-- Cloud -->
     <dependency>
