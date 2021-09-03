@@ -60,6 +60,8 @@ public abstract class AppCommand {
 		return reply(":thumbsup:");
 	}
 
+	// Jayce specific
+
 	protected boolean isWebhookChannel() {
 		return channel().getId().equals(Config.WEBHOOK_CHANNEL_ID);
 	}

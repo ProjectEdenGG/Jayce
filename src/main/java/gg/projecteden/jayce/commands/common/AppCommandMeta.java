@@ -4,6 +4,7 @@ import gg.projecteden.jayce.commands.common.annotations.Choices;
 import gg.projecteden.jayce.commands.common.annotations.Command;
 import gg.projecteden.jayce.commands.common.annotations.Desc;
 import gg.projecteden.jayce.commands.common.annotations.Optional;
+import gg.projecteden.jayce.commands.common.exceptions.AppCommandException;
 import gg.projecteden.jayce.commands.common.exceptions.AppCommandMisconfiguredException;
 import gg.projecteden.utils.Utils;
 import lombok.Data;
@@ -29,6 +30,7 @@ import static gg.projecteden.jayce.commands.common.AppCommandRegistry.COMMANDS;
 import static gg.projecteden.jayce.commands.common.AppCommandRegistry.CONVERTERS;
 import static gg.projecteden.jayce.commands.common.AppCommandRegistry.loadChoices;
 import static gg.projecteden.jayce.commands.common.AppCommandRegistry.resolveOptionType;
+import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 import static gg.projecteden.utils.StringUtils.replaceLast;
 
 @Data
@@ -104,24 +106,11 @@ public class AppCommandMeta<T extends AppCommand> {
 
 		@NotNull
 		private Object[] convert(List<OptionMapping> options) {
-			final Parameter[] parameters = method.getParameters();
+			final Object[] arguments = new Object[method.getParameters().length];
 
-			final Object[] arguments = new Object[parameters.length];
-
-			// convert passed arguments
 			int index = 0;
-			for (Parameter parameter : parameters) {
-				for (OptionMapping option : options) {
-					if (!option.getName().equals(parameter.getName()))
-						continue;
-
-					arguments[index++] = CONVERTERS.get(parameter.getType()).apply(option);
-				}
-			}
-
-			// fill in the rest
-			while (index < arguments.length)
-				arguments[index++] = null;
+			for (AppCommandArgument argument : this.arguments)
+				arguments[index++] = argument.convert(argument.findOption(options));
 
 			return arguments;
 		}
@@ -129,6 +118,7 @@ public class AppCommandMeta<T extends AppCommand> {
 		@Data
 		public class AppCommandArgument {
 			private final Parameter parameter;
+			private final String name;
 			private final String description;
 			private final Class<?> type;
 			private final Class<?> choices;
@@ -137,6 +127,7 @@ public class AppCommandMeta<T extends AppCommand> {
 
 			public AppCommandArgument(Parameter parameter) {
 				this.parameter = parameter;
+				this.name = parameter.getName();
 				this.description = defaultDescription(parameter);
 				this.type = parameter.getType();
 				final Choices choicesAnnotation = parameter.getAnnotation(Choices.class);
@@ -158,6 +149,25 @@ public class AppCommandMeta<T extends AppCommand> {
 				}
 
 				return option;
+			}
+
+			protected OptionMapping findOption(List<OptionMapping> options) {
+				return options.stream()
+					.filter(option -> option.getName().equals(name))
+					.findFirst()
+					.orElse(null);
+			}
+
+			public Object convert(OptionMapping option) {
+				if (required && option == null || isNullOrEmpty(option.getAsString()))
+					throw new AppCommandException(parameter.getName() + " is required");
+
+				final Object object = CONVERTERS.get(parameter.getType()).apply(option);
+
+				if (required && object == null)
+					throw new AppCommandException(parameter.getName() + " is required");
+
+				return object;
 			}
 		}
 
