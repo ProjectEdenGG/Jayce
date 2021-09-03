@@ -7,7 +7,6 @@ import gg.projecteden.jayce.commands.common.AppCommandEvent;
 import gg.projecteden.jayce.commands.common.annotations.Command;
 import gg.projecteden.jayce.commands.common.annotations.Desc;
 import gg.projecteden.jayce.commands.common.annotations.Role;
-import gg.projecteden.jayce.github.Issues.IssueState;
 import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.models.scheduledjobs.jobs.SupportChannelArchiveJob;
 import gg.projecteden.models.scheduledjobs.ScheduledJobsService;
@@ -35,10 +34,7 @@ public class ChannelAppCommand extends AppCommand {
 
 	@Command("Mark this channel as resolved")
 	void resolve() {
-		CompletableFuture<Issue> assign = issues().edit(getIssueId(), issue ->
-			issues().addAssignees(issue, member()).withState(IssueState.CLOSED.name()));
-
-		assign.thenRun(() -> {
+		issues().assign(getIssueId(), member()).thenRun(() -> {
 			new SupportChannelArchiveJob(channel()).schedule(now().plusDays(1));
 			reply("This channel has been marked as **resolved** and will be archived in 24 hours");
 		}).exceptionally(ex -> {

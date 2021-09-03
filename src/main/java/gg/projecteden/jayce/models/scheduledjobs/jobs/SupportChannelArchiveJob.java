@@ -1,6 +1,8 @@
 package gg.projecteden.jayce.models.scheduledjobs.jobs;
 
 import gg.projecteden.jayce.Jayce;
+import gg.projecteden.jayce.github.Repos;
+import gg.projecteden.jayce.utils.Utils;
 import gg.projecteden.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.models.scheduledjobs.common.RetryIfInterrupted;
 import lombok.AllArgsConstructor;
@@ -46,16 +48,18 @@ public class SupportChannelArchiveJob extends AbstractJob {
 		if (categories.isEmpty())
 			return completed();
 
-		final CompletableFuture<Void> move = channel.getManager().setParent(categories.iterator().next()).submit();
-
-		move.thenRun(() -> {
-			new SupportChannelDeleteJob(channel).schedule(now().plusDays(3));
-			future.complete(JobStatus.COMPLETED);
-		}).exceptionally(ex -> {
-			ex.printStackTrace();
-			future.complete(JobStatus.ERRORED);
-			return null;
-		});
+		channel.getManager()
+			.setParent(categories.iterator().next())
+			.submit()
+			.thenCompose($ -> Repos.repo(channel.getParent()).issues().close(Utils.getIssueId(channel)))
+			.thenRun(() -> {
+				new SupportChannelDeleteJob(channel).schedule(now().plusDays(3));
+				future.complete(JobStatus.COMPLETED);
+			}).exceptionally(ex -> {
+				ex.printStackTrace();
+				future.complete(JobStatus.ERRORED);
+				return null;
+			});
 
 		return future;
 	}
