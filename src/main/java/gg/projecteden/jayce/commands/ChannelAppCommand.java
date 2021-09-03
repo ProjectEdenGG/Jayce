@@ -45,15 +45,17 @@ public class ChannelAppCommand extends AppCommand {
 
 	@Command("Mark this channel as unresolved and cancel archival")
 	void unresolve() {
-		final List<SupportChannelArchiveJob> jobs = new ScheduledJobsService().getApp()
-			.get(JobStatus.PENDING).stream()
-			.map(job -> job instanceof SupportChannelArchiveJob archiveJob ? archiveJob : null)
-			.filter(Objects::nonNull)
-			.filter(job -> job.getGuildId().equals(guild().getId()))
-			.filter(job -> job.getChannelId().equals(channel().getId()))
-			.toList();
+		new ScheduledJobsService().editApp(jobs -> {
+			final List<SupportChannelArchiveJob> archiveJobs = jobs
+				.get(JobStatus.PENDING).stream()
+				.map(job -> job instanceof SupportChannelArchiveJob archiveJob ? archiveJob : null)
+				.filter(Objects::nonNull)
+				.filter(job -> job.getGuildId().equals(guild().getId()))
+				.filter(job -> job.getChannelId().equals(channel().getId()))
+				.toList();
 
-		new ArrayList<>(jobs).forEach(job -> job.setStatus(JobStatus.CANCELLED));
+			new ArrayList<>(archiveJobs).forEach(job -> job.setStatus(JobStatus.CANCELLED));
+		});
 
 		CompletableFuture<Issue> unassign = issues().edit(getIssueId(), ImmutableIssue::withAssignees);
 
