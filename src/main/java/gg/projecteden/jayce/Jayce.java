@@ -4,6 +4,7 @@ import com.spotify.github.v3.clients.GitHubClient;
 import gg.projecteden.EdenAPI;
 import gg.projecteden.jayce.commands.common.AppCommandRegistry;
 import gg.projecteden.jayce.config.Config;
+import gg.projecteden.models.scheduledjobs.ScheduledJobsRunner;
 import gg.projecteden.mongodb.DatabaseConfig;
 import gg.projecteden.utils.Env;
 import gg.projecteden.utils.Utils;
@@ -31,6 +32,8 @@ public class Jayce extends EdenAPI {
 		try {
 			github();
 			jda();
+
+			ScheduledJobsRunner.start();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
