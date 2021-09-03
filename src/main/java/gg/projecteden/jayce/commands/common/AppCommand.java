@@ -28,6 +28,10 @@ public abstract class AppCommand {
 		return member().getEffectiveName();
 	}
 
+	protected String mention() {
+		return member().getAsMention();
+	}
+
 	protected Guild guild() {
 		return event.getEvent().getGuild();
 	}

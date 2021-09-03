@@ -75,7 +75,7 @@ public class IssuesAppCommand extends AppCommand {
 
 	@Command("Edit an issue's body")
 	void edit_body(@Desc("issue number") int id, String text) {
-		issues.edit(id, issue -> issue.withBody(Optional.of(text))).thenRun(this::thumbsup);
+		issues.edit(id, issue -> issue.withBody(Optional.of("**" + name() + "**: " + text))).thenRun(this::thumbsup);
 	}
 
 	@Command("Comment on an issue")

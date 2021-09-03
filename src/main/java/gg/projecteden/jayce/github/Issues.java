@@ -33,6 +33,7 @@ import java.util.function.Function;
 
 import static gg.projecteden.jayce.Jayce.GITHUB;
 import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
+import static gg.projecteden.utils.Utils.bash;
 import static gg.projecteden.utils.Utils.mutableCopyOf;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.stream.StreamSupport.stream;
@@ -150,6 +151,15 @@ public class Issues {
 
 		public CompletableFuture<Issue> save(ImmutableIssue issue) {
 			return client().editIssue(issue).thenCompose(response -> completedFuture(issue));
+		}
+
+		// Uses `hub` cli since GitHub's REST API does not support
+		// transferring issues (only their GraphQL API does)
+		public int transfer(final int issueId, String repo) {
+			final String command = "./transfer-issue " + repo().repo() + " " + issueId + " " + repo;
+			final String result = bash(command);
+			final String[] split = result.split("/");
+			return Integer.parseInt(split[split.length - 1]);
 		}
 
 		public CompletableFuture<Comment> comment(final int issueId, final String text) {
