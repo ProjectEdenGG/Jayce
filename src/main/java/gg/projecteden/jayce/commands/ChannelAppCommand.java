@@ -16,6 +16,8 @@ import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.managers.ChannelManager;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -47,12 +49,15 @@ public class ChannelAppCommand extends AppCommand {
 
 	@Command("Mark this channel as unresolved and cancel archival")
 	void unresolve() {
-		new ScheduledJobsService().getApp().get(JobStatus.PENDING).stream()
+		final List<SupportChannelArchiveJob> jobs = new ScheduledJobsService().getApp()
+			.get(JobStatus.PENDING).stream()
 			.map(job -> job instanceof SupportChannelArchiveJob archiveJob ? archiveJob : null)
 			.filter(Objects::nonNull)
 			.filter(job -> job.getGuildId().equals(guild().getId()))
 			.filter(job -> job.getChannelId().equals(channel().getId()))
-			.forEach(job -> job.setStatus(JobStatus.CANCELLED));
+			.toList();
+
+		new ArrayList<>(jobs).forEach(job -> job.setStatus(JobStatus.CANCELLED));
 
 		CompletableFuture<Issue> unassign = issues().edit(getIssueId(), ImmutableIssue::withAssignees);
 
