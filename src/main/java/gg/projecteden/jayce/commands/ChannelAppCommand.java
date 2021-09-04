@@ -1,7 +1,6 @@
 package gg.projecteden.jayce.commands;
 
 import com.spotify.github.v3.issues.ImmutableIssue;
-import com.spotify.github.v3.issues.Issue;
 import gg.projecteden.jayce.commands.common.AppCommand;
 import gg.projecteden.jayce.commands.common.AppCommandEvent;
 import gg.projecteden.jayce.commands.common.annotations.Command;
@@ -15,10 +14,6 @@ import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.managers.ChannelManager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 import static gg.projecteden.utils.StringUtils.camelCase;
@@ -45,21 +40,13 @@ public class ChannelAppCommand extends AppCommand {
 
 	@Command("Mark this channel as unresolved and cancel archival")
 	void unresolve() {
-		new ScheduledJobsService().editApp(jobs -> {
-			final List<SupportChannelArchiveJob> archiveJobs = jobs
-				.get(JobStatus.PENDING).stream()
-				.map(job -> job instanceof SupportChannelArchiveJob archiveJob ? archiveJob : null)
-				.filter(Objects::nonNull)
-				.filter(job -> job.getGuildId().equals(guild().getId()))
-				.filter(job -> job.getChannelId().equals(channel().getId()))
-				.toList();
+		new ScheduledJobsService().editApp(jobs -> jobs
+			.get(JobStatus.PENDING, SupportChannelArchiveJob.class).stream()
+			.filter(job -> job.getGuildId().equals(guild().getId()))
+			.filter(job -> job.getChannelId().equals(channel().getId()))
+			.forEach(job -> job.setStatus(JobStatus.CANCELLED)));
 
-			new ArrayList<>(archiveJobs).forEach(job -> job.setStatus(JobStatus.CANCELLED));
-		});
-
-		CompletableFuture<Issue> unassign = issues().edit(getIssueId(), ImmutableIssue::withAssignees);
-
-		unassign.thenRun(() -> {
+		issues().edit(getIssueId(), ImmutableIssue::withAssignees).thenRun(() -> {
 			reply("This channel has been marked as **unresolved**, archival cancelled");
 		}).exceptionally(ex -> {
 			ex.printStackTrace();

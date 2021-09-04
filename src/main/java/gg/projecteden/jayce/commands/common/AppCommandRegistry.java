@@ -13,6 +13,8 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
+import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege.Type;
 import org.reflections.Reflections;
 
 import java.util.Collections;
@@ -52,6 +54,8 @@ public record AppCommandRegistry(String packageName) {
 
 		var command = meta.getCommand();
 
+//		System.out.println("/" + command.getName() + ": " + command.toData());
+
 		for (Guild guild : JDA.getGuilds()) {
 			try { Thread.sleep(300); } catch (Exception ignored) {}
 
@@ -68,29 +72,28 @@ public record AppCommandRegistry(String packageName) {
 				guild.deleteCommandById(existingCommand.getId()).complete();
 				success.accept("DELETE EXISTING");
 			});
-
-			guild.retrieveCommandPrivileges().complete().forEach((existingCommand, privileges) -> {
-				for (CommandPrivilege privilege : privileges)
-					success.accept("Found privilege " + privilege + " for " + existingCommand + " in " + guild.getName());
-			});
 			*/
 
 			Consumer<Command> setPrivilege = response -> {
-				/* TODO
-				final CommandPrivilege privilege = new CommandPrivilege(Type.ROLE, true, guild.getRolesByName());
-				guild.updateCommandPrivilegesById(response.getId(), privilege).submit()
-					.thenAccept(response2 -> {
-						success.accept("PRIVILEGE");
-					}).exceptionally(ex -> {
-						failure.accept("PRIVILEGE");
-						ex.printStackTrace();
-						return null;
-					});
+				if (!meta.requiresRole())
+					return;
 
-				*/
+				final List<Role> roles = guild.getRolesByName(meta.getRole(), true);
+				if (roles.isEmpty()) {
+					failure.accept("PRIVILEGE | " + "Required role " + meta.getRole() + " not found");
+					return;
+				}
+
+				final CommandPrivilege privilege = new CommandPrivilege(Type.ROLE, true, roles.iterator().next().getIdLong());
+
+				guild.updateCommandPrivilegesById(response.getId(), privilege).submit().thenRun(() -> {
+					success.accept("PRIVILEGE");
+				}).exceptionally(ex -> {
+					failure.accept("PRIVILEGE");
+					ex.printStackTrace();
+					return null;
+				});
 			};
-
-			System.out.println("/" + command.getName() + ": " + command.toData());
 
 			guild.upsertCommand(command).submit().thenAccept(response -> {
 				success.accept("COMMAND");

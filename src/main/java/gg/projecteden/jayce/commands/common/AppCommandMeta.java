@@ -4,11 +4,13 @@ import gg.projecteden.jayce.commands.common.annotations.Choices;
 import gg.projecteden.jayce.commands.common.annotations.Command;
 import gg.projecteden.jayce.commands.common.annotations.Desc;
 import gg.projecteden.jayce.commands.common.annotations.Optional;
+import gg.projecteden.jayce.commands.common.annotations.Role;
 import gg.projecteden.jayce.commands.common.exceptions.AppCommandException;
 import gg.projecteden.jayce.commands.common.exceptions.AppCommandMisconfiguredException;
 import gg.projecteden.utils.Utils;
 import lombok.Data;
 import lombok.SneakyThrows;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -18,6 +20,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -37,12 +40,14 @@ import static gg.projecteden.utils.StringUtils.replaceLast;
 public class AppCommandMeta<T extends AppCommand> {
 	private final String name;
 	private final Class<T> clazz;
+	private final String role;
 	private final Map<String, AppCommandMethod> methods;
 	private final CommandData command;
 
 	public AppCommandMeta(Class<T> clazz) {
 		this.name = replaceLast(clazz.getSimpleName(), AppCommand.class.getSimpleName(), "").toLowerCase();
 		this.clazz = clazz;
+		this.role = defaultRole(clazz.getAnnotation(Role.class));
 		this.command = new CommandData(name, requireDescription(clazz));
 
 		init();
@@ -81,6 +86,7 @@ public class AppCommandMeta<T extends AppCommand> {
 		private final Method method;
 		private final String name;
 		private final String description;
+		private final String role;
 		private final String[] literals;
 		private final List<AppCommandArgument> arguments;
 		private final List<OptionData> options;
@@ -89,6 +95,7 @@ public class AppCommandMeta<T extends AppCommand> {
 			this.method = method;
 			this.name = method.getName();
 			this.literals = name.toLowerCase().split("_");
+			this.role = defaultRole(method.getAnnotation(Role.class));
 			this.description = method.getAnnotation(Command.class).value();
 			this.arguments = Stream.of(method.getParameters()).map(AppCommandArgument::new).toList();
 			this.options = this.arguments.stream().map(AppCommandArgument::asOption).toList();
@@ -101,16 +108,18 @@ public class AppCommandMeta<T extends AppCommand> {
 
 		@SneakyThrows
 		public void handle(SlashCommandEvent event) {
-			method.invoke(newInstance(new AppCommandEvent(event)), convert(event.getOptions()));
+			method.invoke(newInstance(new AppCommandEvent(event)), convert(event.getMember(), event.getOptions()));
 		}
 
 		@NotNull
-		private Object[] convert(List<OptionMapping> options) {
+		private Object[] convert(Member member, List<OptionMapping> options) {
+			checkRole(member, role);
+
 			final Object[] arguments = new Object[method.getParameters().length];
 
 			int index = 0;
 			for (AppCommandArgument argument : this.arguments)
-				arguments[index++] = argument.convert(argument.findOption(options));
+				arguments[index++] = argument.convert(member, argument.findOption(options));
 
 			return arguments;
 		}
@@ -120,6 +129,7 @@ public class AppCommandMeta<T extends AppCommand> {
 			private final Parameter parameter;
 			private final String name;
 			private final String description;
+			private final String role;
 			private final Class<?> type;
 			private final Class<?> choices;
 			private final boolean required;
@@ -129,6 +139,7 @@ public class AppCommandMeta<T extends AppCommand> {
 				this.parameter = parameter;
 				this.name = parameter.getName();
 				this.description = defaultDescription(parameter);
+				this.role = defaultRole(parameter.getAnnotation(Role.class));
 				this.type = parameter.getType();
 				final Choices choicesAnnotation = parameter.getAnnotation(Choices.class);
 				this.choices = choicesAnnotation == null ? type : choicesAnnotation.value();
@@ -158,7 +169,9 @@ public class AppCommandMeta<T extends AppCommand> {
 					.orElse(null);
 			}
 
-			public Object convert(OptionMapping option) {
+			public Object convert(Member member, OptionMapping option) {
+				checkRole(member, role);
+
 				if (required && option == null || isNullOrEmpty(option.getAsString()))
 					throw new AppCommandException(parameter.getName() + " is required");
 
@@ -205,6 +218,18 @@ public class AppCommandMeta<T extends AppCommand> {
 
 	}
 
+	private void checkRole(Member member, String roleName) {
+		if (isNullOrEmpty(roleName))
+			return;
+
+		if (member.getRoles().stream().noneMatch(role -> roleName.equalsIgnoreCase(role.getName())))
+			throw new AppCommandException("No permission");
+	}
+
+	public boolean requiresRole() {
+		return !isNullOrEmpty(role);
+	}
+
 	@NotNull
 	private static String requireDescription(Class<?> clazz) {
 		final Command annotation = clazz.getAnnotation(Command.class);
@@ -215,9 +240,14 @@ public class AppCommandMeta<T extends AppCommand> {
 	}
 
 	@NotNull
-	static String defaultDescription(Parameter parameter) {
+	private static String defaultDescription(Parameter parameter) {
 		final Desc annotation = parameter.getAnnotation(Desc.class);
 		return annotation == null ? parameter.getName() : annotation.value();
+	}
+
+	@Nullable
+	private static String defaultRole(Role annotation) {
+		return annotation == null ? null : annotation.value();
 	}
 
 }
