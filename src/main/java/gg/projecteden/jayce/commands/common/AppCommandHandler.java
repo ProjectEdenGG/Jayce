@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 /*
 TODO
 - Exception handling
-- Permissions (Privileges)
  */
 
 @Environments(Env.DEV)

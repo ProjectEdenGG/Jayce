@@ -69,8 +69,8 @@ public class ChannelAppCommand extends AppCommand {
 			.setName(repo.toLowerCase() + "-" + newId)
 			.setParent(newCategory)
 			.setTopic(newUrl)
-			.sync()
 			.submit()
+			.thenCompose($ -> manager.get().sync().submit())
 			.thenRun(() -> reply("Transferred to **" + camelCase(repo) + "**"))
 			.exceptionally(ex -> {
 				ex.printStackTrace();
