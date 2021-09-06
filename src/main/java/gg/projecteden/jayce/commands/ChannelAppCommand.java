@@ -5,6 +5,7 @@ import gg.projecteden.jayce.commands.common.AppCommand;
 import gg.projecteden.jayce.commands.common.AppCommandEvent;
 import gg.projecteden.jayce.commands.common.annotations.Command;
 import gg.projecteden.jayce.commands.common.annotations.Desc;
+import gg.projecteden.jayce.commands.common.annotations.GuildCommand;
 import gg.projecteden.jayce.commands.common.annotations.Role;
 import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.models.scheduledjobs.jobs.SupportChannelArchiveJob;
@@ -16,11 +17,13 @@ import net.dv8tion.jda.api.managers.ChannelManager;
 
 import java.util.function.Supplier;
 
+import static gg.projecteden.jayce.Jayce.PROJECT_EDEN_GUILD_ID;
 import static gg.projecteden.utils.StringUtils.camelCase;
 import static java.time.LocalDateTime.now;
 
 @Role("Staff")
 @Command("Manage support channels")
+@GuildCommand(exclude = PROJECT_EDEN_GUILD_ID)
 public class ChannelAppCommand extends AppCommand {
 
 	public ChannelAppCommand(AppCommandEvent event) {

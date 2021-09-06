@@ -9,6 +9,7 @@ import gg.projecteden.jayce.commands.common.AppCommandEvent;
 import gg.projecteden.jayce.commands.common.annotations.Choices;
 import gg.projecteden.jayce.commands.common.annotations.Command;
 import gg.projecteden.jayce.commands.common.annotations.Desc;
+import gg.projecteden.jayce.commands.common.annotations.GuildCommand;
 import gg.projecteden.jayce.commands.common.annotations.Role;
 import gg.projecteden.jayce.commands.common.exceptions.AppCommandException;
 import gg.projecteden.jayce.config.Config;
@@ -26,12 +27,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static gg.projecteden.jayce.Jayce.PROJECT_EDEN_GUILD_ID;
 import static gg.projecteden.jayce.commands.common.AppCommandRegistry.supplyChoices;
 import static gg.projecteden.utils.StringUtils.ellipsis;
 import static java.util.Objects.requireNonNull;
 
 @Role("Staff")
 @Command("Interact with GitHub issues")
+@GuildCommand(exclude = PROJECT_EDEN_GUILD_ID)
 public class IssuesAppCommand extends AppCommand {
 	private final RepoContext repo = Repos.main();
 	private final RepoIssueContext issues = repo.issues();

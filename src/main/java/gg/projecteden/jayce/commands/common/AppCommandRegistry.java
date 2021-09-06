@@ -1,6 +1,5 @@
 package gg.projecteden.jayce.commands.common;
 
-import gg.projecteden.utils.DiscordId;
 import lombok.SneakyThrows;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildChannel;
@@ -52,15 +51,23 @@ public record AppCommandRegistry(String packageName) {
 	private static void register(AppCommandMeta<?> meta) {
 		COMMANDS.put(meta.getName(), meta);
 
+		if (meta.isGuildCommand())
+			registerGuildCommand(meta);
+		else
+			registerGlobalCommand(meta);
+	}
+
+	private static void registerGuildCommand(AppCommandMeta<?> meta) {
 		var command = meta.getCommand();
 
-//		System.out.println("/" + command.getName() + ": " + command.toData());
-
 		for (Guild guild : JDA.getGuilds()) {
-			try { Thread.sleep(300); } catch (Exception ignored) {}
-
-			if (guild.getId().equals(DiscordId.Guild.PROJECT_EDEN.getId()))
-				continue;
+			if (!meta.getIncludedGuilds().isEmpty()) {
+				if (!meta.getIncludedGuilds().contains(guild.getId()))
+					continue;
+			} else if (!meta.getExcludedGuilds().isEmpty()) {
+				if (meta.getIncludedGuilds().contains(guild.getId()))
+					continue;
+			}
 
 			String id = "/" + command.getName() + " | " + guild.getName() + " |";
 
@@ -104,6 +111,38 @@ public record AppCommandRegistry(String packageName) {
 				return null;
 			});
 		}
+	}
+
+	private static void registerGlobalCommand(AppCommandMeta<?> meta) {
+		var command = meta.getCommand();
+
+		String id = "/" + command.getName() + " | GLOBAL | ";
+
+		Consumer<String> success = action -> System.out.println(id + " ✔ " + action);
+		Consumer<String> failure = action -> System.out.println(id + " ✗ " + action);
+
+		/*
+		JDA.retrieveCommands().complete().forEach(existingCommand -> {
+			JDA.deleteCommandById(existingCommand.getId()).complete();
+			success.accept("DELETE EXISTING");
+		});
+		*/
+
+		Consumer<Command> setPrivilege = response -> {
+			if (!meta.requiresRole())
+				return;
+
+			// TODO
+		};
+
+		JDA.upsertCommand(command).submit().thenAccept(response -> {
+			success.accept("COMMAND");
+			setPrivilege.accept(response);
+		}).exceptionally(ex -> {
+			failure.accept("COMMAND");
+			ex.printStackTrace();
+			return null;
+		});
 	}
 
 	public static void mapOptionType(OptionType optionType, Class<?>... classes) {

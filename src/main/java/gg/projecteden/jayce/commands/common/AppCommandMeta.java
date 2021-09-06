@@ -3,6 +3,7 @@ package gg.projecteden.jayce.commands.common;
 import gg.projecteden.jayce.commands.common.annotations.Choices;
 import gg.projecteden.jayce.commands.common.annotations.Command;
 import gg.projecteden.jayce.commands.common.annotations.Desc;
+import gg.projecteden.jayce.commands.common.annotations.GuildCommand;
 import gg.projecteden.jayce.commands.common.annotations.Optional;
 import gg.projecteden.jayce.commands.common.annotations.Role;
 import gg.projecteden.jayce.commands.common.exceptions.AppCommandException;
@@ -24,6 +25,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,14 +44,28 @@ public class AppCommandMeta<T extends AppCommand> {
 	private final String name;
 	private final Class<T> clazz;
 	private final String role;
-	private final Map<String, AppCommandMethod> methods;
+	private final boolean guildCommand;
+	private final List<String> includedGuilds;
+	private final List<String> excludedGuilds;
 	private final CommandData command;
+	private final Map<String, AppCommandMethod> methods;
 
 	public AppCommandMeta(Class<T> clazz) {
 		this.name = replaceLast(clazz.getSimpleName(), AppCommand.class.getSimpleName(), "").toLowerCase();
 		this.clazz = clazz;
 		this.role = defaultRole(clazz.getAnnotation(Role.class));
 		this.command = new CommandData(name, requireDescription(clazz));
+
+		final GuildCommand annotation = this.clazz.getAnnotation(GuildCommand.class);
+		if (annotation == null) {
+			this.guildCommand = false;
+			this.includedGuilds = Collections.emptyList();
+			this.excludedGuilds = Collections.emptyList();
+		} else {
+			this.guildCommand = true;
+			this.includedGuilds = Arrays.asList(annotation.value());
+			this.excludedGuilds = Arrays.asList(annotation.exclude());
+		}
 
 		init();
 
