@@ -1,17 +1,18 @@
 package gg.projecteden.jayce.commands;
 
+import com.spotify.github.v3.issues.ImmutableLabel;
 import com.spotify.github.v3.issues.Issue;
 import com.spotify.github.v3.issues.Label;
 import com.spotify.github.v3.search.SearchIssue;
+import gg.projecteden.discord.appcommands.AppCommandEvent;
+import gg.projecteden.discord.appcommands.annotations.Choices;
+import gg.projecteden.discord.appcommands.annotations.Command;
+import gg.projecteden.discord.appcommands.annotations.Desc;
+import gg.projecteden.discord.appcommands.annotations.GuildCommand;
+import gg.projecteden.discord.appcommands.annotations.Role;
+import gg.projecteden.discord.appcommands.exceptions.AppCommandException;
 import gg.projecteden.jayce.Jayce;
-import gg.projecteden.jayce.commands.common.AppCommand;
-import gg.projecteden.jayce.commands.common.AppCommandEvent;
-import gg.projecteden.jayce.commands.common.annotations.Choices;
-import gg.projecteden.jayce.commands.common.annotations.Command;
-import gg.projecteden.jayce.commands.common.annotations.Desc;
-import gg.projecteden.jayce.commands.common.annotations.GuildCommand;
-import gg.projecteden.jayce.commands.common.annotations.Role;
-import gg.projecteden.jayce.commands.common.exceptions.AppCommandException;
+import gg.projecteden.jayce.commands.common.JayceAppCommand;
 import gg.projecteden.jayce.config.Config;
 import gg.projecteden.jayce.github.Issues.RepoIssueContext;
 import gg.projecteden.jayce.github.Repos;
@@ -27,15 +28,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static gg.projecteden.discord.appcommands.AppCommandRegistry.registerConverter;
+import static gg.projecteden.discord.appcommands.AppCommandRegistry.supplyChoices;
 import static gg.projecteden.jayce.Jayce.PROJECT_EDEN_GUILD_ID;
-import static gg.projecteden.jayce.commands.common.AppCommandRegistry.supplyChoices;
 import static gg.projecteden.utils.StringUtils.ellipsis;
 import static java.util.Objects.requireNonNull;
 
 @Role("Staff")
 @Command("Interact with GitHub issues")
 @GuildCommand(exclude = PROJECT_EDEN_GUILD_ID)
-public class IssuesAppCommand extends AppCommand {
+public class IssuesAppCommand extends JayceAppCommand {
 	private final RepoContext repo = Repos.main();
 	private final RepoIssueContext issues = repo.issues();
 
@@ -134,6 +136,8 @@ public class IssuesAppCommand extends AppCommand {
 	}
 
 	static {
+		registerConverter(Label.class, input -> ImmutableLabel.builder().name(input).build());
+
 		supplyChoices(Label.class, () -> {
 			try {
 				return Repos.main().listLabels().get().stream()

@@ -1,12 +1,12 @@
 package gg.projecteden.jayce.commands;
 
 import com.spotify.github.v3.issues.ImmutableIssue;
-import gg.projecteden.jayce.commands.common.AppCommand;
-import gg.projecteden.jayce.commands.common.AppCommandEvent;
-import gg.projecteden.jayce.commands.common.annotations.Command;
-import gg.projecteden.jayce.commands.common.annotations.Desc;
-import gg.projecteden.jayce.commands.common.annotations.GuildCommand;
-import gg.projecteden.jayce.commands.common.annotations.Role;
+import gg.projecteden.discord.appcommands.AppCommandEvent;
+import gg.projecteden.discord.appcommands.annotations.Command;
+import gg.projecteden.discord.appcommands.annotations.Desc;
+import gg.projecteden.discord.appcommands.annotations.GuildCommand;
+import gg.projecteden.discord.appcommands.annotations.Role;
+import gg.projecteden.jayce.commands.common.JayceAppCommand;
 import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.models.scheduledjobs.jobs.SupportChannelArchiveJob;
 import gg.projecteden.models.scheduledjobs.ScheduledJobsService;
@@ -24,7 +24,7 @@ import static java.time.LocalDateTime.now;
 @Role("Staff")
 @Command("Manage support channels")
 @GuildCommand(exclude = PROJECT_EDEN_GUILD_ID)
-public class ChannelAppCommand extends AppCommand {
+public class ChannelAppCommand extends JayceAppCommand {
 
 	public ChannelAppCommand(AppCommandEvent event) {
 		super(event);

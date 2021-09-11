@@ -2,7 +2,7 @@ package gg.projecteden.jayce;
 
 import com.spotify.github.v3.clients.GitHubClient;
 import gg.projecteden.EdenAPI;
-import gg.projecteden.jayce.commands.common.AppCommandRegistry;
+import gg.projecteden.discord.appcommands.AppCommandRegistry;
 import gg.projecteden.jayce.config.Config;
 import gg.projecteden.models.scheduledjobs.ScheduledJobsRunner;
 import gg.projecteden.mongodb.DatabaseConfig;
@@ -52,7 +52,7 @@ public class Jayce extends EdenAPI {
 			.awaitReady();
 
 		final String commandsPackage = Jayce.class.getPackage().getName() + ".commands";
-		new AppCommandRegistry(commandsPackage).registerAll();
+		new AppCommandRegistry(JDA, commandsPackage).registerAll();
 	}
 
 	@Override
