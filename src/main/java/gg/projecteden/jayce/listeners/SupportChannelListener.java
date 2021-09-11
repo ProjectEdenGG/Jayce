@@ -3,14 +3,12 @@ package gg.projecteden.jayce.listeners;
 import com.spotify.github.v3.issues.ImmutableIssue;
 import com.spotify.github.v3.issues.ImmutableLabel;
 import com.spotify.github.v3.issues.Issue;
-import gg.projecteden.annotations.Environments;
 import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.jayce.config.Config;
 import gg.projecteden.jayce.github.Issues.RepoIssueContext;
 import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.github.Repos.RepoContext;
 import gg.projecteden.jayce.listeners.common.DiscordListener;
-import gg.projecteden.utils.Env;
 import gg.projecteden.utils.StringUtils;
 import gg.projecteden.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.MillisTime;
@@ -26,7 +24,6 @@ import java.util.Objects;
 
 import static gg.projecteden.utils.StringUtils.ellipsis;
 
-@Environments(Env.DEV)
 public class SupportChannelListener extends DiscordListener {
 	private static final String TITLE_REGEX = "(?i)^title:( )?";
 

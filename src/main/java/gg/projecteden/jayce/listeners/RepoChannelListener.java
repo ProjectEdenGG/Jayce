@@ -2,14 +2,12 @@ package gg.projecteden.jayce.listeners;
 
 import com.google.gson.Gson;
 import com.spotify.github.v3.comment.Comment;
-import gg.projecteden.annotations.Environments;
 import gg.projecteden.jayce.config.Config;
 import gg.projecteden.jayce.github.Issues.RepoIssueContext;
 import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.github.Repos.RepoContext;
 import gg.projecteden.jayce.listeners.common.DiscordListener;
 import gg.projecteden.jayce.utils.Utils;
-import gg.projecteden.utils.Env;
 import gg.projecteden.utils.StringUtils;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +27,6 @@ import java.util.function.Consumer;
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 import static java.util.Objects.requireNonNull;
 
-@Environments(Env.DEV)
 public class RepoChannelListener extends DiscordListener {
 
 	@Override
