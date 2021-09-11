@@ -38,10 +38,13 @@ public class SupportChannelDeleteJob extends AbstractJob {
 		if (channel == null)
 			return completed();
 
-		channel.delete().queue(success -> future.complete(JobStatus.COMPLETED), ex -> {
-			ex.printStackTrace();
-			future.complete(JobStatus.ERRORED);
-		});
+		channel.delete().submit()
+			.thenRun(() -> future.complete(JobStatus.COMPLETED))
+			.exceptionally(ex -> {
+				ex.printStackTrace();
+				future.complete(JobStatus.ERRORED);
+				return null;
+			});
 
 		return future;
 	}

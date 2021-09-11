@@ -52,10 +52,16 @@ public class SupportChannelArchiveJob extends AbstractJob {
 			.setParent(categories.iterator().next())
 			.submit()
 			.thenCompose($ -> Repos.repo(channel.getParent()).issues().close(Utils.getIssueId(channel)))
+			.exceptionally(ex -> {
+				ex.printStackTrace();
+				future.complete(JobStatus.ERRORED);
+				return null;
+			})
 			.thenRun(() -> {
 				new SupportChannelDeleteJob(channel).schedule(now().plusDays(3));
 				future.complete(JobStatus.COMPLETED);
-			}).exceptionally(ex -> {
+			})
+			.exceptionally(ex -> {
 				ex.printStackTrace();
 				future.complete(JobStatus.ERRORED);
 				return null;
