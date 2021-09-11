@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.concurrent.CompletableFuture;
@@ -17,13 +18,15 @@ import java.util.concurrent.CompletableFuture;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @RetryIfInterrupted
-public class SupportChannelDeleteJob extends AbstractJob {
+public class MessageDeleteJob extends AbstractJob {
 	private String guildId;
 	private String channelId;
+	private String messageId;
 
-	public SupportChannelDeleteJob(TextChannel channel) {
-		this.guildId = channel.getGuild().getId();
-		this.channelId = channel.getId();
+	public MessageDeleteJob(Message message) {
+		this.guildId = message.getGuild().getId();
+		this.channelId = message.getTextChannel().getId();
+		this.messageId = message.getId();
 	}
 
 	@Override
@@ -38,7 +41,7 @@ public class SupportChannelDeleteJob extends AbstractJob {
 		if (channel == null)
 			return completed();
 
-		channel.delete().submit()
+		channel.deleteMessageById(messageId).submit()
 			.thenRun(() -> future.complete(JobStatus.COMPLETED))
 			.exceptionally(ex -> {
 				ex.printStackTrace();

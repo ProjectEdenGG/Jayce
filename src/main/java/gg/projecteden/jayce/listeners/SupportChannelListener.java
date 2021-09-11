@@ -9,9 +9,8 @@ import gg.projecteden.jayce.github.Issues.RepoIssueContext;
 import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.github.Repos.RepoContext;
 import gg.projecteden.jayce.listeners.common.DiscordListener;
+import gg.projecteden.jayce.models.scheduledjobs.jobs.MessageDeleteJob;
 import gg.projecteden.utils.StringUtils;
-import gg.projecteden.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.MillisTime;
 import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -23,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static gg.projecteden.utils.StringUtils.ellipsis;
+import static java.time.LocalDateTime.now;
 
 public class SupportChannelListener extends DiscordListener {
 	private static final String TITLE_REGEX = "(?i)^title:( )?";
@@ -63,7 +63,7 @@ public class SupportChannelListener extends DiscordListener {
 					newChannel.getManager().setTopic(issues.url(issue).build()).queue();
 					message.delete().queue();
 					channel.sendMessage(member.getAsMention() + " " + newChannel.getAsMention()).queue(reply ->
-						Tasks.wait(MillisTime.MINUTE, () -> reply.delete().queue()));
+						new MessageDeleteJob(reply).schedule(now().plusMinutes(1)));
 				}, ex -> handleException(event, ex));
 			}).exceptionally(ex -> {
 				handleException(event, ex);
