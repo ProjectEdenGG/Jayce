@@ -110,7 +110,7 @@ public class IssuesAppCommand extends JayceAppCommand {
 			final String url = issues.url().build();
 			final StringBuilder body = new StringBuilder();
 
-			for (SearchIssue issue : items)
+			for (SearchIssue issue : items.subList(0, Math.min(10, items.size())))
 				body.append(String.format("#%d [%s](%s) - %s%s", issue.number(), ellipsis(issue.title(), 50),
 					url + issue.number(), issue.user().login(), System.lineSeparator() + System.lineSeparator()));
 
