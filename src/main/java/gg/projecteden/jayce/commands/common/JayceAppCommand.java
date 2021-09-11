@@ -12,7 +12,6 @@ public abstract class JayceAppCommand extends AppCommand {
 
 	public JayceAppCommand(AppCommandEvent event) {
 		super(event);
-		System.out.println("handling " + getClass().getSimpleName());
 	}
 
 	protected boolean isWebhookChannel() {

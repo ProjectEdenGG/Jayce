@@ -9,6 +9,8 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import static gg.projecteden.jayce.Jayce.PROJECT_EDEN_GUILD_ID;
+
 public abstract class DiscordListener extends ListenerAdapter {
 
 	protected void handleException(@NotNull GenericGuildMessageEvent event, Throwable ex) {
@@ -31,7 +33,7 @@ public abstract class DiscordListener extends ListenerAdapter {
 	}
 
 	protected boolean shouldIgnoreGuild(@NotNull GenericGuildMessageEvent event) {
-		return Jayce.get().getEnv() != Env.PROD && event.getGuild().getId().equals("132680070480396288");
+		return Jayce.get().getEnv() != Env.PROD && event.getGuild().getId().equals(PROJECT_EDEN_GUILD_ID);
 	}
 
 }

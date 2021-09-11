@@ -4,6 +4,7 @@ import com.spotify.github.v3.issues.ImmutableLabel;
 import com.spotify.github.v3.issues.Issue;
 import com.spotify.github.v3.issues.Label;
 import com.spotify.github.v3.search.SearchIssue;
+import gg.projecteden.annotations.Environments;
 import gg.projecteden.discord.appcommands.AppCommandEvent;
 import gg.projecteden.discord.appcommands.annotations.Choices;
 import gg.projecteden.discord.appcommands.annotations.Command;
@@ -36,7 +37,8 @@ import static java.util.Objects.requireNonNull;
 
 @Role("Staff")
 @Command("Interact with GitHub issues")
-@GuildCommand(exclude = PROJECT_EDEN_GUILD_ID)
+@GuildCommand(PROJECT_EDEN_GUILD_ID)
+@Environments(Env.PROD)
 public class IssuesAppCommand extends JayceAppCommand {
 	private final RepoContext repo = Repos.main();
 	private final RepoIssueContext issues = repo.issues();

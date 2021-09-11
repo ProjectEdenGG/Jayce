@@ -1,10 +1,13 @@
 package gg.projecteden.jayce.listeners;
 
+import gg.projecteden.annotations.Environments;
 import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.listeners.common.DiscordListener;
+import gg.projecteden.utils.Env;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
+@Environments(Env.PROD)
 public class IssueLinkListener extends DiscordListener {
 
 	@Override
