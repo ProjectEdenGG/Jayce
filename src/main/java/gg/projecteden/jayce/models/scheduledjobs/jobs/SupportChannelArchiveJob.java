@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static java.time.LocalDateTime.now;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 
 @Data
 @NoArgsConstructor
@@ -26,10 +27,12 @@ import static java.time.LocalDateTime.now;
 public class SupportChannelArchiveJob extends AbstractJob {
 	private String guildId;
 	private String channelId;
+	private boolean closeIssue;
 
-	public SupportChannelArchiveJob(TextChannel channel) {
+	public SupportChannelArchiveJob(TextChannel channel, boolean closeIssue) {
 		this.guildId = channel.getGuild().getId();
 		this.channelId = channel.getId();
+		this.closeIssue = closeIssue;
 	}
 
 	@Override
@@ -51,7 +54,11 @@ public class SupportChannelArchiveJob extends AbstractJob {
 		channel.getManager()
 			.setParent(categories.iterator().next())
 			.submit()
-			.thenCompose($ -> Repos.repo(channel.getParent()).issues().close(Utils.getIssueId(channel)))
+			.thenCompose($ -> {
+				if (!closeIssue)
+					return completedFuture(null);
+				return Repos.repo(channel.getParent()).issues().close(Utils.getIssueId(channel));
+			})
 			.exceptionally(ex -> {
 				ex.printStackTrace();
 				future.complete(JobStatus.ERRORED);
