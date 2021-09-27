@@ -23,13 +23,12 @@ import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-import static gg.projecteden.jayce.Jayce.PROJECT_EDEN_GUILD_ID;
 import static gg.projecteden.utils.StringUtils.camelCase;
 import static java.time.LocalDateTime.now;
 
+@GuildCommand
 @Role("Staff")
 @Command("Manage support channels")
-@GuildCommand(exclude = PROJECT_EDEN_GUILD_ID)
 public class ChannelAppCommand extends JayceAppCommand {
 
 	public ChannelAppCommand(AppCommandEvent event) {

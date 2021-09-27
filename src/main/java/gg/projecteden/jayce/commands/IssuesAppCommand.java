@@ -30,13 +30,12 @@ import java.util.Optional;
 
 import static gg.projecteden.discord.appcommands.AppCommandRegistry.registerConverter;
 import static gg.projecteden.discord.appcommands.AppCommandRegistry.supplyChoices;
-import static gg.projecteden.jayce.Jayce.PROJECT_EDEN_GUILD_ID;
 import static gg.projecteden.utils.StringUtils.ellipsis;
 import static java.util.Objects.requireNonNull;
 
+@GuildCommand
 @Role("Staff")
 @Command("Interact with GitHub issues")
-@GuildCommand(exclude = PROJECT_EDEN_GUILD_ID)
 public class IssuesAppCommand extends JayceAppCommand {
 	private final RepoContext repo = Repos.main();
 	private final RepoIssueContext issues = repo.issues();
