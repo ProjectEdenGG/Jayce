@@ -47,7 +47,7 @@ public class SupportChannelArchiveJob extends AbstractJob {
 		if (channel == null)
 			return completed();
 
-		final List<Category> categories = guild.getCategoriesByName("support-archive", true);
+		final List<Category> categories = guild.getCategoriesByName("support archive", true);
 		if (categories.isEmpty())
 			return completed();
 

@@ -4,7 +4,6 @@ import com.spotify.github.v3.issues.ImmutableIssue;
 import com.spotify.github.v3.issues.ImmutableLabel;
 import com.spotify.github.v3.issues.Issue;
 import gg.projecteden.exceptions.EdenException;
-import gg.projecteden.jayce.config.Config;
 import gg.projecteden.jayce.github.Issues.RepoIssueContext;
 import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.github.Repos.RepoContext;
@@ -42,9 +41,6 @@ public class SupportChannelListener extends DiscordListener {
 				return;
 
 			if (!"Support".equalsIgnoreCase(category.getName()))
-				return;
-
-			if (message.getContentRaw().startsWith(Config.COMMAND_PREFIX))
 				return;
 
 			final RepoContext repo = Repos.repo(channel);

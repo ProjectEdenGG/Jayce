@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -161,7 +162,11 @@ public class RepoChannelListener extends DiscordListener {
 
 		@NotNull
 		public static String asComment(Message message) {
-			return asComment(message.getId(), requireNonNull(message.getMember()), message.getContentDisplay());
+			String content = message.getContentDisplay();
+			for (Attachment attachment : message.getAttachments())
+				content += System.lineSeparator() + "![Attachment](" + attachment.getUrl() + ")";
+
+			return asComment(message.getId(), requireNonNull(message.getMember()), content);
 		}
 
 		public static String asComment(String eventId, Member member, String content) {
