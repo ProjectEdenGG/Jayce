@@ -46,10 +46,8 @@ public class IssuesAppCommand extends JayceAppCommand {
 
 	@Command("Create an issue")
 	void create(String title, String body) {
-		issues.create(issues.of(member(), title, body).build()).thenAccept(result -> {
-			if (!isWebhookChannel())
-				reply(issues.url(result).embed(false).build());
-		});
+		issues.create(issues.of(member(), title, body).build()).thenAccept(result ->
+			replyEphemeral(issues.url(result).embed(false).build()));
 	}
 
 	@Command("Open an existing issue")
@@ -100,8 +98,10 @@ public class IssuesAppCommand extends JayceAppCommand {
 	@Command("Search existing issues")
 	void search(String query) {
 		issues.search(query).thenAccept(items -> {
-			if (Utils.isNullOrEmpty(items))
-				throw new AppCommandException("No results found");
+			if (Utils.isNullOrEmpty(items)) {
+				reply("No results found");
+				return;
+			}
 
 			final String title = "Found " + items.size() + StringUtils.plural(" issue", items.size());
 			final String url = issues.url().build();
