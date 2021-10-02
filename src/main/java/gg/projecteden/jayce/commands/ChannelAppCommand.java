@@ -43,7 +43,7 @@ public class ChannelAppCommand extends JayceAppCommand {
 		boolean closeIssue = close == null || close;
 		issues().assign(getIssueId(), member()).thenRun(() -> {
 			channel().getManager().setName(Jayce.RESOLVED + "-" + channel().getName().substring(1)).queue();
-			new SupportChannelArchiveJob(channel(), closeIssue).schedule(now().plusDays(1));
+			new SupportChannelArchiveJob(channel(), closeIssue).schedule(now().plusHours(12));
 			reply("This channel has been marked as **resolved** and will be archived in 24 hours. " +
 				"The related issue will " + (closeIssue ? "" : "not ") + "be closed.");
 		}).exceptionally(ex -> {
