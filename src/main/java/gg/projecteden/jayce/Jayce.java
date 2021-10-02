@@ -22,6 +22,8 @@ public class Jayce extends EdenAPI {
 	public static JDA JDA;
 	public static GitHubClient GITHUB;
 	public static final String PROJECT_EDEN_GUILD_ID = "132680070480396288";
+	public static final String UNRESOLVED = "✘";
+	public static final String RESOLVED = "✔";
 
 	public static void main(String[] args) {
 		new Jayce();

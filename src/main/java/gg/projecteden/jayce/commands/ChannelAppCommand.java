@@ -7,6 +7,7 @@ import gg.projecteden.discord.appcommands.annotations.Desc;
 import gg.projecteden.discord.appcommands.annotations.GuildCommand;
 import gg.projecteden.discord.appcommands.annotations.Optional;
 import gg.projecteden.discord.appcommands.annotations.Role;
+import gg.projecteden.jayce.Jayce;
 import gg.projecteden.jayce.commands.common.JayceAppCommand;
 import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.models.scheduledjobs.jobs.SupportChannelArchiveJob;
@@ -41,6 +42,7 @@ public class ChannelAppCommand extends JayceAppCommand {
 
 		boolean closeIssue = close == null || close;
 		issues().assign(getIssueId(), member()).thenRun(() -> {
+			channel().getManager().setName(Jayce.RESOLVED + "-" + channel().getName().substring(1)).queue();
 			new SupportChannelArchiveJob(channel(), closeIssue).schedule(now().plusDays(1));
 			reply("This channel has been marked as **resolved** and will be archived in 24 hours. " +
 				"The related issue will " + (closeIssue ? "" : "not ") + "be closed.");
@@ -55,6 +57,7 @@ public class ChannelAppCommand extends JayceAppCommand {
 		cancelExistingArchivalJobs();
 
 		issues().edit(getIssueId(), ImmutableIssue::withAssignees).thenRun(() -> {
+			channel().getManager().setName(Jayce.UNRESOLVED + "-" + channel().getName().substring(1)).queue();
 			reply("This channel has been marked as **unresolved**, archival cancelled");
 		}).exceptionally(ex -> {
 			ex.printStackTrace();
@@ -82,7 +85,7 @@ public class ChannelAppCommand extends JayceAppCommand {
 		final Supplier<ChannelManager> manager = () -> channel.get().getManager();
 
 		manager.get()
-			.setName(repo.toLowerCase() + "-" + newId)
+			.setName(channel().getName().charAt(0) + "-" + repo.toLowerCase() + "-" + newId)
 			.setParent(newCategory)
 			.setTopic(newUrl)
 			.sync(newCategory)

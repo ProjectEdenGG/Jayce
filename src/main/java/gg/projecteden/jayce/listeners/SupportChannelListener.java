@@ -4,6 +4,7 @@ import com.spotify.github.v3.issues.ImmutableIssue;
 import com.spotify.github.v3.issues.ImmutableLabel;
 import com.spotify.github.v3.issues.Issue;
 import gg.projecteden.exceptions.EdenException;
+import gg.projecteden.jayce.Jayce;
 import gg.projecteden.jayce.github.Issues.RepoIssueContext;
 import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.github.Repos.RepoContext;
@@ -54,7 +55,7 @@ public class SupportChannelListener extends DiscordListener {
 				final int number = getIssueNumber(issue);
 				final Category repoCategory = getRepoCategory(message, repo);
 
-				repoCategory.createTextChannel(repo.repo() + "-" + number).queue(newChannel -> {
+				repoCategory.createTextChannel(Jayce.UNRESOLVED + "-" + repo.repo() + "-" + number).queue(newChannel -> {
 					newChannel.sendMessage(member.getAsMention() + ": " + content.replaceFirst(TITLE_REGEX, "")).queue();
 					newChannel.getManager().setTopic(issues.url(issue).build()).queue();
 					message.delete().queue();
