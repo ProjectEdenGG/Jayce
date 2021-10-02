@@ -2,7 +2,6 @@ package gg.projecteden.jayce.listeners;
 
 import com.google.gson.Gson;
 import com.spotify.github.v3.comment.Comment;
-import gg.projecteden.jayce.config.Config;
 import gg.projecteden.jayce.github.Issues.RepoIssueContext;
 import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.github.Repos.RepoContext;
@@ -46,9 +45,6 @@ public class RepoChannelListener extends DiscordListener {
 
 			int issueId = Utils.getIssueId(channel);
 			if (issueId < 1)
-				return;
-
-			if (message.getContentRaw().startsWith(Config.COMMAND_PREFIX))
 				return;
 
 			final RepoContext repo = Repos.repo(category);
