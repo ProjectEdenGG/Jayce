@@ -1,7 +1,6 @@
 package gg.projecteden.jayce.listeners;
 
 import com.spotify.github.v3.issues.ImmutableIssue;
-import com.spotify.github.v3.issues.ImmutableLabel;
 import com.spotify.github.v3.issues.Issue;
 import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.jayce.Jayce;
@@ -10,7 +9,6 @@ import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.github.Repos.RepoContext;
 import gg.projecteden.jayce.listeners.common.DiscordListener;
 import gg.projecteden.jayce.models.scheduledjobs.jobs.MessageDeleteJob;
-import gg.projecteden.utils.StringUtils;
 import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -48,10 +46,8 @@ public class SupportChannelListener extends DiscordListener {
 			final RepoIssueContext issues = repo.issues();
 
 			final String content = message.getContentDisplay();
-			final ImmutableIssue.Builder builder = getIssue(issues, member, content)
-				.addLabels(ImmutableLabel.builder().name(StringUtils.left(channel.getName(), channel.getName().length() - 1)).build());
 
-			issues.create(builder.build()).thenAccept(issue -> {
+			issues.create(getIssue(issues, member, content).build()).thenAccept(issue -> {
 				final int number = getIssueNumber(issue);
 				final Category repoCategory = getRepoCategory(message, repo);
 
