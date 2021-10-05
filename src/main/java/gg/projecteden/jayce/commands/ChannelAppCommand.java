@@ -31,6 +31,7 @@ import static java.time.LocalDateTime.now;
 @Role("Staff")
 @Command("Manage support channels")
 public class ChannelAppCommand extends JayceAppCommand {
+	private static final int ARCHIVE_AFTER_HOURS = 12;
 
 	public ChannelAppCommand(AppCommandEvent event) {
 		super(event);
@@ -43,8 +44,8 @@ public class ChannelAppCommand extends JayceAppCommand {
 		boolean closeIssue = close == null || close;
 		issues().assign(getIssueId(), member()).thenRun(() -> {
 			channel().getManager().setName(Jayce.RESOLVED + "-" + channel().getName().substring(1)).queue();
-			new SupportChannelArchiveJob(channel(), closeIssue).schedule(now().plusHours(12));
-			reply("This channel has been marked as **resolved** and will be archived in 24 hours. " +
+			new SupportChannelArchiveJob(channel(), closeIssue).schedule(now().plusHours(ARCHIVE_AFTER_HOURS));
+			reply("This channel has been marked as **resolved** and will be archived in " + ARCHIVE_AFTER_HOURS + " hours. " +
 				"The related issue will " + (closeIssue ? "" : "not ") + "be closed.");
 		}).exceptionally(ex -> {
 			ex.printStackTrace();
