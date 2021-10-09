@@ -107,7 +107,7 @@ public class ChannelAppCommand extends JayceAppCommand {
 			channel().getIterableHistory().forEach(message -> add(message.delete().submit()));
 		}}).thenRun(() -> {
 			final EmbedBuilder image = new EmbedBuilder().setImage(BRANDING_URL + channel().getName() + ".png");
-			final EmbedBuilder text = new EmbedBuilder().appendDescription(description);
+			final EmbedBuilder text = new EmbedBuilder().appendDescription(description.replaceAll("\\n", System.lineSeparator()));
 
 			channel().sendMessage(new MessageBuilder().setEmbeds(image.build(), text.build()).build()).queue();
 			event.getEvent().reply("Success").setEphemeral(true).queue();
