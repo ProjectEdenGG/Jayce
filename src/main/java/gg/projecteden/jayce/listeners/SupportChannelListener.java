@@ -42,6 +42,9 @@ public class SupportChannelListener extends DiscordListener {
 			if (!"Support".equalsIgnoreCase(category.getName()))
 				return;
 
+			if ("titan".equalsIgnoreCase(channel.getName()))
+				return;
+
 			final RepoContext repo = Repos.repo(channel);
 			final RepoIssueContext issues = repo.issues();
 

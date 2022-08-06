@@ -35,7 +35,7 @@ public class Repos {
 
 	public static RepoContext repo(TextChannel channel) {
 		if (channel == null)
-			throw new EdenException("Cannot determine repo from null category");
+			throw new EdenException("Cannot determine repo from null channel");
 		return repo(camelCase(channel.getName()));
 	}
 
