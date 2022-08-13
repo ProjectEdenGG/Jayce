@@ -1,7 +1,10 @@
 package gg.projecteden.jayce.models.scheduledjobs.jobs;
 
+import dev.morphia.annotations.Converters;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.RetryIfInterrupted;
+import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.jayce.Jayce;
 import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.utils.Utils;
@@ -24,6 +27,7 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @RetryIfInterrupted
+@Converters({UUIDConverter.class, LocalDateTimeConverter.class})
 public class SupportChannelArchiveJob extends AbstractJob {
 	private String guildId;
 	private String channelId;
