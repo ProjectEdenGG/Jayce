@@ -2,12 +2,12 @@ package gg.projecteden.jayce.listeners;
 
 import com.google.gson.Gson;
 import com.spotify.github.v3.comment.Comment;
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.jayce.github.Issues.RepoIssueContext;
 import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.github.Repos.RepoContext;
 import gg.projecteden.jayce.listeners.common.DiscordListener;
 import gg.projecteden.jayce.utils.Utils;
-import gg.projecteden.utils.StringUtils;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.Category;
@@ -15,28 +15,30 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
+import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
+import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 import static java.util.Objects.requireNonNull;
 
 public class RepoChannelListener extends DiscordListener {
 
 	@Override
-	public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
 		try {
 			if (shouldIgnore(event))
 				return;
 
-			final TextChannel channel = event.getChannel();
-			final Category category = channel.getParent();
+			if (!(event.getChannel() instanceof TextChannel channel))
+				return;
+
+			final Category category = channel.getParentCategory();
 			final Message message = event.getMessage();
 			final Member member = event.getMember();
 
@@ -61,13 +63,15 @@ public class RepoChannelListener extends DiscordListener {
 	}
 
 	@Override
-	public void onGuildMessageUpdate(@NotNull GuildMessageUpdateEvent event) {
+	public void onMessageUpdate(@NotNull MessageUpdateEvent event) {
 		try {
 			if (shouldIgnoreGuild(event))
 				return;
 
-			final TextChannel channel = event.getChannel();
-			final Category category = channel.getParent();
+			if (!(event.getChannel() instanceof TextChannel channel))
+				return;
+
+			final Category category = channel.getParentCategory();
 			final Message message = event.getMessage();
 			final Member member = event.getMember();
 
@@ -89,13 +93,15 @@ public class RepoChannelListener extends DiscordListener {
 	}
 
 	@Override
-	public void onGuildMessageDelete(@NotNull GuildMessageDeleteEvent event) {
+	public void onMessageDelete(@NotNull MessageDeleteEvent event) {
 		try {
 			if (shouldIgnoreGuild(event))
 				return;
 
-			final TextChannel channel = event.getChannel();
-			final Category category = channel.getParent();
+			if (!(event.getChannel() instanceof TextChannel channel))
+				return;
+
+			final Category category = channel.getParentCategory();
 			final String messageId = event.getMessageId();
 
 			if (category == null)

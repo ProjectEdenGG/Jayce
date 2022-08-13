@@ -1,34 +1,35 @@
 package gg.projecteden.jayce.commands;
 
 import com.spotify.github.v3.issues.ImmutableIssue;
-import gg.projecteden.discord.appcommands.AppCommandEvent;
-import gg.projecteden.discord.appcommands.annotations.Command;
-import gg.projecteden.discord.appcommands.annotations.Desc;
-import gg.projecteden.discord.appcommands.annotations.GuildCommand;
-import gg.projecteden.discord.appcommands.annotations.Optional;
-import gg.projecteden.discord.appcommands.annotations.Role;
+import gg.projecteden.api.common.utils.CompletableFutures;
+import gg.projecteden.api.discord.appcommands.AppCommandEvent;
+import gg.projecteden.api.discord.appcommands.annotations.Command;
+import gg.projecteden.api.discord.appcommands.annotations.Desc;
+import gg.projecteden.api.discord.appcommands.annotations.GuildCommand;
+import gg.projecteden.api.discord.appcommands.annotations.Optional;
+import gg.projecteden.api.discord.appcommands.annotations.RequiredRole;
+import gg.projecteden.api.mongodb.models.scheduledjobs.ScheduledJobsService;
+import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob.JobStatus;
 import gg.projecteden.jayce.Jayce;
 import gg.projecteden.jayce.commands.common.JayceAppCommand;
 import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.models.scheduledjobs.jobs.SupportChannelArchiveJob;
-import gg.projecteden.models.scheduledjobs.ScheduledJobsService;
-import gg.projecteden.models.scheduledjobs.common.AbstractJob.JobStatus;
-import gg.projecteden.utils.CompletableFutures;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.managers.ChannelManager;
+import net.dv8tion.jda.api.managers.channel.ChannelManager;
+import net.dv8tion.jda.api.managers.channel.concrete.TextChannelManager;
 
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static java.time.LocalDateTime.now;
 
 @GuildCommand
-@Role("Staff")
+@RequiredRole("Staff")
 @Command("Manage support channels")
 public class ChannelAppCommand extends JayceAppCommand {
 	private static final int ARCHIVE_AFTER_HOURS = 12;
@@ -83,7 +84,7 @@ public class ChannelAppCommand extends JayceAppCommand {
 
 		final String channelId = channel().getId();
 		final Supplier<TextChannel> channel = () -> guild().getTextChannelById(channelId);
-		final Supplier<ChannelManager> manager = () -> channel.get().getManager();
+		final Supplier<ChannelManager<TextChannel, TextChannelManager>> manager = () -> channel.get().getManager();
 
 		manager.get()
 			.setName(channel().getName().charAt(0) + "-" + repo.toLowerCase() + "-" + newId)

@@ -4,22 +4,22 @@ import com.spotify.github.v3.issues.ImmutableLabel;
 import com.spotify.github.v3.issues.Issue;
 import com.spotify.github.v3.issues.Label;
 import com.spotify.github.v3.search.SearchIssue;
-import gg.projecteden.discord.appcommands.AppCommandEvent;
-import gg.projecteden.discord.appcommands.annotations.Choices;
-import gg.projecteden.discord.appcommands.annotations.Command;
-import gg.projecteden.discord.appcommands.annotations.Desc;
-import gg.projecteden.discord.appcommands.annotations.GuildCommand;
-import gg.projecteden.discord.appcommands.annotations.Role;
-import gg.projecteden.discord.appcommands.exceptions.AppCommandException;
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.Nullables;
+import gg.projecteden.api.common.utils.StringUtils;
+import gg.projecteden.api.discord.appcommands.AppCommandEvent;
+import gg.projecteden.api.discord.appcommands.annotations.Choices;
+import gg.projecteden.api.discord.appcommands.annotations.Command;
+import gg.projecteden.api.discord.appcommands.annotations.Desc;
+import gg.projecteden.api.discord.appcommands.annotations.GuildCommand;
+import gg.projecteden.api.discord.appcommands.annotations.RequiredRole;
+import gg.projecteden.api.discord.appcommands.exceptions.AppCommandException;
 import gg.projecteden.jayce.Jayce;
 import gg.projecteden.jayce.commands.common.JayceAppCommand;
 import gg.projecteden.jayce.config.Config;
 import gg.projecteden.jayce.github.Issues.RepoIssueContext;
 import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.github.Repos.RepoContext;
-import gg.projecteden.utils.Env;
-import gg.projecteden.utils.StringUtils;
-import gg.projecteden.utils.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
@@ -28,13 +28,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static gg.projecteden.discord.appcommands.AppCommandRegistry.registerConverter;
-import static gg.projecteden.discord.appcommands.AppCommandRegistry.supplyChoices;
-import static gg.projecteden.utils.StringUtils.ellipsis;
+import static gg.projecteden.api.common.utils.StringUtils.ellipsis;
+import static gg.projecteden.api.discord.appcommands.AppCommandRegistry.registerConverter;
+import static gg.projecteden.api.discord.appcommands.AppCommandRegistry.supplyChoices;
 import static java.util.Objects.requireNonNull;
 
 @GuildCommand
-@Role("Staff")
+@RequiredRole("Staff")
 @Command("Interact with GitHub issues")
 public class IssuesAppCommand extends JayceAppCommand {
 	private final RepoContext repo = Repos.main();
@@ -98,7 +98,7 @@ public class IssuesAppCommand extends JayceAppCommand {
 	@Command("Search existing issues")
 	void search(String query) {
 		issues.search(query).thenAccept(items -> {
-			if (Utils.isNullOrEmpty(items)) {
+			if (Nullables.isNullOrEmpty(items)) {
 				reply("No results found");
 				return;
 			}
@@ -135,7 +135,7 @@ public class IssuesAppCommand extends JayceAppCommand {
 	}
 
 	static {
-		registerConverter(Label.class, input -> ImmutableLabel.builder().name(input).build());
+		registerConverter(Label.class, input -> ImmutableLabel.builder().name(input.getInput()).build());
 
 		supplyChoices(Label.class, () -> {
 			try {

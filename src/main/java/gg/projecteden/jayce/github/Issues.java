@@ -31,10 +31,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.Utils.bash;
+import static gg.projecteden.api.common.utils.Utils.mutableCopyOf;
 import static gg.projecteden.jayce.Jayce.GITHUB;
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
-import static gg.projecteden.utils.Utils.bash;
-import static gg.projecteden.utils.Utils.mutableCopyOf;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.stream.StreamSupport.stream;
 

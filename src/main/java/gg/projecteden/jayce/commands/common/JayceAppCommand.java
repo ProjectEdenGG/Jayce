@@ -1,7 +1,7 @@
 package gg.projecteden.jayce.commands.common;
 
-import gg.projecteden.discord.appcommands.AppCommand;
-import gg.projecteden.discord.appcommands.AppCommandEvent;
+import gg.projecteden.api.discord.appcommands.AppCommand;
+import gg.projecteden.api.discord.appcommands.AppCommandEvent;
 import gg.projecteden.jayce.config.Config;
 import gg.projecteden.jayce.github.Issues.RepoIssueContext;
 import gg.projecteden.jayce.github.Repos;
@@ -23,7 +23,7 @@ public abstract class JayceAppCommand extends AppCommand {
 	}
 
 	protected RepoContext repo() {
-		return Repos.repo(channel().getParent());
+		return Repos.repo(channel().getParentCategory());
 	}
 
 	protected RepoIssueContext issues() {

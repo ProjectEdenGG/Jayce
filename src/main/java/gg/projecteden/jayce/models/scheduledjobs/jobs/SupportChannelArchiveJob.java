@@ -1,10 +1,10 @@
 package gg.projecteden.jayce.models.scheduledjobs.jobs;
 
+import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob;
+import gg.projecteden.api.mongodb.models.scheduledjobs.common.RetryIfInterrupted;
 import gg.projecteden.jayce.Jayce;
 import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.utils.Utils;
-import gg.projecteden.models.scheduledjobs.common.AbstractJob;
-import gg.projecteden.models.scheduledjobs.common.RetryIfInterrupted;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -57,7 +57,7 @@ public class SupportChannelArchiveJob extends AbstractJob {
 			.thenCompose($ -> {
 				if (!closeIssue)
 					return completedFuture(null);
-				return Repos.repo(channel.getParent()).issues().close(Utils.getIssueId(channel));
+				return Repos.repo(channel.getParentCategory()).issues().close(Utils.getIssueId(channel));
 			})
 			.exceptionally(ex -> {
 				ex.printStackTrace();

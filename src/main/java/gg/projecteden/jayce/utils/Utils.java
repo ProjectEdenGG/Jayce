@@ -15,7 +15,7 @@ public class Utils {
 
 	public static int getIssueId(TextChannel channel) {
 		final String channelName = channel.getName();
-		final String channelPrefix = "(?i)^[" + Jayce.UNRESOLVED + Jayce.RESOLVED + "]-" + requireNonNull(channel.getParent()).getName() + "-";
+		final String channelPrefix = "(?i)^[" + Jayce.UNRESOLVED + Jayce.RESOLVED + "]-" + requireNonNull(channel.getParentCategory()).getName() + "-";
 		if (!channelName.matches(channelPrefix + "\\d+$"))
 			return -1;
 

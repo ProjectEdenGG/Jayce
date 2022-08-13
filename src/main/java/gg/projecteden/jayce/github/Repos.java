@@ -3,7 +3,7 @@ package gg.projecteden.jayce.github;
 import com.spotify.github.async.AsyncPage;
 import com.spotify.github.v3.clients.RepositoryClient;
 import com.spotify.github.v3.issues.Label;
-import gg.projecteden.exceptions.EdenException;
+import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.jayce.config.Config;
 import gg.projecteden.jayce.github.Issues.RepoIssueContext;
 import kotlin.Pair;
@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.jayce.Jayce.GITHUB;
-import static gg.projecteden.utils.StringUtils.camelCase;
 import static java.util.stream.StreamSupport.stream;
 
 public class Repos {

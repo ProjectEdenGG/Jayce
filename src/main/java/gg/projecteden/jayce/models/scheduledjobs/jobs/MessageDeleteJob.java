@@ -1,8 +1,8 @@
 package gg.projecteden.jayce.models.scheduledjobs.jobs;
 
+import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob;
+import gg.projecteden.api.mongodb.models.scheduledjobs.common.RetryIfInterrupted;
 import gg.projecteden.jayce.Jayce;
-import gg.projecteden.models.scheduledjobs.common.AbstractJob;
-import gg.projecteden.models.scheduledjobs.common.RetryIfInterrupted;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

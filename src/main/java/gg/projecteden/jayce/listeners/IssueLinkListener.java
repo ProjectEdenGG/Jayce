@@ -2,13 +2,13 @@ package gg.projecteden.jayce.listeners;
 
 import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.listeners.common.DiscordListener;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class IssueLinkListener extends DiscordListener {
 
 	@Override
-	public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
 		try {
 			final String content = event.getMessage().getContentDisplay();
 			if (!content.contains("git#"))

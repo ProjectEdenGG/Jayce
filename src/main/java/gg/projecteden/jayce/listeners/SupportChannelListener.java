@@ -2,7 +2,7 @@ package gg.projecteden.jayce.listeners;
 
 import com.spotify.github.v3.issues.ImmutableIssue;
 import com.spotify.github.v3.issues.Issue;
-import gg.projecteden.exceptions.EdenException;
+import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.jayce.Jayce;
 import gg.projecteden.jayce.github.Issues.RepoIssueContext;
 import gg.projecteden.jayce.github.Repos;
@@ -13,26 +13,28 @@ import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
 
-import static gg.projecteden.utils.StringUtils.ellipsis;
+import static gg.projecteden.api.common.utils.StringUtils.ellipsis;
 import static java.time.LocalDateTime.now;
 
 public class SupportChannelListener extends DiscordListener {
 	private static final String TITLE_REGEX = "(?i)^title:( )?";
 
 	@Override
-	public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
 		try {
 			if (shouldIgnore(event))
 				return;
-			
-			final TextChannel channel = event.getChannel();
-			final Category category = channel.getParent();
+
+			if (!(event.getChannel() instanceof TextChannel channel))
+				return;
+
+			final Category category = channel.getParentCategory();
 			final Message message = event.getMessage();
 			final Member member = event.getMember();
 

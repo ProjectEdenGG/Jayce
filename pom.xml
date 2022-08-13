@@ -99,35 +99,30 @@
       <id>jda-repo</id>
       <url>https://m2.dv8tion.net/releases</url>
     </repository>
-    <repository>
-      <id>cloud-repo</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-    </repository>
   </repositories>
 
   <dependencies>
     <!-- EdenAPI -->
     <dependency>
       <groupId>gg.projecteden</groupId>
-      <artifactId>eden-api</artifactId>
-      <version>1.6.6</version>
+      <artifactId>eden-common</artifactId>
+      <version>2.1.10-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>gg.projecteden</groupId>
+      <artifactId>eden-discord</artifactId>
+      <version>2.1.10-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>gg.projecteden</groupId>
+      <artifactId>eden-db</artifactId>
+      <version>2.1.10-SNAPSHOT</version>
     </dependency>
     <!-- Github API -->
     <dependency>
       <groupId>com.spotify</groupId>
       <artifactId>github-client</artifactId>
       <version>0.0.29-SNAPSHOT</version>
-    </dependency>
-    <!-- Cloud -->
-    <dependency>
-      <groupId>cloud.commandframework</groupId>
-      <artifactId>cloud-jda</artifactId>
-      <version>1.5.0</version>
-    </dependency>
-    <dependency>
-      <groupId>cloud.commandframework</groupId>
-      <artifactId>cloud-annotations</artifactId>
-      <version>1.5.0</version>
     </dependency>
   </dependencies>
 </project>

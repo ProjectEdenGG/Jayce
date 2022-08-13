@@ -1,24 +1,23 @@
 package gg.projecteden.jayce;
 
 import com.spotify.github.v3.clients.GitHubClient;
-import gg.projecteden.EdenAPI;
-import gg.projecteden.discord.appcommands.AppCommandRegistry;
+import gg.projecteden.api.common.DatabaseConfig;
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.ReflectionUtils;
+import gg.projecteden.api.discord.appcommands.AppCommandRegistry;
+import gg.projecteden.api.mongodb.EdenDatabaseAPI;
+import gg.projecteden.api.mongodb.models.scheduledjobs.ScheduledJobsRunner;
 import gg.projecteden.jayce.config.Config;
-import gg.projecteden.models.scheduledjobs.ScheduledJobsRunner;
-import gg.projecteden.mongodb.DatabaseConfig;
-import gg.projecteden.utils.Env;
-import gg.projecteden.utils.Utils;
 import lombok.SneakyThrows;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.reflections.Reflections;
 
 import java.net.URI;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public class Jayce extends EdenAPI {
+public class Jayce extends EdenDatabaseAPI {
 	public static JDA JDA;
 	public static GitHubClient GITHUB;
 	public static final String PROJECT_EDEN_GUILD_ID = "132680070480396288";
@@ -71,11 +70,9 @@ public class Jayce extends EdenAPI {
 	}
 
 	private Stream<? extends ListenerAdapter> getListeners() {
-		final Reflections reflections = new Reflections(Jayce.class.getPackage().getName());
-		return reflections.getSubTypesOf(ListenerAdapter.class).stream().map(clazz -> {
+		return ReflectionUtils.subTypesOf(ListenerAdapter.class, Jayce.class.getPackageName()).stream().map(clazz -> {
 			try {
-				if (Utils.canEnable(clazz))
-					return clazz.getConstructor().newInstance();
+				return clazz.getConstructor().newInstance();
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
