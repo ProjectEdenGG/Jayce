@@ -1,12 +1,16 @@
 package gg.projecteden.jayce;
 
 import com.spotify.github.v3.clients.GitHubClient;
+import dev.morphia.converters.TypeConverter;
 import gg.projecteden.api.common.DatabaseConfig;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.api.discord.appcommands.AppCommandRegistry;
 import gg.projecteden.api.mongodb.EdenDatabaseAPI;
 import gg.projecteden.api.mongodb.models.scheduledjobs.ScheduledJobsRunner;
+import gg.projecteden.api.mongodb.serializers.JobConverter;
+import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.jayce.config.Config;
 import lombok.SneakyThrows;
 import net.dv8tion.jda.api.JDA;
@@ -14,6 +18,8 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.net.URI;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -67,6 +73,12 @@ public class Jayce extends EdenDatabaseAPI {
 			.password(Config.DATABASE_PASSWORD)
 			.env(getEnv())
 			.build();
+	}
+
+	@Override
+	public Collection<? extends Class<? extends TypeConverter>> getMongoConverters() {
+		// TODO Why isnt eden-api handling this?
+		return List.of(LocalDateTimeConverter.class, JobConverter.class, UUIDConverter.class);
 	}
 
 	private Stream<? extends ListenerAdapter> getListeners() {
