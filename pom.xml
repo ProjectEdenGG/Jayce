@@ -6,8 +6,8 @@
   <version>2.0.0</version>
 
   <properties>
-    <jdk.version>16</jdk.version>
-    <eden-api.version>2.1.12-SNAPSHOT</eden-api.version>
+    <jdk.version>17</jdk.version>
+    <eden-api.version>2.1.13-SNAPSHOT</eden-api.version>
     <lombok.encoding>UTF-8</lombok.encoding>
   </properties>
 
