@@ -144,7 +144,8 @@ public class IssuesAppCommand extends JayceAppCommand {
 					.filter(Objects::nonNull)
 					.map(String::toLowerCase)
 					.map(label -> new Choice(label, label))
-					.toList();
+					.toList()
+					.subList(0, 25);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				return null;
