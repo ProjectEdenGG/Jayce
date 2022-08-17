@@ -29,7 +29,7 @@ public class MessageDeleteJob extends AbstractJob {
 
 	public MessageDeleteJob(Message message) {
 		this.guildId = message.getGuild().getId();
-		this.channelId = message.getTextChannel().getId();
+		this.channelId = message.getGuildChannel().getId();
 		this.messageId = message.getId();
 	}
 

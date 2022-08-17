@@ -39,7 +39,7 @@ public class ChannelAppCommand extends JayceAppCommand {
 	}
 
 	@Command("Mark this channel as resolved")
-	void resolve(@Desc("Close issue") @Optional Boolean close) {
+	void resolve(@Desc("Close issue") @Optional("false") Boolean close) {
 		cancelExistingArchivalJobs();
 
 		boolean closeIssue = close == null || close;

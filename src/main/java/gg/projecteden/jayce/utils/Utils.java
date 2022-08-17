@@ -1,6 +1,8 @@
 package gg.projecteden.jayce.utils;
 
 import gg.projecteden.jayce.Jayce;
+import net.dv8tion.jda.api.entities.GuildChannel;
+import net.dv8tion.jda.api.entities.ICategorizableChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.List;
@@ -13,7 +15,7 @@ public class Utils {
 		return List.of(input.split("(?<!:) "));
 	}
 
-	public static int getIssueId(TextChannel channel) {
+	public static int getIssueId(ICategorizableChannel channel) {
 		final String channelName = channel.getName();
 		final String channelPrefix = "(?i)^[" + Jayce.UNRESOLVED + Jayce.RESOLVED + "]-" + requireNonNull(channel.getParentCategory()).getName() + "-";
 		if (!channelName.matches(channelPrefix + "\\d+$"))

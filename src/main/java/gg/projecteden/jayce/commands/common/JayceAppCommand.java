@@ -19,7 +19,7 @@ public abstract class JayceAppCommand extends AppCommand {
 	}
 
 	protected int getIssueId() {
-		return Utils.getIssueId(event.getEvent().getTextChannel());
+		return Utils.getIssueId(event.getEvent().getGuildChannel().asStandardGuildChannel());
 	}
 
 	protected RepoContext repo() {
