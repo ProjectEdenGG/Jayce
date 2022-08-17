@@ -12,8 +12,10 @@ import lombok.SneakyThrows;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import java.net.URI;
+import java.util.EnumSet;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -48,6 +50,7 @@ public class Jayce extends EdenDatabaseAPI {
 	@SneakyThrows
 	private void jda() {
 		JDA = JDABuilder.createDefault(Config.DISCORD_TOKEN)
+			.enableIntents(EnumSet.allOf(GatewayIntent.class))
 			.addEventListeners(getListeners().toArray())
 			.build()
 			.awaitReady();
