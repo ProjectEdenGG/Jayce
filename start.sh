@@ -1,3 +1,4 @@
+#!/bin/bash
 java -jar \
 --add-opens java.base/java.net=ALL-UNNAMED \
 --add-opens java.base/java.util=ALL-UNNAMED \

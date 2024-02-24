@@ -123,7 +123,7 @@
     <dependency>
       <groupId>com.spotify</groupId>
       <artifactId>github-client</artifactId>
-      <version>0.0.29-SNAPSHOT</version>
+      <version>0.0.30-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>
