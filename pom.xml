@@ -90,7 +90,11 @@
   <repositories>
     <repository>
       <id>projecteden-repo</id>
-      <url>https://sonatype.projecteden.gg/repository/maven-public/</url>
+      <url>https://maven.projecteden.gg/releases</url>
+    </repository>
+    <repository>
+      <id>projecteden-snapshots</id>
+      <url>https://maven.projecteden.gg/snapshots</url>
     </repository>
     <repository>
       <id>apache</id>
