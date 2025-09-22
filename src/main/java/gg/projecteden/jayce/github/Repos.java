@@ -7,8 +7,8 @@ import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.jayce.config.Config;
 import gg.projecteden.jayce.github.Issues.RepoIssueContext;
 import kotlin.Pair;
-import net.dv8tion.jda.api.entities.Category;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

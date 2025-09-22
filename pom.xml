@@ -6,8 +6,8 @@
   <version>2.0.0</version>
 
   <properties>
-    <jdk.version>17</jdk.version>
-    <eden-api.version>2.2.1-SNAPSHOT</eden-api.version>
+    <jdk.version>21</jdk.version>
+    <eden-api.version>2.3.12-SNAPSHOT</eden-api.version>
     <lombok.encoding>UTF-8</lombok.encoding>
   </properties>
 
@@ -35,7 +35,7 @@
             <path>
               <groupId>org.projectlombok</groupId>
               <artifactId>lombok</artifactId>
-              <version>1.18.20</version>
+              <version>1.18.36</version>
             </path>
           </annotationProcessorPaths>
         </configuration>
@@ -43,7 +43,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.3.0-SNAPSHOT</version>
+        <version>3.6.1</version>
         <executions>
           <execution>
             <phase>package</phase>

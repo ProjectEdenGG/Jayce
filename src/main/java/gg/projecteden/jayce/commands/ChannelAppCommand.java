@@ -15,11 +15,11 @@ import gg.projecteden.jayce.commands.common.JayceAppCommand;
 import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.models.scheduledjobs.jobs.SupportChannelArchiveJob;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Category;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.managers.channel.ChannelManager;
 import net.dv8tion.jda.api.managers.channel.concrete.TextChannelManager;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
@@ -39,7 +39,7 @@ public class ChannelAppCommand extends JayceAppCommand {
 	}
 
 	@Command("Mark this channel as resolved")
-	void resolve(@Desc("Close issue") @Optional("false") Boolean close) {
+	void resolve(@Desc("Close issue") @Optional("true") Boolean close) {
 		cancelExistingArchivalJobs();
 
 		boolean closeIssue = close == null || close;
@@ -110,7 +110,7 @@ public class ChannelAppCommand extends JayceAppCommand {
 			final EmbedBuilder image = new EmbedBuilder().setImage(BRANDING_URL + channel().getName() + ".png");
 			final EmbedBuilder text = new EmbedBuilder().appendDescription(description.replaceAll("\\\\n", System.lineSeparator()));
 
-			channel().sendMessage(new MessageBuilder().setEmbeds(image.build(), text.build()).build()).queue();
+			channel().sendMessage(new MessageCreateBuilder().setEmbeds(image.build(), text.build()).build()).queue();
 			event.getEvent().reply("Success").setEphemeral(true).queue();
 		});
 	}

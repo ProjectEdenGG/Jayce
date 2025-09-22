@@ -9,10 +9,10 @@ import gg.projecteden.jayce.github.Repos;
 import gg.projecteden.jayce.github.Repos.RepoContext;
 import gg.projecteden.jayce.listeners.common.DiscordListener;
 import gg.projecteden.jayce.models.scheduledjobs.jobs.MessageDeleteJob;
-import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 

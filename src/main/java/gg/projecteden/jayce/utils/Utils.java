@@ -1,7 +1,7 @@
 package gg.projecteden.jayce.utils;
 
 import gg.projecteden.jayce.Jayce;
-import net.dv8tion.jda.api.entities.ICategorizableChannel;
+import net.dv8tion.jda.api.entities.channel.attribute.ICategorizableChannel;
 
 import java.util.List;
 
